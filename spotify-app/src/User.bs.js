@@ -3,9 +3,8 @@
 
 var React = require("react");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var User$ReactTemplate = require("./User.bs.js");
 
-var component = ReasonReact.statelessComponent("Component1");
+var component = ReasonReact.statelessComponent("User");
 
 function make(_children) {
   return /* record */[
@@ -19,13 +18,10 @@ function make(_children) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (_self) {
-              return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, User$ReactTemplate.make(/* array */[])), React.createElement("h1", undefined, "Welcome to SpotDJ"), React.createElement("div", {
-                              className: "link-sharing"
-                            }, React.createElement("p", undefined, "Share the following link to invite people to your music"), React.createElement("div", undefined, React.createElement("input", {
-                                      value: "www.example.com/?userId"
-                                    }), React.createElement("button", undefined, "share")), React.createElement("div", undefined, React.createElement("p", undefined, "240 Listners"), React.createElement("a", undefined, "Stop Sharing"))), React.createElement("div", {
-                              className: "current-playing"
-                            }, React.createElement("p", undefined, "Played by userABC")));
+              return React.createElement("div", undefined, React.createElement("img", {
+                              alt: "user icon",
+                              src: "./img/user.png"
+                            }), React.createElement("p", undefined, "userABC"));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
