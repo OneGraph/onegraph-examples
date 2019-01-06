@@ -4,6 +4,8 @@
 var React = require("react");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
+var userIcon = require("./img/user.png");
+
 var component = ReasonReact.statelessComponent("User");
 
 function make(_children) {
@@ -20,7 +22,7 @@ function make(_children) {
           /* render */(function (_self) {
               return React.createElement("div", undefined, React.createElement("img", {
                               alt: "user icon",
-                              src: "./img/user.png"
+                              src: userIcon
                             }), React.createElement("p", undefined, "userABC"));
             }),
           /* initialState */component[/* initialState */10],
@@ -30,6 +32,7 @@ function make(_children) {
         ];
 }
 
+exports.userIcon = userIcon;
 exports.component = component;
 exports.make = make;
-/* component Not a pure module */
+/* userIcon Not a pure module */
