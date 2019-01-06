@@ -4,6 +4,7 @@
 var React = require("react");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var User$ReactTemplate = require("./User.bs.js");
+var AppStyle$ReactTemplate = require("./AppStyle.bs.js");
 
 var component = ReasonReact.statelessComponent("Component1");
 
@@ -19,7 +20,9 @@ function make(_children) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (_self) {
-              return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, User$ReactTemplate.make(/* array */[])), React.createElement("h1", undefined, "Welcome to SpotDJ"), React.createElement("div", {
+              return React.createElement("div", {
+                          className: AppStyle$ReactTemplate.app
+                        }, ReasonReact.element(undefined, undefined, User$ReactTemplate.make(/* array */[])), React.createElement("h1", undefined, "Welcome to SpotDJ"), React.createElement("div", {
                               className: "link-sharing"
                             }, React.createElement("p", undefined, "Share the following link to invite people to your music"), React.createElement("div", undefined, React.createElement("input", {
                                       value: "www.example.com/?userId"
@@ -34,6 +37,9 @@ function make(_children) {
         ];
 }
 
+var Css = 0;
+
+exports.Css = Css;
 exports.component = component;
 exports.make = make;
 /* component Not a pure module */

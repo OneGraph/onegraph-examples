@@ -1,10 +1,12 @@
+module Css = AppStyle;
+
 let component = ReasonReact.statelessComponent("Component1");
 
 let make = _children => {
   ...component,
   render: _self =>
     ReasonReact.(
-      <div>
+      <div className=Css.app>
         <User />
         <h1> {string("Welcome to SpotDJ")} </h1>
         <div className="link-sharing">
