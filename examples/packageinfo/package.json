@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "onegraph-npm-example",
+  "name": "packageinfo",
   "description": "PackageInfo - npm package information using OneGraph",
   "version": "1.0.0",
   "scripts": {
