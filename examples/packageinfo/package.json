@@ -1,0 +1,36 @@
+{
+  "private": true,
+  "name": "onegraph-npm-example",
+  "description": "PackageInfo - npm package information using OneGraph",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next src",
+    "build": "next build src",
+    "start": "NODE_ENV=production node server.js"
+  },
+  "dependencies": {
+    "alveron": "^2.0.0",
+    "apollo-boost": "^0.1.22",
+    "date-fns": "^2.0.0-alpha.26",
+    "fela": "^10.1.0",
+    "fela-dom": "^10.1.0",
+    "fela-preset-web": "^10.1.0",
+    "graphql": "^14.0.2",
+    "next": "^7.0.0",
+    "node-fetch": "^2.3.0",
+    "onegraph-auth": "^0.2.18",
+    "prop-types": "^15.6.2",
+    "react": "16.7.0-alpha.2",
+    "react-apollo": "^2.3.3",
+    "react-dom": "16.7.0-alpha.2",
+    "react-fela": "^10.1.0",
+    "react-markdown-github": "^3.0.1",
+    "react-markdown-github-renderers": "^1.0.0",
+    "react-vis": "^1.11.5"
+  },
+  "devDependencies": {
+    "express": "^4.16.4",
+    "lru-cache": "^5.1.1",
+    "prettier": "^1.14.2"
+  }
+}
