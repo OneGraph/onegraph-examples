@@ -42,6 +42,7 @@ export default function Dependencies({ dependencies, updateSearch }) {
               <div
                 className={css({
                   color: theme.colors.primary,
+                  cursor: 'pointer',
                 })}
                 onClick={() => updateSearch(name)}>
                 {name}
