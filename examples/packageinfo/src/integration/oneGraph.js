@@ -1,6 +1,6 @@
 import OneGraphAuth from 'onegraph-auth'
 
-export const APP_ID = '55e199e4-fc81-4887-b5ab-dc3f35fb71cf'
+import { APP_ID } from '../../env'
 
 let auth
 export function getAuth() {

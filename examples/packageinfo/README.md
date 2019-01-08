@@ -25,7 +25,14 @@ https://packageinfo.now.sh/?package=graphql
 ```
 
 ## Running locally
-In order to run the app locally, we have to run the following commands:
+Before running locally, we have to add a `env.js` file that exports our OneGraph API_ID. In order to get one, simply log in to your *OneGraph Dashboard* and choose an existing app or create a new one and copy its App Id in the *Settings* panel. 
+
+##### env.js
+```javascript
+export const APP_ID = /* ID */
+```
+
+Now we can run the app using the following commands:
 ```sh
 yarn
 yarn dev

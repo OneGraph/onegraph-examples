@@ -1,7 +1,8 @@
 import fetch from 'node-fetch'
 import { ApolloClient, InMemoryCache, HttpLink } from 'apollo-boost'
 
-import { getAuth, loginGithub, APP_ID } from './oneGraph'
+import { getAuth, loginGithub } from './oneGraph'
+import { APP_ID } from '../../env'
 
 let apolloClient = null
 
