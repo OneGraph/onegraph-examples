@@ -18,15 +18,15 @@
     "graphql": "^14.0.2",
     "next": "^7.0.0",
     "node-fetch": "^2.3.0",
-    "onegraph-auth": "^0.2.18",
     "prop-types": "^15.6.2",
     "react": "16.7.0-alpha.2",
-    "react-apollo": "^2.3.3",
+    "react-apollo": "2.3.1",
     "react-dom": "16.7.0-alpha.2",
     "react-fela": "^10.1.0",
     "react-markdown-github": "^3.0.1",
     "react-markdown-github-renderers": "^1.0.0",
-    "react-vis": "^1.11.5"
+    "react-onegraph": "^1.0.0",
+    "react-vis": "1.11.5"
   },
   "devDependencies": {
     "express": "^4.16.4",
