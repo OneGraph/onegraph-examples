@@ -62,7 +62,7 @@ class BundleSize extends Component {
   }
 }
 
-export default function Info({ data }) {
+export default function Info({ data, githubStatus }) {
   const { css } = useFela()
 
   const {
@@ -184,8 +184,9 @@ export default function Info({ data }) {
                     *<span className={css({ opacity: 0 })}>*</span>
                   </sup>
                   <p>
-                    This npm package does not link to a Github or any repository
-                    at all.
+                    {!githubStatus
+                      ? 'You need to login with GitHub in order to see that information.'
+                      : 'This npm package does not link to a GitHub repository.'}
                   </p>
                 </div>
               </Conditional>

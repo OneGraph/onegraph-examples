@@ -44,7 +44,6 @@ export default class MyDocument extends Document {
             name="viewport"
             content="width=device-width,height=device-height,initial-scale=1, viewport-fit=cover"
           />
-          <title>PackageInfo | npm package information using OneGraph</title>
           <meta
             name="title"
             content="PackageInfo | npm package information using OneGraph"

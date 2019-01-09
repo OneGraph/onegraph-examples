@@ -2,9 +2,12 @@ import App, { Container } from 'next/app'
 import React from 'react'
 import { ApolloProvider } from 'react-apollo'
 import { ThemeProvider } from 'react-fela'
+import { AuthProvider } from 'react-onegraph'
 
 import withApolloClient from '../integration/withApolloClient'
 import theme from '../styling/theme'
+
+import { APP_ID } from '../../env'
 
 class MyApp extends App {
   render() {
@@ -12,9 +15,11 @@ class MyApp extends App {
     return (
       <Container>
         <ThemeProvider theme={theme}>
-          <ApolloProvider client={apolloClient}>
-            <Component {...pageProps} />
-          </ApolloProvider>
+          <AuthProvider appId={APP_ID}>
+            <ApolloProvider client={apolloClient}>
+              <Component {...pageProps} />
+            </ApolloProvider>
+          </AuthProvider>
         </ThemeProvider>
       </Container>
     )

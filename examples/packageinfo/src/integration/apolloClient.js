@@ -1,7 +1,6 @@
 import fetch from 'node-fetch'
 import { ApolloClient, InMemoryCache, HttpLink } from 'apollo-boost'
 
-import { getAuth, loginGithub } from './oneGraph'
 import { APP_ID } from '../../env'
 
 let apolloClient = null
@@ -11,14 +10,13 @@ if (!process.browser) {
   global.fetch = fetch
 }
 
-function create(initialState, getHeaders = () => {}) {
+function create(initialState) {
   // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
   return new ApolloClient({
     connectToDevTools: process.browser,
     ssrMode: !process.browser, // Disables forceFetch on the server (so queries are only run once)
     link: new HttpLink({
       uri: 'https://serve.onegraph.com/dynamic?app_id=' + APP_ID,
-      headers: getHeaders(),
       credentials: 'same-origin', // Additional fetch() options like `credentials` or `headers`
     }),
     cache: new InMemoryCache().restore(initialState || {}),
@@ -33,7 +31,7 @@ export default function initApollo(initialState) {
   }
 
   if (!apolloClient) {
-    apolloClient = create(initialState, getAuth().authHeaders)
+    apolloClient = create(initialState)
   }
 
   return apolloClient
