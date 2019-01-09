@@ -19,7 +19,12 @@
   ],
   "suffix": ".bs.js",
   "namespace": true,
-  "bs-dependencies": ["reason-react", "bs-emotion", "@ahrefs/bs-reactstrap"],
+  "bs-dependencies": [
+    "reason-react",
+    "bs-emotion",
+    "@ahrefs/bs-reactstrap",
+    "re-classnames"
+  ],
   "refmt": 3,
   "ppx-flags": ["bs-emotion-ppx/ppx"]
 }
