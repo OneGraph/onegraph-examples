@@ -6,6 +6,7 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 var User$ReactTemplate = require("./User.bs.js");
 var AppStyle$ReactTemplate = require("./AppStyle.bs.js");
 var LinkShare$ReactTemplate = require("./LinkShare.bs.js");
+var CurrentlyPlaying$ReactTemplate = require("./CurrentlyPlaying.bs.js");
 
 var userIcon = require("./img/user.png");
 
@@ -27,9 +28,7 @@ function make(_children) {
                           className: AppStyle$ReactTemplate.app
                         }, ReasonReact.element(undefined, undefined, User$ReactTemplate.make(/* array */[])), React.createElement("h1", {
                               className: AppStyle$ReactTemplate.pageTitle
-                            }, "Welcome to SpotDJ"), ReasonReact.element(undefined, undefined, LinkShare$ReactTemplate.make(/* array */[])), React.createElement("div", {
-                              className: "current-playing"
-                            }, React.createElement("p", undefined, "Played by userABC")));
+                            }, "Welcome to SpotDJ"), ReasonReact.element(undefined, undefined, LinkShare$ReactTemplate.make(/* array */[])), ReasonReact.element(undefined, undefined, CurrentlyPlaying$ReactTemplate.make(/* array */[])));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

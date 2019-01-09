@@ -53,3 +53,45 @@ let subInfo = [%css
     ),
   ]
 ];
+
+let songInfo = [%css
+  [
+    alignItems(`center),
+    width(`pct(100.)),
+    position(`absolute),
+    bottom(`px(0)),
+    color(`hex("ffffff")),
+    select(".audio-wave", [width(`px(48))]),
+    select(
+      ".action-btn-circle",
+      [
+        width(`px(32)),
+        border(`px(2), `solid, `hex("ffffff")),
+        borderRadius(`pct(50.)),
+        padding(`px(4)),
+        select(
+          ":hover",
+          [cursor(`pointer), backgroundColor(`hex("525252"))],
+        ),
+      ],
+    ),
+    select(".song-name", [fontSize(`px(24))]),
+    select(".singer-name", [fontSize(`px(14))]),
+  ]
+];
+
+let songImageFilter = [%css
+  [
+    width(`pct(100.)),
+    height(`pct(100.)),
+    position(`absolute),
+    top(`px(0)),
+    backgroundImage(
+      `linearGradient((
+        `deg(-180.),
+        [(0, `rgba((255, 255, 255, 0.00))), (85, `hex("000000"))],
+      )),
+    ),
+  ]
+];
+Emotion.backgroundImage;

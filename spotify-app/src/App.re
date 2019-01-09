@@ -14,9 +14,7 @@ let make = _children => {
         <User />
         <h1 className=Css.pageTitle> {string("Welcome to SpotDJ")} </h1>
         <LinkShare />
-        <div className="current-playing">
-          <p> {string("Played by userABC")} </p>
-        </div>
+        <CurrentlyPlaying />
       </div>
     ),
 };

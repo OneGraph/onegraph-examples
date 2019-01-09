@@ -211,6 +211,165 @@ var subInfo = Emotion.css(undefined, /* :: */[
       ]
     ]);
 
+var songInfo = Emotion.css(undefined, /* :: */[
+      Emotion.label("songInfo"),
+      /* :: */[
+        Emotion.alignItems(/* center */98248149),
+        /* :: */[
+          Emotion.width(/* `pct */[
+                5591841,
+                100
+              ]),
+          /* :: */[
+            Emotion.position(/* absolute */-1013592457),
+            /* :: */[
+              Emotion.bottom(/* `px */[
+                    25096,
+                    0
+                  ]),
+              /* :: */[
+                Emotion.color(/* `hex */[
+                      5194459,
+                      "ffffff"
+                    ]),
+                /* :: */[
+                  Emotion.select(".audio-wave", /* :: */[
+                        Emotion.width(/* `px */[
+                              25096,
+                              48
+                            ]),
+                        /* [] */0
+                      ]),
+                  /* :: */[
+                    Emotion.select(".action-btn-circle", /* :: */[
+                          Emotion.width(/* `px */[
+                                25096,
+                                32
+                              ]),
+                          /* :: */[
+                            Emotion.border(/* `px */[
+                                  25096,
+                                  2
+                                ], /* solid */12956715, /* `hex */[
+                                  5194459,
+                                  "ffffff"
+                                ]),
+                            /* :: */[
+                              Emotion.borderRadius(/* `pct */[
+                                    5591841,
+                                    50
+                                  ]),
+                              /* :: */[
+                                Emotion.padding(/* `px */[
+                                      25096,
+                                      4
+                                    ]),
+                                /* :: */[
+                                  Emotion.select(":hover", /* :: */[
+                                        Emotion.cursor(/* pointer */-786317123),
+                                        /* :: */[
+                                          Emotion.backgroundColor(/* `hex */[
+                                                5194459,
+                                                "525252"
+                                              ]),
+                                          /* [] */0
+                                        ]
+                                      ]),
+                                  /* [] */0
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]),
+                    /* :: */[
+                      Emotion.select(".song-name", /* :: */[
+                            Emotion.fontSize(/* `px */[
+                                  25096,
+                                  24
+                                ]),
+                            /* [] */0
+                          ]),
+                      /* :: */[
+                        Emotion.select(".singer-name", /* :: */[
+                              Emotion.fontSize(/* `px */[
+                                    25096,
+                                    14
+                                  ]),
+                              /* [] */0
+                            ]),
+                        /* [] */0
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
+
+var songImageFilter = Emotion.css(undefined, /* :: */[
+      Emotion.label("songImageFilter"),
+      /* :: */[
+        Emotion.width(/* `pct */[
+              5591841,
+              100
+            ]),
+        /* :: */[
+          Emotion.height(/* `pct */[
+                5591841,
+                100
+              ]),
+          /* :: */[
+            Emotion.position(/* absolute */-1013592457),
+            /* :: */[
+              Emotion.top(/* `px */[
+                    25096,
+                    0
+                  ]),
+              /* :: */[
+                Emotion.backgroundImage(/* `linearGradient */[
+                      616379637,
+                      /* tuple */[
+                        /* `deg */[
+                          4995526,
+                          -180
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            0,
+                            /* `rgba */[
+                              -878128972,
+                              /* tuple */[
+                                255,
+                                255,
+                                255,
+                                0.00
+                              ]
+                            ]
+                          ],
+                          /* :: */[
+                            /* tuple */[
+                              85,
+                              /* `hex */[
+                                5194459,
+                                "000000"
+                              ]
+                            ],
+                            /* [] */0
+                          ]
+                        ]
+                      ]
+                    ]),
+                /* [] */0
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
+
 exports.app = app;
 exports.userIcon = userIcon;
 exports.flexWrapper = flexWrapper;
@@ -221,4 +380,6 @@ exports.userAccountWrapper = userAccountWrapper;
 exports.linkSharing = linkSharing;
 exports.shareLinkURL = shareLinkURL;
 exports.subInfo = subInfo;
+exports.songInfo = songInfo;
+exports.songImageFilter = songImageFilter;
 /* app Not a pure module */
