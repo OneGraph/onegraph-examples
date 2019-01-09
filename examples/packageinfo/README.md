@@ -8,7 +8,7 @@ PackageInfo is a service that provides detailed information about [npm packages]
 PackageInfo is built with a set of modern web technologies.
 
 * [OneGraph](https://www.onegraph.com): A service that seamlessly connects many services in a single GraphQL API. It provides all the package information from npm and Github in a single request!
-* [onegraph-auth](https://www.onegraph.com/docs/logging_users_in_and_out.html#log-the-user-in): A library that handles Authentication with OneGraph.
+* [react-onegraph](https://github.com/rofrischmann/react-onegraph): React Bindings for OneGraph's [Authentication Client](https://www.onegraph.com/docs/logging_users_in_and_out.html).
 * [React](http://reactjs.org): A library for component-based user interfaces.
 * [Next](http://nextjs.org): A framework for React-powered web applications
 * [Now](https://zeit.co): A platform for serverless application deployment used to serve PackageInfo.
@@ -124,7 +124,7 @@ It also handles the Github authorization that is required to access data from Gi
 
 #### Folders
 - [components](src/components/): Presentational UI components
-- [integration](src/integration/): OneGraph / Apollo setup
+- [integration](src/integration/): Apollo setup
 - [pages](src/pages/): Pages for Next
 - [sections](src/sections/): Different UI sections *e.g. downloads, keywords*
 - [styling](src/styling/): Fela setup
@@ -132,8 +132,10 @@ It also handles the Github authorization that is required to access data from Gi
 
 ----- 
 
-#### OneGraph / Apollo
-- [src/integration/oneGraph.js](src/integration/oneGraph.js): OneGraph setup and authorisation helpers
+#### OneGraph
+- [src/pages/_app.js](src/pages/_app.js): Passing our appId to the react-onegraph's AuthProvider
+
+#### Apollo
 - [src/integration/apolloClient.js](src/integration/ApolloClient.js): Apollo setup including the authorization headers
 - [src/pages/index.js](src/pages/index.js): The app entry point including the Apollo Query component and the GraphQL query
 
