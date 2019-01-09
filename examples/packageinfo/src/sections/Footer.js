@@ -37,6 +37,9 @@ export default function Footer() {
           flexDirection: 'row',
           paddingTop: 5,
         })}>
+        <FooterLink href="https://github.com/OneGraph/onegraph-examples/tree/master/examples/packageinfo">
+          GitHub
+        </FooterLink>
         <FooterLink href="https://www.onegraph.com">OneGraph</FooterLink>
         <FooterLink href="https://twitter.com/onegraphio">Twitter</FooterLink>
       </div>
