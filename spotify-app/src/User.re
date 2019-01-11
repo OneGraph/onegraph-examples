@@ -1,4 +1,5 @@
 open Utils;
+open Emotion;
 open BsReactstrap;
 
 module Css = AppStyle;
@@ -8,6 +9,11 @@ type action =
   | Toggle;
 
 type state = {isDropdownOpen: bool};
+
+/*Style*/
+let userAccountWrapper = [%css
+  [padding4(`px(16), `px(24), `px(0), `px(24))]
+];
 
 let component = ReasonReact.reducerComponent("User");
 
@@ -20,7 +26,7 @@ let make = _children => {
     },
   render: self =>
     ReasonReact.(
-      <header className=Css.flexWrapperRightAlign>
+      <header className={Css.flexWrapper(`flexEnd, `center)}>
         <div style={ReactDOMRe.Style.make(~width="100px", ())}>
           <Dropdown
             isOpen={self.state.isDropdownOpen}
@@ -29,7 +35,10 @@ let make = _children => {
               caret=true
               tag="div"
               className={
-                Cn.make([Css.flexWrapperRightAlign, Css.userAccountWrapper])
+                Cn.make([
+                  Css.flexWrapper(`flexEnd, `center),
+                  userAccountWrapper,
+                ])
               }>
               <img className=Css.userIcon src=userIcon alt="user icon" />
               <p style={ReactDOMRe.Style.make(~margin="0px", ())}>

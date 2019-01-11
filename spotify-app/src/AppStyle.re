@@ -1,28 +1,18 @@
 open Emotion;
 open Emotion.Css.Color;
 
-/*Common*/
 let app = [%css [textAlign(`center)]];
 
 let userIcon = [%css [width(`px(25))]];
 
-let flexWrapper = (~justify) => [%css
-  [display(`flex), justifyContent(justify)]
-];
-
-let flexWrapperRightAlign = [%css
-  [display(`flex), alignItems(`center), justifyContent(`flexEnd)]
+let flexWrapper = (~justify, ~align) => [%css
+  [display(`flex), justifyContent(justify), alignItems(align)]
 ];
 
 let pageTitle = [%css [fontSize(`px(48)), marginBottom(`px(64))]];
 
 let pageSubTitle = [%css
   [fontSize(`px(24)), marginBottom(`px(32)), fontWeight(300)]
-];
-
-/*User Account*/
-let userAccountWrapper = [%css
-  [padding4(`px(16), `px(24), `px(0), `px(24))]
 ];
 
 /*Link Sharing*/
@@ -58,6 +48,7 @@ let songInfo = [%css
   [
     alignItems(`center),
     width(`pct(100.)),
+    padding(`px(16)),
     position(`absolute),
     bottom(`px(0)),
     color(`hex("ffffff")),
@@ -75,8 +66,8 @@ let songInfo = [%css
         ),
       ],
     ),
-    select(".song-name", [fontSize(`px(24))]),
-    select(".singer-name", [fontSize(`px(14))]),
+    select(".song-name", [fontSize(`px(24)), marginBottom(`px(0))]),
+    select(".singer-name", [fontSize(`px(14)), marginBottom(`px(0))]),
   ]
 ];
 
