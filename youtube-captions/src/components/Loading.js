@@ -10,8 +10,6 @@ export default function Loading({ size }) {
           animationDuration: '2s',
           animationTimingFunction: 'ease-in-out',
           animationIterationCount: 'infinite',
-          position: 'relative',
-          left: -25,
           width: 50,
           height: 50,
           borderRadius: 50,
@@ -28,8 +26,7 @@ export default function Loading({ size }) {
           animationIterationCount: 'infinite',
           animationDelay: '1s',
           marginTop: -50,
-          position: 'relative',
-          left: -25,
+
           width: 50,
           height: 50,
           borderRadius: 50,

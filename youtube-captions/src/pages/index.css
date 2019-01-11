@@ -48,3 +48,23 @@ body,
     opacity: 1.0
   }
 }
+
+.desktop-only {
+	display: none
+}
+
+@media (min-width: 640px) {
+	.desktop-only {
+		display: block
+	}
+}
+
+.flag {
+	flex-direction: column
+}
+
+@media (min-width: 640px) {
+	.flag {
+		flex-direction: row
+	}
+}

@@ -109,7 +109,7 @@ function App({ initialVideoId }) {
             boxSizing: 'border-box',
             color: 'rgb(180, 180, 180)',
           }}>
-          https://www.youtube.com/watch?v=
+          <span className="desktop-only">https://www.youtube.com/watch?v=</span>
           <input
             type="text"
             placeholder="VIDEO_ID"
@@ -209,10 +209,10 @@ function App({ initialVideoId }) {
                     fontSize: 14,
                   }}>
                   <div
+                    className="flag"
                     style={{
                       justifyContent: 'space-between',
                       textAlign: 'center',
-                      flexDirection: 'row',
                     }}>
                     You are logged into YouTube.
                     <Spacer size={10} />
