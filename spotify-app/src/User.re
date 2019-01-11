@@ -26,7 +26,7 @@ let make = _children => {
     },
   render: self =>
     ReasonReact.(
-      <header className={Css.flexWrapper(`flexEnd, `center)}>
+      <header className={Css.flexWrapper(~justify=`flexEnd, ~align=`center)}>
         <div style={ReactDOMRe.Style.make(~width="100px", ())}>
           <Dropdown
             isOpen={self.state.isDropdownOpen}
@@ -36,7 +36,7 @@ let make = _children => {
               tag="div"
               className={
                 Cn.make([
-                  Css.flexWrapper(`flexEnd, `center),
+                  Css.flexWrapper(~justify=`flexEnd, ~align=`center),
                   userAccountWrapper,
                 ])
               }>
