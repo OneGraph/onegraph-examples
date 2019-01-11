@@ -17,9 +17,8 @@ app.prepare().then(() => {
   const server = express()
 
   // Use the `renderAndCache` utility defined below to serve pages
-  server.get('/:package', (req, res) => {
-    const queryParams = { package: req.params.package }
-    renderAndCache(req, res, '/', queryParams)
+  server.get('/', (req, res) => {
+    renderAndCache(req, res, '/', req.query)
   })
 
   server.get('*', (req, res) => {

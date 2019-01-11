@@ -260,8 +260,7 @@ const Page = ({ initialSearch }) => {
                           flexDirection: 'row',
                         },
                       })}>
-                      You are logged into GitHub. You may logged out at any
-                      time.
+                      You are logged into GitHub. You may log out at any time.
                       <Spacer size={10} />
                       <span
                         onClick={() => logout('github')}

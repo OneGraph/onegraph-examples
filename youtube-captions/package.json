@@ -1,0 +1,26 @@
+{
+  "private": true,
+  "name": "youtube-captions-helper",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next src",
+    "build": "next build src",
+    "start": "next start src"
+  },
+  "dependencies": {
+    "@zeit/next-css": "^1.0.1",
+    "apollo-boost": "^0.1.22",
+    "graphql": "^14.0.2",
+    "next": "^7.0.0",
+    "node-fetch": "^2.3.0",
+    "prop-types": "^15.6.2",
+    "react": "16.7.0-alpha.2",
+    "react-apollo": "2.3.1",
+    "react-dom": "16.7.0-alpha.2",
+    "react-onegraph": "^1.0.0",
+    "react-player": "^1.8.0"
+  },
+  "devDependencies": {
+    "prettier": "^1.14.2"
+  }
+}
