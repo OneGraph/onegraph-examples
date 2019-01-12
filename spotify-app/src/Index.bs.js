@@ -3,8 +3,10 @@
 
 var ReactDOMRe = require("reason-react/src/ReactDOMRe.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var ApolloProvider = require("reason-apollo/src/ApolloProvider.bs.js");
 var App$ReactTemplate = require("./App.bs.js");
+var Client$ReactTemplate = require("./Client.bs.js");
 
-ReactDOMRe.renderToElementWithId(ReasonReact.element(undefined, undefined, App$ReactTemplate.make(/* array */[])), "root");
+ReactDOMRe.renderToElementWithId(ReasonReact.element(undefined, undefined, ApolloProvider.make(Client$ReactTemplate.instance, /* array */[ReasonReact.element(undefined, undefined, App$ReactTemplate.make(/* array */[]))])), "root");
 
 /*  Not a pure module */
