@@ -17,13 +17,23 @@ function make(_children) {
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
-          /* didMount */component[/* didMount */4],
+          /* didMount */(function (self) {
+              self[/* state */1][/* auth */1].isLoggedIn("gmail").then((function (loginStatus) {
+                        console.log(loginStatus);
+                        Curry._1(self[/* send */3], /* SetLoggedIn */[loginStatus]);
+                        return Promise.resolve(/* () */0);
+                      })).catch((function (err) {
+                      return Promise.resolve((console.log(err), /* () */0));
+                    }));
+              return /* () */0;
+            }),
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
-              return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, BsReactstrap__Button.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (param) {
+              var match = self[/* state */1][/* isLoggedIn */0];
+              return React.createElement("div", undefined, match ? "Loged In!" : "Not in...", ReasonReact.element(undefined, undefined, BsReactstrap__Button.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (param) {
                                     return Curry._1(self[/* send */3], /* HandleClick */0);
                                   }), undefined, undefined, undefined, /* array */["Log In"])));
             }),
@@ -35,19 +45,28 @@ function make(_children) {
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
-              console.log("Clicked Login!!");
-              return /* SideEffects */Block.__(1, [(function (param) {
-                            var auth = param[/* state */1][/* auth */1];
-                            auth.login("gmail").then((function (param) {
-                                        return auth.isLoggedIn("gmail");
-                                      })).then((function (loginStatus) {
-                                      console.log(loginStatus);
-                                      return Promise.resolve(/* () */0);
-                                    })).catch((function (err) {
-                                    return Promise.resolve((console.log(err), /* () */0));
-                                  }));
-                            return /* () */0;
-                          })]);
+              if (action) {
+                return /* Update */Block.__(0, [/* record */[
+                            /* isLoggedIn */action[0],
+                            /* auth */state[/* auth */1]
+                          ]]);
+              } else {
+                console.log("Clicked Login!!");
+                return /* SideEffects */Block.__(1, [(function (param) {
+                              var send = param[/* send */3];
+                              var auth = param[/* state */1][/* auth */1];
+                              auth.login("gmail").then((function (param) {
+                                          return auth.isLoggedIn("gmail");
+                                        })).then((function (loginStatus) {
+                                        console.log(loginStatus);
+                                        Curry._1(send, /* SetLoggedIn */[loginStatus]);
+                                        return Promise.resolve(/* () */0);
+                                      })).catch((function (err) {
+                                      return Promise.resolve((console.log(err), /* () */0));
+                                    }));
+                              return /* () */0;
+                            })]);
+              }
             }),
           /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];
