@@ -4,17 +4,62 @@ module Css = AppStyle;
 
 let userIcon = requireAssetURI("./img/user.png");
 
-let component = ReasonReact.statelessComponent("App");
+type state = {
+  isLoggedIn: bool,
+  auth: OneGraphAuth.auth,
+  userName: option(string),
+};
+type action =
+  | SetLogInStatus(bool);
+
+let component = ReasonReact.reducerComponent("App");
 
 let make = _children => {
   ...component,
-  render: _self =>
+  initialState: () => {
+    isLoggedIn: false,
+    auth: OneGraphAuth.newAuth(OneGraphAuth.config),
+    userName: None,
+  },
+  didMount: self =>
+    Js.Promise.(
+      OneGraphAuth.(
+        OneGraphAuth.isLoggedIn(self.state.auth, "gmail")
+        |> then_(loginStatus => {
+             Js.log(loginStatus);
+             self.send(SetLogInStatus(loginStatus));
+             resolve();
+           })
+        |> catch(err => resolve(Js.log(err)))
+        |> ignore
+      )
+    ),
+  reducer: (action, state) =>
+    switch (action) {
+    | SetLogInStatus(isLoggedIn) =>
+      ReasonReact.Update({...state, isLoggedIn})
+    },
+  render: self =>
     ReasonReact.(
       <div className=Css.app>
-        <User />
-        <h1 className=Css.pageTitle> {string("Welcome to SpotDJ")} </h1>
-        <LinkShare />
-        <CurrentlyPlaying />
+        {
+          self.state.isLoggedIn ?
+            <div>
+              <Query />
+              <User
+                auth={self.state.auth}
+                setLogInStatus={status => self.send(SetLogInStatus(status))}
+                userName={self.state.userName}
+              />
+              <h1 className=Css.pageTitle> {string("Welcome to SpotDJ")} </h1>
+              <LinkShare />
+              <CurrentlyPlaying />
+            </div> :
+            <LogIn
+              auth={self.state.auth}
+              setLogInStatus={status => self.send(SetLogInStatus(status))}
+            />
+        }
       </div>
     ),
 };
