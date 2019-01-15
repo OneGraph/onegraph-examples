@@ -4,6 +4,7 @@ import { useFela } from 'react-fela'
 
 import Conditional from '../components/Conditional'
 import Link from '../components/Link'
+import Headline from '../components/Headline'
 
 export default function Versions({ versions, packageName }) {
   const [expanded, toggleExpansion] = useState(false)
@@ -14,14 +15,7 @@ export default function Versions({ versions, packageName }) {
 
   return (
     <div>
-      <h2>Versions</h2>
-      <hr
-        className={css({
-          height: 1,
-          backgroundColor: 'rgb(200, 200, 200)',
-          border: 0,
-        })}
-      />
+      <Headline>Versions</Headline>
       <div>
         {shownVersions.map(({ date, version }, index) => (
           <div

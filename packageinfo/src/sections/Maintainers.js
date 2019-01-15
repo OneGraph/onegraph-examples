@@ -2,6 +2,7 @@ import React from 'react'
 import { useFela } from 'react-fela'
 
 import Link from '../components/Link'
+import Headline from '../components/Headline'
 
 export default function Maintainers({ maintainers }) {
   const { css } = useFela()
@@ -10,14 +11,7 @@ export default function Maintainers({ maintainers }) {
 
   return (
     <div>
-      <h2>Maintainers</h2>
-      <hr
-        className={css({
-          height: 1,
-          backgroundColor: 'rgb(200, 200, 200)',
-          border: 0,
-        })}
-      />
+      <Headline>Maintainers</Headline>
       {maintainers.map(({ name }, index) => (
         <div
           key={name}

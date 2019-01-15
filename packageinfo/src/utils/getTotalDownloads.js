@@ -1,5 +1,4 @@
-const sumDownloads = arr =>
-  arr.reduce((total, { downloads }) => total + downloads, 0)
+const sumDownloads = arr => arr.reduce((total, { count }) => total + count, 0)
 
 export default function getTotalDownloads(downloads, mode) {
   if (mode === 'week') {

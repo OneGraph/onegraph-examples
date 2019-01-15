@@ -53,14 +53,13 @@ const getTickFormatY = highestDownload => value => {
 export default function DownloadGraph({ downloads, totalDownloads, range }) {
   const { css, theme } = useFela()
 
-  const dataPoints = downloads.map(({ day, downloads }) => ({
+  const dataPoints = downloads.map(({ day, count }) => ({
     x: new Date(day).getTime(),
-    y: downloads,
+    y: count,
   }))
 
-  const highestDownload = downloads.sort(
-    (a, b) => a.downloads < b.downloads || -1
-  )[0].downloads
+  const highestDownload = downloads.sort((a, b) => a.count < b.count || -1)[0]
+    .count
 
   return (
     <div className={css({ flex: 1 })}>

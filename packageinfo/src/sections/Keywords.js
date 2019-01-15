@@ -1,19 +1,14 @@
 import React from 'react'
 import { useFela } from 'react-fela'
 
+import Headline from '../components/Headline'
+
 export default ({ keywords }) => {
   const { css } = useFela()
 
   return (
     <div>
-      <h2>Keywords</h2>
-      <hr
-        className={css({
-          height: 1,
-          backgroundColor: 'rgb(200, 200, 200)',
-          border: 0,
-        })}
-      />
+      <Headline>Keywords</Headline>
       <div
         className={css({
           flexDirection: 'row',

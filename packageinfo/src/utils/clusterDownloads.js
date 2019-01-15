@@ -14,12 +14,12 @@ export default function clusterDownloads(downloads, mode) {
   while (downloads.length > 0) {
     const data = downloads.splice(0, 15)
 
-    const value = data.reduce((total, point) => total + point.downloads, 0) * 2
+    const value = data.reduce((total, point) => total + point.count, 0) * 2
     const date = data[Math.floor(data.length / 2)].day
 
     newData.push({
       day: date,
-      downloads: value,
+      count: value,
     })
   }
 

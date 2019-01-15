@@ -10,6 +10,7 @@ import getFelaRenderer from '../styling/getFelaRenderer'
 import FelaProvider from '../styling/FelaProvider'
 
 import preparePackageData from '../utils/preparePackageData'
+import padNumber from '../utils/padNumber'
 
 import Loading from '../sections/Loading'
 import Error from '../sections/Error'
@@ -17,6 +18,7 @@ import Placeholder from '../sections/Placeholder'
 import Footer from '../sections/Footer'
 import Info from '../sections/Info'
 import Downloads from '../sections/Downloads'
+import BundleSize from '../sections/BundleSize'
 import Maintainers from '../sections/Maintainers'
 import Keywords from '../sections/Keywords'
 import Versions from '../sections/Versions'
@@ -29,17 +31,19 @@ import Spacer from '../components/Spacer'
 // one request for the all data including 2 different services
 // this is both convenient and mind-blowing
 const GET_STATS = gql`
-  query npm($package: String!) {
+  query npm($package: String!, $startDate: String!, $endDate: String!) {
     npm {
       package(name: $package) {
         homepage
         keywords
         description
         keywords
-        license
         name
         readme
         readmeFilename
+        license {
+          type
+        }
         maintainers {
           name
         }
@@ -50,16 +54,31 @@ const GET_STATS = gql`
             version
           }
         }
-        downloadsRange(period: "last-year") {
-          downloads {
-            downloads
-            day
+        downloads {
+          period(startDate: $startDate, endDate: $endDate) {
+            perDay {
+              day
+              count
+            }
           }
         }
         time {
           versions {
             date
             version
+          }
+        }
+        bundlephobia {
+          gzip
+          size
+          history {
+            gzip
+            size
+            version
+          }
+          dependencySizes {
+            approximateSize
+            name
           }
         }
         repository {
@@ -99,6 +118,13 @@ const GET_STATS = gql`
   }
 `
 
+const getDateString = date =>
+  [
+    date.getFullYear(),
+    padNumber(date.getMonth() + 1),
+    padNumber(date.getDate()),
+  ].join('-')
+
 const Page = ({ initialSearch }) => {
   const { status, login, logout, headers } = useContext(AuthContext)
   const [search, updateSearch] = useState(initialSearch)
@@ -108,11 +134,19 @@ const Page = ({ initialSearch }) => {
   // we can share a direct URL to a specific package
   useEffect(
     () => {
+      window.onpopstate = () => {
+        // weird browser behaviour dunno what to do
+        const pkg = history.state.package
+          ? history.state.package
+          : history.state.url.substr(10, history.state.url.length)
+        updateSearch(pkg)
+      }
+
       // don't update on mount as this'd break
       // the GitHub authentication redirect
       if (search !== initialSearch) {
         window.history.replaceState(
-          null,
+          { package: search },
           '',
           window.location.origin +
             '/' +
@@ -182,7 +216,14 @@ const Page = ({ initialSearch }) => {
           query={GET_STATS}
           // passing the headers to the variables is a neat hack
           // forcing Apollo to refetch the data using the new headers
-          variables={{ package: search, headers }}
+          variables={{
+            package: search,
+            endDate: getDateString(new Date()),
+            startDate: getDateString(
+              new Date(new Date().setFullYear(new Date().getFullYear() - 1))
+            ),
+            headers,
+          }}
           context={{ headers }}
           // TODO: investigate why this is required
           // without it won't always update on input change
@@ -196,11 +237,20 @@ const Page = ({ initialSearch }) => {
               return <Loading />
             }
 
-            if (!data.npm.package && error) {
-              return <Error packageName={search} error={error} />
+            if (!data || !data.npm.package) {
+              if (error) {
+                return <Error packageName={search} error={error} />
+              }
+
+              return (
+                <Error
+                  packageName={search}
+                  error={{ message: 'Package not found.' }}
+                />
+              )
             }
 
-            const packageData = preparePackageData(data.npm.package)
+            const packageData = preparePackageData({ ...data.npm.package })
 
             const {
               name,
@@ -209,6 +259,8 @@ const Page = ({ initialSearch }) => {
               keywords,
               versions,
               dependencies,
+              bundlephobia,
+              bundlephobiaHistory,
               readme,
               readmeUrl,
             } = packageData
@@ -291,6 +343,11 @@ const Page = ({ initialSearch }) => {
                 <Conditional condition={keywords.length > 0}>
                   <Keywords keywords={keywords} />
                   <Spacer size={30} />
+                </Conditional>
+                <Conditional condition={bundlephobia}>
+                  <BundleSize bundlephobiaHistory={bundlephobiaHistory} />
+
+                  <Spacer size={25} />
                 </Conditional>
                 <Versions versions={versions} packageName={name} />
                 <Spacer size={50} />

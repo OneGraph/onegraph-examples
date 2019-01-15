@@ -2,6 +2,9 @@ import React from 'react'
 import { useFela } from 'react-fela'
 
 import Link from '../components/Link'
+import Headline from '../components/Headline'
+
+import formatBundleSize from '../utils/formatBundleSize'
 
 export default function Dependencies({ dependencies, updateSearch }) {
   const { css, theme } = useFela()
@@ -10,16 +13,9 @@ export default function Dependencies({ dependencies, updateSearch }) {
 
   return (
     <div>
-      <h2>Dependencies</h2>
-      <hr
-        className={css({
-          height: 1,
-          backgroundColor: 'rgb(200, 200, 200)',
-          border: 0,
-        })}
-      />
+      <Headline>Dependencies</Headline>
       <div>
-        {dependencies.map(({ name, version }, index) => (
+        {dependencies.map(({ name, version, bundlephobia }, index) => (
           <div
             key={name + version}
             className={css({
@@ -44,11 +40,28 @@ export default function Dependencies({ dependencies, updateSearch }) {
                   color: theme.colors.primary,
                   cursor: 'pointer',
                 })}
-                onClick={() => updateSearch(name)}>
+                onClick={() => {
+                  window.history.pushState(
+                    { package: name },
+                    '',
+                    window.location.origin + '/?package=' + name
+                  )
+                  updateSearch(name)
+                }}>
                 {name}
               </div>
             </div>
-
+            <div
+              className={css({
+                color: 'grey',
+                flex: '0 1 160px',
+                textAlign: 'right',
+                paddingRight: 30,
+              })}>
+              {bundlephobia
+                ? formatBundleSize(bundlephobia.approximateSize)
+                : null}
+            </div>
             <div className={css({ flexDirection: 'row' })}>
               <Link noUnderline href={`https://www.npmjs.com/package/${name}`}>
                 npm

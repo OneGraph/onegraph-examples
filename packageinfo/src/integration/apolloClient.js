@@ -16,8 +16,8 @@ function create(initialState) {
     connectToDevTools: process.browser,
     ssrMode: !process.browser, // Disables forceFetch on the server (so queries are only run once)
     link: new HttpLink({
-      uri: 'https://serve.onegraph.com/dynamic?app_id=' + APP_ID,
-      credentials: 'same-origin', // Additional fetch() options like `credentials` or `headers`
+      uri:
+        'https://serve.onegraph.com/dynamic?show_metrics=true&app_id=' + APP_ID,
     }),
     cache: new InMemoryCache().restore(initialState || {}),
   })

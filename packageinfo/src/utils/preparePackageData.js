@@ -5,7 +5,8 @@ export default function preparePackageData({
   name,
   description,
   license,
-  downloadsRange,
+  bundlephobia,
+  downloads,
   readme,
   versions,
   keywords = [],
@@ -19,25 +20,44 @@ export default function preparePackageData({
   const currentVersion = lastPublish.version
 
   const lastPublishDate = new Date(lastPublish.date)
-  const downloads = downloadsRange.downloads
+  const perDayDownloads = downloads.period.perDay
 
-  const dependencies = versions.find(
+  let dependencies = versions.find(
     version => version.version === currentVersion
   ).dependencies
+
+  if (bundlephobia && bundlephobia.dependencySizes) {
+    dependencies = dependencies.map(dependency => {
+      const bundlephobiaDependency = bundlephobia.dependencySizes.find(
+        pkg => pkg.name === dependency.name
+      )
+
+      if (bundlephobiaDependency) {
+        return {
+          ...dependency,
+          bundlephobia: bundlephobiaDependency,
+        }
+      }
+
+      return dependency
+    })
+  }
 
   const data = {
     currentVersion,
     dependencies,
+    bundlephobia,
+    bundlephobiaHistory: bundlephobia ? bundlephobia.history : [],
     lastPublishDate,
     versions: sortedVersions,
     homepage,
     name,
     description,
     primaryLanguage: {},
-    downloads,
+    downloads: perDayDownloads,
     maintainers,
     keywords: keywords || [],
-    license,
+    license: license.type,
     readme,
   }
 

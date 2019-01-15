@@ -6,7 +6,7 @@ export default function Headline({ children }) {
 
   return (
     <h2 className={css({ borderBottom: '1px solid rgb(200, 200, 200)' })}>
-      Downloads
+      {children}
     </h2>
   )
 }
