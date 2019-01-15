@@ -1,6 +1,6 @@
 # [PackageInfo](https://packageinfo.now.sh)
 
-PackageInfo is a service that provides detailed information about [npm packages](https://www.npmjs.com) using [OneGraph](https://www.onegraph.com). It combines both information from [npm](https://www.npmjs.com) and [Github](http://github.com).
+PackageInfo is a service that provides detailed information about [npm packages](https://www.npmjs.com) using [OneGraph](https://www.onegraph.com). It combines information from [npm](https://www.npmjs.com), [Github](http://github.com) and [BundlePhobia](https://bundlephobia.com).
 
 ![Preview](preview.png)
 
@@ -10,7 +10,7 @@ PackageInfo is built with a set of modern web technologies.
 * [OneGraph](https://www.onegraph.com): A service that seamlessly connects many services in a single GraphQL API. It provides all the package information from npm and Github in a single request!
 * [react-onegraph](https://github.com/rofrischmann/react-onegraph): React Bindings for OneGraph's [Authentication Client](https://www.onegraph.com/docs/logging_users_in_and_out.html).
 * [React](http://reactjs.org): A library for component-based user interfaces.
-* [Next](http://nextjs.org): A framework for React-powered web applications
+* [Next](http://nextjs.org): A framework for React-powered web applications.
 * [Now](https://zeit.co): A platform for serverless application deployment used to serve PackageInfo.
 * [Apollo](https://www.apollographql.com): A leading client for GraphQL backends that connects OneGraph with PackageInfo.
 * [Fela](http://fela.js.org): A CSS in JS styling library that renders to Atomic CSS.
@@ -19,7 +19,7 @@ PackageInfo is built with a set of modern web technologies.
 * [react-markdown-github-renderers](https://github.com/rexxars/react-markdown-github-renderers): A set of react-markdown renderers providing GitHub-like appearance
 
 ## Sharing links
-Searching for packages with automatically update the URL to include the package name in order to share it e.g.
+Searching for packages will automatically update the URL to include the package name in order to share it e.g.
 ```url
 https://packageinfo.now.sh/?package=graphql
 ```
@@ -48,17 +48,19 @@ yarn start
 Whenever the search input changes, the UI updates its state and the Apollo client triggers a new request to OneGraph that receives all the relevant data for a package. Here's what the query looks like:
 
 ```graphql
-query npm($package: String!) {
+query npm($package: String!, $startDate: String!, $endDate: String!) {
   npm {
     package(name: $package) {
       homepage
       keywords
       description
       keywords
-      license
       name
       readme
       readmeFilename
+      license {
+        type
+      }
       maintainers {
         name
       }
@@ -69,16 +71,31 @@ query npm($package: String!) {
           version
         }
       }
-      downloadsRange(period: "last-year") {
-        downloads {
-          downloads
-          day
+      downloads {
+        period(startDate: $startDate, endDate: $endDate) {
+          perDay {
+            day
+            count
+          }
         }
       }
       time {
         versions {
           date
           version
+        }
+      }
+      bundlephobia {
+        gzip
+        size
+        history {
+          gzip
+          size
+          version
+        }
+        dependencySizes {
+          approximateSize
+          name
         }
       }
       repository {

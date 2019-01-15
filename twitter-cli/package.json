@@ -1,11 +1,11 @@
 {
+  "private": true,
   "name": "twitter-cli",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "babel -d lib src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "babel -d lib src"
   },
   "author": "",
   "license": "MIT",
