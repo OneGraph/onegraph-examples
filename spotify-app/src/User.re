@@ -6,6 +6,7 @@ module Css = AppStyle;
 let userIcon = requireAssetURI("./img/user.png");
 
 type action =
+  | HandleLogOut
   | Toggle;
 
 type state = {isDropdownOpen: bool};
@@ -17,13 +18,35 @@ let userAccountWrapper = [%css
 
 let component = ReasonReact.reducerComponent("User");
 
-let make = _children => {
+let make = (~auth, ~setLogInStatus, ~userName, _children) => {
   ...component,
   initialState: () => {isDropdownOpen: false},
   reducer: (action, state) =>
-    switch (action) {
-    | Toggle => ReasonReact.Update({isDropdownOpen: !state.isDropdownOpen})
-    },
+    Js.Promise.(
+      OneGraphAuth.(
+        switch (action) {
+        | HandleLogOut =>
+          Js.log("Clicked LogOut!!");
+          ReasonReact.SideEffects(
+            (
+              _state =>
+                auth
+                |> logout(_, "gmail")
+                |> then_(() => isLoggedIn(auth, "gmail"))
+                |> then_(loginStatus => {
+                     Js.log(loginStatus);
+                     setLogInStatus(loginStatus);
+                     resolve();
+                   })
+                |> catch(err => resolve(Js.log(err)))
+                |> ignore
+            ),
+          );
+        | Toggle =>
+          ReasonReact.Update({isDropdownOpen: !state.isDropdownOpen})
+        }
+      )
+    ),
   render: self =>
     ReasonReact.(
       <header className={Css.flexWrapper(~justify=`flexEnd, ~align=`center)}>
@@ -42,11 +65,18 @@ let make = _children => {
               }>
               <img className=Css.userIcon src=userIcon alt="user icon" />
               <p style={ReactDOMRe.Style.make(~margin="0px", ())}>
-                {ReasonReact.string("userABC")}
+                {
+                  switch (userName) {
+                  | Some(userName) => ReasonReact.string(userName)
+                  | None => null
+                  }
+                }
               </p>
             </DropdownToggle>
             <DropdownMenu right=true>
-              <DropdownItem> {string("Sign Out")} </DropdownItem>
+              <DropdownItem onClick={() => self.send(HandleLogOut)}>
+                {string("Sign Out")}
+              </DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </div>

@@ -37,7 +37,7 @@ var userAccountWrapper = Emotion.css(undefined, /* :: */[
 
 var component = ReasonReact.reducerComponent("User");
 
-function make(_children) {
+function make(auth, setLogInStatus, userName, _children) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -56,7 +56,7 @@ function make(_children) {
                                 width: "100px"
                               }
                             }, ReasonReact.element(undefined, undefined, BsReactstrap__Dropdown.make(undefined, undefined, undefined, undefined, self[/* state */1][/* isDropdownOpen */0], undefined, undefined, undefined, undefined, undefined, (function (param) {
-                                        return Curry._1(self[/* send */3], /* Toggle */0);
+                                        return Curry._1(self[/* send */3], /* Toggle */1);
                                       }), undefined, undefined, undefined, /* array */[
                                       ReasonReact.element(undefined, undefined, BsReactstrap__DropdownToggle.make(true, undefined, Cn.make(/* :: */[
                                                     AppStyle$ReactTemplate.flexWrapper(/* flexEnd */924268066, /* center */98248149),
@@ -74,9 +74,11 @@ function make(_children) {
                                                       style: {
                                                         margin: "0px"
                                                       }
-                                                    }, "userABC")
+                                                    }, userName !== undefined ? userName : null)
                                               ])),
-                                      ReasonReact.element(undefined, undefined, BsReactstrap__DropdownMenu.make(undefined, true, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, BsReactstrap__DropdownItem.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Sign Out"]))]))
+                                      ReasonReact.element(undefined, undefined, BsReactstrap__DropdownMenu.make(undefined, true, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, BsReactstrap__DropdownItem.make(undefined, undefined, undefined, undefined, undefined, (function (param) {
+                                                            return Curry._1(self[/* send */3], /* HandleLogOut */0);
+                                                          }), undefined, undefined, undefined, /* array */["Sign Out"]))]))
                                     ]))));
             }),
           /* initialState */(function (param) {
@@ -84,7 +86,23 @@ function make(_children) {
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
-              return /* Update */Block.__(0, [/* record */[/* isDropdownOpen */!state[/* isDropdownOpen */0]]]);
+              if (action) {
+                return /* Update */Block.__(0, [/* record */[/* isDropdownOpen */!state[/* isDropdownOpen */0]]]);
+              } else {
+                console.log("Clicked LogOut!!");
+                return /* SideEffects */Block.__(1, [(function (_state) {
+                              auth.logout("gmail").then((function (param) {
+                                          return auth.isLoggedIn("gmail");
+                                        })).then((function (loginStatus) {
+                                        console.log(loginStatus);
+                                        Curry._1(setLogInStatus, loginStatus);
+                                        return Promise.resolve(/* () */0);
+                                      })).catch((function (err) {
+                                      return Promise.resolve((console.log(err), /* () */0));
+                                    }));
+                              return /* () */0;
+                            })]);
+              }
             }),
           /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];
