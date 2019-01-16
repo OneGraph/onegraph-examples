@@ -11,7 +11,7 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 var ReasonApollo = require("reason-apollo/src/ReasonApollo.bs.js");
 var User$ReactTemplate = require("./User.bs.js");
 
-var ppx_printed_query = "query findUsername  {\nme  {\ngmail  {\nname  \n}\n\n}\n\n}\n";
+var ppx_printed_query = "query findUsername  {\nme  {\ngmail  {\nsub  \nname  \ngivenName  \n}\n\n}\n\n}\n";
 
 function parse(value) {
   var match = Js_json.decodeObject(value);
@@ -32,22 +32,48 @@ function parse(value) {
             var match$5 = Js_json.decodeObject(value$1);
             var tmp$2;
             if (match$5 !== undefined) {
-              var match$6 = Js_dict.get(Caml_option.valFromOption(match$5), "name");
+              var value$2 = Caml_option.valFromOption(match$5);
+              var match$6 = Js_dict.get(value$2, "sub");
               var tmp$3;
               if (match$6 !== undefined) {
-                var value$2 = Caml_option.valFromOption(match$6);
-                var match$7 = Js_json.decodeNull(value$2);
-                if (match$7 !== undefined) {
-                  tmp$3 = undefined;
+                var value$3 = Caml_option.valFromOption(match$6);
+                var match$7 = Js_json.decodeString(value$3);
+                tmp$3 = match$7 !== undefined ? match$7 : Js_exn.raiseError("graphql_ppx: Expected string, got " + JSON.stringify(value$3));
+              } else {
+                tmp$3 = Js_exn.raiseError("graphql_ppx: Field sub on type GoogleUser is missing");
+              }
+              var match$8 = Js_dict.get(value$2, "name");
+              var tmp$4;
+              if (match$8 !== undefined) {
+                var value$4 = Caml_option.valFromOption(match$8);
+                var match$9 = Js_json.decodeNull(value$4);
+                if (match$9 !== undefined) {
+                  tmp$4 = undefined;
                 } else {
-                  var match$8 = Js_json.decodeString(value$2);
-                  tmp$3 = match$8 !== undefined ? match$8 : Js_exn.raiseError("graphql_ppx: Expected string, got " + JSON.stringify(value$2));
+                  var match$10 = Js_json.decodeString(value$4);
+                  tmp$4 = match$10 !== undefined ? match$10 : Js_exn.raiseError("graphql_ppx: Expected string, got " + JSON.stringify(value$4));
                 }
               } else {
-                tmp$3 = undefined;
+                tmp$4 = undefined;
+              }
+              var match$11 = Js_dict.get(value$2, "givenName");
+              var tmp$5;
+              if (match$11 !== undefined) {
+                var value$5 = Caml_option.valFromOption(match$11);
+                var match$12 = Js_json.decodeNull(value$5);
+                if (match$12 !== undefined) {
+                  tmp$5 = undefined;
+                } else {
+                  var match$13 = Js_json.decodeString(value$5);
+                  tmp$5 = match$13 !== undefined ? match$13 : Js_exn.raiseError("graphql_ppx: Expected string, got " + JSON.stringify(value$5));
+                }
+              } else {
+                tmp$5 = undefined;
               }
               tmp$2 = {
-                name: tmp$3
+                sub: tmp$3,
+                name: tmp$4,
+                givenName: tmp$5
               };
             } else {
               tmp$2 = Js_exn.raiseError("graphql_ppx: Object is not a value");
@@ -144,12 +170,13 @@ function make$1(auth, setLogInStatus, _children) {
                                     if (match !== undefined) {
                                       var match$1 = Caml_option.valFromOption(match).name;
                                       if (match$1 !== undefined) {
-                                        return ReasonReact.element(undefined, undefined, User$ReactTemplate.make(auth, setLogInStatus, match$1, /* array */[]));
+                                        var name = match$1;
+                                        return ReasonReact.element(name, undefined, User$ReactTemplate.make(auth, setLogInStatus, name, /* array */[]));
                                       } else {
-                                        return ReasonReact.element(undefined, undefined, User$ReactTemplate.make(auth, setLogInStatus, "", /* array */[]));
+                                        return ReasonReact.element("", undefined, User$ReactTemplate.make(auth, setLogInStatus, "", /* array */[]));
                                       }
                                     } else {
-                                      return ReasonReact.element(undefined, undefined, User$ReactTemplate.make(auth, setLogInStatus, "", /* array */[]));
+                                      return ReasonReact.element("", undefined, User$ReactTemplate.make(auth, setLogInStatus, "", /* array */[]));
                                     }
                                   } else {
                                     return React.createElement("div", undefined, result[0].message);
