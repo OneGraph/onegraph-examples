@@ -2,6 +2,19 @@ open Utils;
 open Emotion;
 open BsReactstrap;
 
+let spotifyLogo = requireAssetURI("./img/spotify-logo.png");
+
+let spotifyBtn = [%css
+  [
+    backgroundColor(`hex("1DB954")),
+    borderStyle(`none),
+    display(`flex),
+    alignItems(`center),
+    margin4(`px(48), `auto, `px(32), `auto),
+    select("hover", [important(backgroundColor(`hex("1ED760")))]),
+  ]
+];
+
 let component = ReasonReact.statelessComponent("Login");
 
 let handleLogIn = (auth, setLogInStatus) => {
@@ -26,8 +39,17 @@ let make = (~auth, ~setLogInStatus, _children) => {
   render: _self =>
     ReasonReact.(
       <div>
-        <Button onClick={() => handleLogIn(auth, setLogInStatus)}>
-          {string("Log In")}
+        <Button
+          className=spotifyBtn
+          onClick={() => handleLogIn(auth, setLogInStatus)}>
+          <img
+            style={
+              ReactDOMRe.Style.make(~width="24px", ~marginRight="8px", ())
+            }
+            src=spotifyLogo
+            alt="Spotify Logo"
+          />
+          {string("Log In to Spotify Account")}
         </Button>
       </div>
     ),

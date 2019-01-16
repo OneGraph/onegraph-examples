@@ -3,8 +3,49 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
+var Emotion = require("bs-emotion/src/Emotion.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var BsReactstrap__Button = require("@ahrefs/bs-reactstrap/src/BsReactstrap__Button.bs.js");
+
+var spotifyLogo = require("./img/spotify-logo.png");
+
+var spotifyBtn = Emotion.css(undefined, /* :: */[
+      Emotion.label("spotifyBtn"),
+      /* :: */[
+        Emotion.backgroundColor(/* `hex */[
+              5194459,
+              "1DB954"
+            ]),
+        /* :: */[
+          Emotion.borderStyle(/* none */-922086728),
+          /* :: */[
+            Emotion.display(/* flex */-1010954439),
+            /* :: */[
+              Emotion.alignItems(/* center */98248149),
+              /* :: */[
+                Emotion.margin4(/* `px */[
+                      25096,
+                      48
+                    ], /* auto */-1065951377, /* `px */[
+                      25096,
+                      32
+                    ], /* auto */-1065951377),
+                /* :: */[
+                  Emotion.select("hover", /* :: */[
+                        Emotion.important(Emotion.backgroundColor(/* `hex */[
+                                  5194459,
+                                  "1ED760"
+                                ])),
+                        /* [] */0
+                      ]),
+                  /* [] */0
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
 
 var component = ReasonReact.statelessComponent("Login");
 
@@ -36,7 +77,17 @@ function make(auth, setLogInStatus, _children) {
           /* render */(function (_self) {
               return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, BsReactstrap__Button.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (param) {
                                     return handleLogIn(auth, setLogInStatus);
-                                  }), undefined, undefined, undefined, /* array */["Log In"])));
+                                  }), undefined, spotifyBtn, undefined, /* array */[
+                                  React.createElement("img", {
+                                        style: {
+                                          marginRight: "8px",
+                                          width: "24px"
+                                        },
+                                        alt: "Spotify Logo",
+                                        src: spotifyLogo
+                                      }),
+                                  "Log In to Spotify Account"
+                                ])));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
@@ -45,7 +96,9 @@ function make(auth, setLogInStatus, _children) {
         ];
 }
 
+exports.spotifyLogo = spotifyLogo;
+exports.spotifyBtn = spotifyBtn;
 exports.component = component;
 exports.handleLogIn = handleLogIn;
 exports.make = make;
-/* component Not a pure module */
+/* spotifyLogo Not a pure module */
