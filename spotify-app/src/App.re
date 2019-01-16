@@ -7,7 +7,6 @@ let userIcon = requireAssetURI("./img/user.png");
 type state = {
   isLoggedIn: bool,
   auth: OneGraphAuth.auth,
-  userName: option(string),
 };
 type action =
   | SetLogInStatus(bool);
@@ -16,7 +15,7 @@ let component = ReasonReact.reducerComponent("App");
 
 let make = _children => {
   ...component,
-  initialState: () => {isLoggedIn: false, auth: Client.auth, userName: None},
+  initialState: () => {isLoggedIn: false, auth: Client.auth},
   didMount: self =>
     Js.Promise.(
       OneGraphAuth.(
@@ -41,18 +40,9 @@ let make = _children => {
         {
           self.state.isLoggedIn ?
             <div>
-              <Query
-                token={
-                  switch (OneGraphAuth.authToken(self.state.auth)) {
-                  | Some(token) => token
-                  | None => ""
-                  }
-                }
-              />
-              <User
+              <GetUsername
                 auth={self.state.auth}
                 setLogInStatus={status => self.send(SetLogInStatus(status))}
-                userName={self.state.userName}
               />
               <h1 className=Css.pageTitle> {string("Welcome to SpotDJ")} </h1>
               <LinkShare />

@@ -5,13 +5,11 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var OnegraphAuth = require("onegraph-auth");
-var User$ReactTemplate = require("./User.bs.js");
 var LogIn$ReactTemplate = require("./LogIn.bs.js");
-var Query$ReactTemplate = require("./query.bs.js");
+var Client$ReactTemplate = require("./Client.bs.js");
 var AppStyle$ReactTemplate = require("./AppStyle.bs.js");
 var LinkShare$ReactTemplate = require("./LinkShare.bs.js");
-var OneGraphAuth$ReactTemplate = require("./OneGraphAuth.bs.js");
+var GetUsername$ReactTemplate = require("./GetUsername.bs.js");
 var CurrentlyPlaying$ReactTemplate = require("./CurrentlyPlaying.bs.js");
 
 var userIcon = require("./img/user.png");
@@ -40,36 +38,27 @@ function make(_children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
               var match = self[/* state */1][/* isLoggedIn */0];
-              var tmp;
-              if (match) {
-                var match$1 = OneGraphAuth$ReactTemplate.authToken(self[/* state */1][/* auth */1]);
-                tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, Query$ReactTemplate.make(match$1 !== undefined ? match$1 : "", /* array */[])), ReasonReact.element(undefined, undefined, User$ReactTemplate.make(self[/* state */1][/* auth */1], (function (status) {
-                                return Curry._1(self[/* send */3], /* SetLogInStatus */[status]);
-                              }), self[/* state */1][/* userName */2], /* array */[])), React.createElement("h1", {
-                          className: AppStyle$ReactTemplate.pageTitle
-                        }, "Welcome to SpotDJ"), ReasonReact.element(undefined, undefined, LinkShare$ReactTemplate.make(/* array */[])), ReasonReact.element(undefined, undefined, CurrentlyPlaying$ReactTemplate.make(/* array */[])));
-              } else {
-                tmp = ReasonReact.element(undefined, undefined, LogIn$ReactTemplate.make(self[/* state */1][/* auth */1], (function (status) {
-                            return Curry._1(self[/* send */3], /* SetLogInStatus */[status]);
-                          }), /* array */[]));
-              }
               return React.createElement("div", {
                           className: AppStyle$ReactTemplate.app
-                        }, tmp);
+                        }, match ? React.createElement("div", undefined, ReasonReact.element(undefined, undefined, GetUsername$ReactTemplate.make(self[/* state */1][/* auth */1], (function (status) {
+                                          return Curry._1(self[/* send */3], /* SetLogInStatus */[status]);
+                                        }), /* array */[])), React.createElement("h1", {
+                                    className: AppStyle$ReactTemplate.pageTitle
+                                  }, "Welcome to SpotDJ"), ReasonReact.element(undefined, undefined, LinkShare$ReactTemplate.make(/* array */[])), ReasonReact.element(undefined, undefined, CurrentlyPlaying$ReactTemplate.make(/* array */[]))) : ReasonReact.element(undefined, undefined, LogIn$ReactTemplate.make(self[/* state */1][/* auth */1], (function (status) {
+                                      return Curry._1(self[/* send */3], /* SetLogInStatus */[status]);
+                                    }), /* array */[])));
             }),
           /* initialState */(function (param) {
               return /* record */[
                       /* isLoggedIn */false,
-                      /* auth */new OnegraphAuth.default(OneGraphAuth$ReactTemplate.config),
-                      /* userName */undefined
+                      /* auth */Client$ReactTemplate.auth
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
               return /* Update */Block.__(0, [/* record */[
                           /* isLoggedIn */action[0],
-                          /* auth */state[/* auth */1],
-                          /* userName */state[/* userName */2]
+                          /* auth */state[/* auth */1]
                         ]]);
             }),
           /* jsElementWrapped */component[/* jsElementWrapped */13]
