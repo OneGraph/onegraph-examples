@@ -23,7 +23,7 @@ var userAccountWrapper = Emotion.css(undefined, /* :: */[
               16
             ], /* `px */[
               25096,
-              24
+              0
             ], /* `px */[
               25096,
               0
@@ -31,7 +31,13 @@ var userAccountWrapper = Emotion.css(undefined, /* :: */[
               25096,
               24
             ]),
-        /* [] */0
+        /* :: */[
+          Emotion.marginRight(/* `px */[
+                25096,
+                48
+              ]),
+          /* [] */0
+        ]
       ]
     ]);
 
@@ -72,9 +78,10 @@ function make(auth, setLogInStatus, userName, _children) {
                                                     }),
                                                 React.createElement("p", {
                                                       style: {
-                                                        margin: "0px"
+                                                        margin: "0px",
+                                                        flex: "0 0 auto"
                                                       }
-                                                    }, userName !== undefined ? userName : null)
+                                                    }, userName)
                                               ])),
                                       ReasonReact.element(undefined, undefined, BsReactstrap__DropdownMenu.make(undefined, true, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, BsReactstrap__DropdownItem.make(undefined, undefined, undefined, undefined, undefined, (function (param) {
                                                             return Curry._1(self[/* send */3], /* HandleLogOut */0);

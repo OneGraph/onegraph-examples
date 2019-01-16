@@ -13,7 +13,7 @@ type state = {isDropdownOpen: bool};
 
 /*Style*/
 let userAccountWrapper = [%css
-  [padding4(`px(16), `px(24), `px(0), `px(24))]
+  [padding4(`px(16), `px(0), `px(0), `px(24)), marginRight(`px(48))]
 ];
 
 let component = ReasonReact.reducerComponent("User");
@@ -64,13 +64,11 @@ let make = (~auth, ~setLogInStatus, ~userName, _children) => {
                 ])
               }>
               <img className=Css.userIcon src=userIcon alt="user icon" />
-              <p style={ReactDOMRe.Style.make(~margin="0px", ())}>
-                {
-                  switch (userName) {
-                  | Some(userName) => ReasonReact.string(userName)
-                  | None => null
-                  }
-                }
+              <p
+                style={
+                  ReactDOMRe.Style.make(~margin="0px", ~flex="0 0 auto", ())
+                }>
+                {ReasonReact.string(userName)}
               </p>
             </DropdownToggle>
             <DropdownMenu right=true>
