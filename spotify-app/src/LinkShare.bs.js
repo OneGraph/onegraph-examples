@@ -7,6 +7,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Emotion = require("bs-emotion/src/Emotion.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var BsReactstrap__Button = require("@ahrefs/bs-reactstrap/src/BsReactstrap__Button.bs.js");
 var AppStyle$ReactTemplate = require("./AppStyle.bs.js");
 var BsReactstrap__Dropdown = require("@ahrefs/bs-reactstrap/src/BsReactstrap__Dropdown.bs.js");
 var BsReactstrap__DropdownItem = require("@ahrefs/bs-reactstrap/src/BsReactstrap__DropdownItem.bs.js");
@@ -120,7 +121,7 @@ var subInfo = Emotion.css(undefined, /* :: */[
 
 var component = ReasonReact.reducerComponent("User");
 
-function make(_children) {
+function make(isPublic, toggleShareStatus, _children) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -136,7 +137,9 @@ function make(_children) {
                           className: linkSharing
                         }, React.createElement("p", {
                               className: AppStyle$ReactTemplate.pageSubTitle
-                            }, "Share the following link to invite people to your music"), React.createElement("div", {
+                            }, "Share the following link to invite people to your music"), ReasonReact.element(undefined, undefined, BsReactstrap__Button.make(undefined, undefined, isPublic ? "danger" : "success", undefined, undefined, undefined, undefined, undefined, (function (_e) {
+                                    return Curry._1(toggleShareStatus, /* () */0);
+                                  }), "sm", undefined, undefined, /* array */[isPublic ? "Stop Sharing" : "Share Publicaly"])), React.createElement("div", {
                               style: {
                                 margin: "auto",
                                 width: "fit-content"
@@ -164,9 +167,7 @@ function make(_children) {
                                           /* [] */0
                                         ]
                                       ])
-                                }, React.createElement("p", undefined, React.createElement("i", undefined, "240 Listners")), React.createElement("a", {
-                                      id: "stop-btn"
-                                    }, "Stop Sharing"))));
+                                }, React.createElement("p", undefined, React.createElement("i", undefined, "240 Listners")))));
             }),
           /* initialState */(function (param) {
               return /* record */[/* isDropdownOpen */false];

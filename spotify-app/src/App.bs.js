@@ -44,22 +44,34 @@ function make(_children) {
                                           return Curry._1(self[/* send */3], /* SetLogInStatus */[status]);
                                         }), /* array */[])), React.createElement("h1", {
                                     className: AppStyle$ReactTemplate.pageTitle
-                                  }, "Welcome to SpotDJ"), ReasonReact.element(undefined, undefined, LinkShare$ReactTemplate.make(/* array */[])), ReasonReact.element(undefined, undefined, CurrentlyPlaying$ReactTemplate.make(/* array */[]))) : ReasonReact.element(undefined, undefined, LogIn$ReactTemplate.make(self[/* state */1][/* auth */1], (function (status) {
+                                  }, "Welcome to SpotDJ"), ReasonReact.element(undefined, undefined, LinkShare$ReactTemplate.make(self[/* state */1][/* isPublic */2], (function (param) {
+                                          return Curry._1(self[/* send */3], /* ToggleShareStatus */0);
+                                        }), /* array */[])), ReasonReact.element(undefined, undefined, CurrentlyPlaying$ReactTemplate.make(/* array */[]))) : ReasonReact.element(undefined, undefined, LogIn$ReactTemplate.make(self[/* state */1][/* auth */1], (function (status) {
                                       return Curry._1(self[/* send */3], /* SetLogInStatus */[status]);
                                     }), /* array */[])));
             }),
           /* initialState */(function (param) {
               return /* record */[
                       /* isLoggedIn */false,
-                      /* auth */Client$ReactTemplate.auth
+                      /* auth */Client$ReactTemplate.auth,
+                      /* isPublic */true
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
-              return /* Update */Block.__(0, [/* record */[
-                          /* isLoggedIn */action[0],
-                          /* auth */state[/* auth */1]
-                        ]]);
+              if (action) {
+                return /* Update */Block.__(0, [/* record */[
+                            /* isLoggedIn */action[0],
+                            /* auth */state[/* auth */1],
+                            /* isPublic */state[/* isPublic */2]
+                          ]]);
+              } else {
+                return /* Update */Block.__(0, [/* record */[
+                            /* isLoggedIn */state[/* isLoggedIn */0],
+                            /* auth */state[/* auth */1],
+                            /* isPublic */!state[/* isPublic */2]
+                          ]]);
+              }
             }),
           /* jsElementWrapped */component[/* jsElementWrapped */13]
         ];

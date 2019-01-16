@@ -7,15 +7,17 @@ let userIcon = requireAssetURI("./img/user.png");
 type state = {
   isLoggedIn: bool,
   auth: OneGraphAuth.auth,
+  isPublic: bool,
 };
 type action =
-  | SetLogInStatus(bool);
+  | SetLogInStatus(bool)
+  | ToggleShareStatus;
 
 let component = ReasonReact.reducerComponent("App");
 
 let make = _children => {
   ...component,
-  initialState: () => {isLoggedIn: false, auth: Client.auth},
+  initialState: () => {isLoggedIn: false, auth: Client.auth, isPublic: true},
   didMount: self =>
     Js.Promise.(
       OneGraphAuth.(
@@ -33,6 +35,8 @@ let make = _children => {
     switch (action) {
     | SetLogInStatus(isLoggedIn) =>
       ReasonReact.Update({...state, isLoggedIn})
+    | ToggleShareStatus =>
+      ReasonReact.Update({...state, isPublic: !state.isPublic})
     },
   render: self =>
     ReasonReact.(
@@ -45,7 +49,10 @@ let make = _children => {
                 setLogInStatus={status => self.send(SetLogInStatus(status))}
               />
               <h1 className=Css.pageTitle> {string("Welcome to SpotDJ")} </h1>
-              <LinkShare />
+              <LinkShare
+                isPublic={self.state.isPublic}
+                toggleShareStatus={() => self.send(ToggleShareStatus)}
+              />
               <CurrentlyPlaying />
             </div> :
             <LogIn

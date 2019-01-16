@@ -37,7 +37,7 @@ let subInfo = [%css
 
 let component = ReasonReact.reducerComponent("User");
 
-let make = _children => {
+let make = (~isPublic, ~toggleShareStatus, _children) => {
   ...component,
   initialState: () => {isDropdownOpen: false},
   reducer: (action, state) =>
@@ -50,6 +50,16 @@ let make = _children => {
         <p className=Css.pageSubTitle>
           {string("Share the following link to invite people to your music")}
         </p>
+        <Button
+          color={isPublic ? "danger" : "success"}
+          size="sm"
+          onClick={_e => toggleShareStatus()}>
+          {
+            isPublic ?
+              ReasonReact.string("Stop Sharing") :
+              ReasonReact.string("Share Publicaly")
+          }
+        </Button>
         <div
           style={
             ReactDOMRe.Style.make(~width="fit-content", ~margin="auto", ())
@@ -80,9 +90,62 @@ let make = _children => {
               ])
             }>
             <p> <i> {string("240 Listners")} </i> </p>
-            <a id="stop-btn"> {string("Stop Sharing")} </a>
           </div>
         </div>
       </div>
     ),
 };
+
+/*
+ let switchBtn = [%css
+   [
+     position(`relative),
+     display(`inlineBlock),
+     width(`px(85)),
+     height(`px(25)),
+     select("input", [display(`none)]),
+   ]
+ ];
+
+ let sliderRound = [%css
+   [
+     position(`absolute),
+     cursor(`pointer),
+     top(`px(0)),
+     left(`px(0)),
+     right(`px(0)),
+     bottom(`px(0)),
+     backgroundColor(`hex("afafaf")),
+     textAlign(`center),
+     lineHeight(`px(25)),
+     fontSize(`px(14)),
+     color(`hex("ffffff")),
+     padding2(`px(0), `px(0)),
+     transitionDuration(`s(0.4)),
+     borderRadius(`px(34)),
+     paddingLeft(`px(20)),
+     select(
+       "before",
+       [
+         position(`absolute),
+         content(""),
+         height(`px(17)),
+         width(`px(17)),
+         left(`px(4)),
+         bottom(`px(4)),
+         backgroundColor(`hex("ffffff")),
+         transitionDuration(`s(0.4)),
+         borderRadius(`pct(50.)),
+         select("input:checked", [transform(`translateX(`px(60)))]),
+       ],
+     ),
+     select(
+       "input:checked",
+       [backgroundColor(`hex("2196f3")), paddingRight(`px(30))],
+     ),
+     select(
+       "input:focus",
+       [boxShadow(~x=`px(0), ~y=`px(0), ~blur=`px(1), `hex("2196f3"))],
+     ),
+   ]
+ ];*/
