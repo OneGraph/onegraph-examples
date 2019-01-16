@@ -40,15 +40,22 @@ function make(_children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
               var match = self[/* state */1][/* isLoggedIn */0];
+              var tmp;
+              if (match) {
+                var match$1 = OneGraphAuth$ReactTemplate.authToken(self[/* state */1][/* auth */1]);
+                tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, Query$ReactTemplate.make(match$1 !== undefined ? match$1 : "", /* array */[])), ReasonReact.element(undefined, undefined, User$ReactTemplate.make(self[/* state */1][/* auth */1], (function (status) {
+                                return Curry._1(self[/* send */3], /* SetLogInStatus */[status]);
+                              }), self[/* state */1][/* userName */2], /* array */[])), React.createElement("h1", {
+                          className: AppStyle$ReactTemplate.pageTitle
+                        }, "Welcome to SpotDJ"), ReasonReact.element(undefined, undefined, LinkShare$ReactTemplate.make(/* array */[])), ReasonReact.element(undefined, undefined, CurrentlyPlaying$ReactTemplate.make(/* array */[])));
+              } else {
+                tmp = ReasonReact.element(undefined, undefined, LogIn$ReactTemplate.make(self[/* state */1][/* auth */1], (function (status) {
+                            return Curry._1(self[/* send */3], /* SetLogInStatus */[status]);
+                          }), /* array */[]));
+              }
               return React.createElement("div", {
                           className: AppStyle$ReactTemplate.app
-                        }, match ? React.createElement("div", undefined, ReasonReact.element(undefined, undefined, Query$ReactTemplate.make(/* array */[])), ReasonReact.element(undefined, undefined, User$ReactTemplate.make(self[/* state */1][/* auth */1], (function (status) {
-                                          return Curry._1(self[/* send */3], /* SetLogInStatus */[status]);
-                                        }), self[/* state */1][/* userName */2], /* array */[])), React.createElement("h1", {
-                                    className: AppStyle$ReactTemplate.pageTitle
-                                  }, "Welcome to SpotDJ"), ReasonReact.element(undefined, undefined, LinkShare$ReactTemplate.make(/* array */[])), ReasonReact.element(undefined, undefined, CurrentlyPlaying$ReactTemplate.make(/* array */[]))) : ReasonReact.element(undefined, undefined, LogIn$ReactTemplate.make(self[/* state */1][/* auth */1], (function (status) {
-                                      return Curry._1(self[/* send */3], /* SetLogInStatus */[status]);
-                                    }), /* array */[])));
+                        }, tmp);
             }),
           /* initialState */(function (param) {
               return /* record */[

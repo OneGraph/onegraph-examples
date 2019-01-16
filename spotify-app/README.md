@@ -21,6 +21,18 @@ Note that any hot reload on a route will fall back to the root (`/`), so `Reason
 
 To use a port other than 8000 set the `PORT` environment variable (`PORT=8080 npm run server`).
 
+## Send Introspection Query
+
+To access the queries provided by OneGraph, run 
+
+`
+yarn send-introspection-query https://serve.onegraph.com/dynamic?app_id=bafd4254-c229-48c2-8c53-44a01477a43e
+`
+
+This will generate a graphql_schema.json which will be used to safely type your GraphQL queries/mutations.
+
+
+
 ## Build for Production
 
 ```sh

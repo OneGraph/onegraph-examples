@@ -2,6 +2,7 @@
 'use strict';
 
 var ApolloLinks = require("reason-apollo/src/ApolloLinks.bs.js");
+var ApolloLink = require("apollo-link");
 var ReasonApollo = require("reason-apollo/src/ReasonApollo.bs.js");
 var ApolloInMemoryCache = require("reason-apollo/src/ApolloInMemoryCache.bs.js");
 
@@ -9,9 +10,21 @@ var inMemoryCache = ApolloInMemoryCache.createInMemoryCache(undefined, undefined
 
 var httpLink = ApolloLinks.createHttpLink("https://serve.onegraph.com/dynamic?app_id=bafd4254-c229-48c2-8c53-44a01477a43e", undefined, undefined, undefined, "include", undefined, /* () */0);
 
-var instance = ReasonApollo.createApolloClient(httpLink, inMemoryCache, undefined, undefined, undefined, undefined, /* () */0);
+var authLink = ApolloLinks.createContextLink((function (param) {
+        return {
+                headers: (function (prim) {
+                    return prim.authHeaders();
+                  })
+              };
+      }));
+
+var instance = ReasonApollo.createApolloClient(ApolloLink.from(/* array */[
+          httpLink,
+          authLink
+        ]), inMemoryCache, undefined, undefined, undefined, undefined, /* () */0);
 
 exports.inMemoryCache = inMemoryCache;
 exports.httpLink = httpLink;
+exports.authLink = authLink;
 exports.instance = instance;
 /* inMemoryCache Not a pure module */
