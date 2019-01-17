@@ -6,13 +6,14 @@ var React = require("react");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Js_dict = require("bs-platform/lib/js/js_dict.js");
 var Js_json = require("bs-platform/lib/js/js_json.js");
+var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Belt_Option = require("bs-platform/lib/js/belt_Option.js");
 var Caml_option = require("bs-platform/lib/js/caml_option.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var ReasonApollo = require("reason-apollo/src/ReasonApollo.bs.js");
 var CurrentlyPlaying$ReactTemplate = require("./CurrentlyPlaying.bs.js");
 
-var ppx_printed_query = "query findUsername  {\nspotify  {\nme  {\nid  \nplayer  {\nisPlaying  \ncurrentlyPlayingType  \nitem  {\nid  \nname  \nartists  {\nname  \n}\n\ndurationMs  \n}\n\nprogressMs  \n}\n\n}\n\n}\n\n}\n";
+var ppx_printed_query = "query findUsername  {\nspotify  {\nme  {\nid  \nplayer  {\nisPlaying  \ncurrentlyPlayingType  \nitem  {\nid  \nname  \nartists  {\nname  \n}\n\ndurationMs  \nhref  \nalbum  {\nimages  {\nurl  \n}\n\n}\n\n}\n\nprogressMs  \n}\n\n}\n\n}\n\n}\n";
 
 function parse(value) {
   var match = Js_json.decodeObject(value);
@@ -179,11 +180,86 @@ function parse(value) {
                           } else {
                             tmp$13 = undefined;
                           }
+                          var match$33 = Js_dict.get(value$9, "href");
+                          var tmp$14;
+                          if (match$33 !== undefined) {
+                            var value$14 = Caml_option.valFromOption(match$33);
+                            var match$34 = Js_json.decodeNull(value$14);
+                            if (match$34 !== undefined) {
+                              tmp$14 = undefined;
+                            } else {
+                              var match$35 = Js_json.decodeString(value$14);
+                              tmp$14 = match$35 !== undefined ? match$35 : Js_exn.raiseError("graphql_ppx: Expected string, got " + JSON.stringify(value$14));
+                            }
+                          } else {
+                            tmp$14 = undefined;
+                          }
+                          var match$36 = Js_dict.get(value$9, "album");
+                          var tmp$15;
+                          if (match$36 !== undefined) {
+                            var value$15 = Caml_option.valFromOption(match$36);
+                            var match$37 = Js_json.decodeNull(value$15);
+                            if (match$37 !== undefined) {
+                              tmp$15 = undefined;
+                            } else {
+                              var match$38 = Js_json.decodeObject(value$15);
+                              var tmp$16;
+                              if (match$38 !== undefined) {
+                                var match$39 = Js_dict.get(Caml_option.valFromOption(match$38), "images");
+                                var tmp$17;
+                                if (match$39 !== undefined) {
+                                  var value$16 = Caml_option.valFromOption(match$39);
+                                  var match$40 = Js_json.decodeNull(value$16);
+                                  if (match$40 !== undefined) {
+                                    tmp$17 = undefined;
+                                  } else {
+                                    var match$41 = Js_json.decodeArray(value$16);
+                                    tmp$17 = match$41 !== undefined ? match$41.map((function (value) {
+                                              var match = Js_json.decodeObject(value);
+                                              if (match !== undefined) {
+                                                var match$1 = Js_dict.get(Caml_option.valFromOption(match), "url");
+                                                var tmp;
+                                                if (match$1 !== undefined) {
+                                                  var value$1 = Caml_option.valFromOption(match$1);
+                                                  var match$2 = Js_json.decodeNull(value$1);
+                                                  if (match$2 !== undefined) {
+                                                    tmp = undefined;
+                                                  } else {
+                                                    var match$3 = Js_json.decodeString(value$1);
+                                                    tmp = match$3 !== undefined ? match$3 : Js_exn.raiseError("graphql_ppx: Expected string, got " + JSON.stringify(value$1));
+                                                  }
+                                                } else {
+                                                  tmp = undefined;
+                                                }
+                                                return {
+                                                        url: tmp
+                                                      };
+                                              } else {
+                                                return Js_exn.raiseError("graphql_ppx: Object is not a value");
+                                              }
+                                            })) : Js_exn.raiseError("graphql_ppx: Expected array, got " + JSON.stringify(value$16));
+                                  }
+                                } else {
+                                  tmp$17 = undefined;
+                                }
+                                tmp$16 = {
+                                  images: tmp$17
+                                };
+                              } else {
+                                tmp$16 = Js_exn.raiseError("graphql_ppx: Object is not a value");
+                              }
+                              tmp$15 = Caml_option.some(tmp$16);
+                            }
+                          } else {
+                            tmp$15 = undefined;
+                          }
                           tmp$9 = {
                             id: tmp$10,
                             name: tmp$11,
                             artists: tmp$12,
-                            durationMs: tmp$13
+                            durationMs: tmp$13,
+                            href: tmp$14,
+                            album: tmp$15
                           };
                         } else {
                           tmp$9 = Js_exn.raiseError("graphql_ppx: Object is not a value");
@@ -193,25 +269,25 @@ function parse(value) {
                     } else {
                       tmp$8 = undefined;
                     }
-                    var match$33 = Js_dict.get(value$5, "progressMs");
-                    var tmp$14;
-                    if (match$33 !== undefined) {
-                      var value$14 = Caml_option.valFromOption(match$33);
-                      var match$34 = Js_json.decodeNull(value$14);
-                      if (match$34 !== undefined) {
-                        tmp$14 = undefined;
+                    var match$42 = Js_dict.get(value$5, "progressMs");
+                    var tmp$18;
+                    if (match$42 !== undefined) {
+                      var value$17 = Caml_option.valFromOption(match$42);
+                      var match$43 = Js_json.decodeNull(value$17);
+                      if (match$43 !== undefined) {
+                        tmp$18 = undefined;
                       } else {
-                        var match$35 = Js_json.decodeNumber(value$14);
-                        tmp$14 = match$35 !== undefined ? match$35 | 0 : Js_exn.raiseError("graphql_ppx: Expected int, got " + JSON.stringify(value$14));
+                        var match$44 = Js_json.decodeNumber(value$17);
+                        tmp$18 = match$44 !== undefined ? match$44 | 0 : Js_exn.raiseError("graphql_ppx: Expected int, got " + JSON.stringify(value$17));
                       }
                     } else {
-                      tmp$14 = undefined;
+                      tmp$18 = undefined;
                     }
                     tmp$5 = {
                       isPlaying: tmp$6,
                       currentlyPlayingType: tmp$7,
                       item: tmp$8,
-                      progressMs: tmp$14
+                      progressMs: tmp$18
                     };
                   } else {
                     tmp$5 = Js_exn.raiseError("graphql_ppx: Object is not a value");
@@ -334,6 +410,25 @@ function make$1(_children) {
                                                   })), (function (player) {
                                                 return player.progressMs;
                                               })), 0);
+                                    var imageArray = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
+                                                            return me.player;
+                                                          })), (function (player) {
+                                                        return player.item;
+                                                      })), (function (item) {
+                                                    return item.album;
+                                                  })), (function (album) {
+                                                return album.images;
+                                              })), /* array */[]);
+                                    var imageUrlArray = imageArray.map((function (image) {
+                                              var match = image.url;
+                                              if (match !== undefined) {
+                                                return match;
+                                              } else {
+                                                return "";
+                                              }
+                                            })).filter((function (name) {
+                                            return name !== "";
+                                          }));
                                     var songName = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
                                                         return me.player;
                                                       })), (function (player) {
@@ -359,7 +454,8 @@ function make$1(_children) {
                                             return name !== "";
                                           }));
                                     var artistName = artistNameArray.join(",");
-                                    return ReasonReact.element(undefined, undefined, CurrentlyPlaying$ReactTemplate.make(songName, artistName, isPlaying, duration, progress, /* array */[]));
+                                    var match = imageUrlArray.length > 1;
+                                    return ReasonReact.element(undefined, undefined, CurrentlyPlaying$ReactTemplate.make(songName, artistName, isPlaying, duration, progress, match ? Caml_array.caml_array_get(imageUrlArray, 1) : Caml_array.caml_array_get(imageUrlArray, 0), /* array */[]));
                                   } else {
                                     return React.createElement("div", undefined, result[0].message);
                                   }

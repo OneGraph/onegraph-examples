@@ -15,6 +15,12 @@ module GetCurrentlyPlaying = [%graphql
      name
      }
      durationMs
+     href
+     album {
+     images {
+     url
+     }
+     }
      }
      progressMs
      }
@@ -55,6 +61,25 @@ let make = _children => {
                  ->flatMap(me => me##player)
                  ->flatMap(player => player##progressMs)
                  ->getWithDefault(0);
+               let imageArray =
+                 response##spotify##me
+                 ->flatMap(me => me##player)
+                 ->flatMap(player => player##item)
+                 ->flatMap(item => item##album)
+                 ->flatMap(album => album##images)
+                 ->getWithDefault([||]);
+
+               let imageUrlArray =
+                 Js.Array.map(
+                   image =>
+                     switch (image##url) {
+                     | Some(url) => url
+                     | None => ""
+                     },
+                   imageArray,
+                 )
+                 |> Js.Array.filter(name => name !== "");
+
                let songName =
                  response##spotify##me
                  ->flatMap(me => me##player)
@@ -84,6 +109,10 @@ let make = _children => {
                  isPlaying
                  duration
                  progress
+                 imageUrl={
+                   Array.length(imageUrlArray) > 1 ?
+                     imageUrlArray[1] : imageUrlArray[0]
+                 }
                />;
              }
          }
