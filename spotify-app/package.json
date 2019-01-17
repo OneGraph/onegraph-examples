@@ -21,7 +21,7 @@
     "bs-emotion": "^0.1.1",
     "graphql": "^14.0.2",
     "graphql-tag": "^2.10.0",
-    "onegraph-auth": "^0.2.18",
+    "onegraph-auth": "^0.2.20",
     "re-classnames": "3.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
