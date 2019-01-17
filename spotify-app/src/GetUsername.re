@@ -1,12 +1,11 @@
 module GetUsername = [%graphql
   {|query findUsername {
-  me {
-    gmail {
-      sub
-      name
-      givenName
-    }
-  }
+     me {
+     spotify {
+     id
+     email
+     }
+     }
 }|}
 ];
 
@@ -25,9 +24,9 @@ let make = (~auth, ~setLogInStatus, _children) => {
              | Error(error) =>
                <div> {ReasonReact.string(error##message)} </div>
              | Data(response) =>
-               switch (response##me##gmail) {
+               switch (response##me##spotify) {
                | Some(gmail) =>
-                 switch (gmail##name) {
+                 switch (gmail##id) {
                  | Some(name) =>
                    <User key=name auth setLogInStatus userName=name />
 

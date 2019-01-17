@@ -23,8 +23,8 @@ let handleLogIn = (auth, setLogInStatus) => {
 
   Js.log("Clicked Login!!");
   auth
-  |> login(_, "gmail")
-  |> then_(() => isLoggedIn(auth, "gmail"))
+  |> login(_, "spotify")
+  |> then_(() => isLoggedIn(auth, "spotify"))
   |> then_(loginStatus => {
        Js.log(loginStatus);
        setLogInStatus(loginStatus);

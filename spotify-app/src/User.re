@@ -31,8 +31,8 @@ let make = (~auth, ~setLogInStatus, ~userName, _children) => {
             (
               _state =>
                 auth
-                |> logout(_, "gmail")
-                |> then_(() => isLoggedIn(auth, "gmail"))
+                |> logout(_, "spotify")
+                |> then_(() => isLoggedIn(auth, "spotify"))
                 |> then_(loginStatus => {
                      Js.log(loginStatus);
                      setLogInStatus(loginStatus);

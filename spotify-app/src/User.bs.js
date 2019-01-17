@@ -98,8 +98,8 @@ function make(auth, setLogInStatus, userName, _children) {
               } else {
                 console.log("Clicked LogOut!!");
                 return /* SideEffects */Block.__(1, [(function (_state) {
-                              auth.logout("gmail").then((function (param) {
-                                          return auth.isLoggedIn("gmail");
+                              auth.logout("spotify").then((function (param) {
+                                          return auth.isLoggedIn("spotify");
                                         })).then((function (loginStatus) {
                                         console.log(loginStatus);
                                         Curry._1(setLogInStatus, loginStatus);

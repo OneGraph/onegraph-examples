@@ -51,8 +51,8 @@ var component = ReasonReact.statelessComponent("Login");
 
 function handleLogIn(auth, setLogInStatus) {
   console.log("Clicked Login!!");
-  auth.login("gmail").then((function (param) {
-              return auth.isLoggedIn("gmail");
+  auth.login("spotify").then((function (param) {
+              return auth.isLoggedIn("spotify");
             })).then((function (loginStatus) {
             console.log(loginStatus);
             Curry._1(setLogInStatus, loginStatus);
