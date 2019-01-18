@@ -178,8 +178,84 @@ var shareBtn = Emotion.css(undefined, /* :: */[
                     5194459,
                     "00000040"
                   ]),
-              /* [] */0
+              /* :: */[
+                Emotion.select(":hover", /* :: */[
+                      Emotion.backgroundColor(/* `hex */[
+                            5194459,
+                            "18a94b"
+                          ]),
+                      /* [] */0
+                    ]),
+                /* :: */[
+                  Emotion.select(":active", /* :: */[
+                        Emotion.important(Emotion.backgroundColor(/* `hex */[
+                                  5194459,
+                                  "18a94b"
+                                ])),
+                        /* [] */0
+                      ]),
+                  /* :: */[
+                    Emotion.select(":focus", /* :: */[
+                          Emotion.important(Emotion.backgroundColor(/* `hex */[
+                                    5194459,
+                                    "18a94b"
+                                  ])),
+                          /* [] */0
+                        ]),
+                    /* [] */0
+                  ]
+                ]
+              ]
             ]
+          ]
+        ]
+      ]
+    ]);
+
+var drowpdownMenuStyle = Emotion.css(undefined, /* :: */[
+      Emotion.label("drowpdownMenuStyle"),
+      /* :: */[
+        Emotion.backgroundColor(/* `hex */[
+              5194459,
+              "047F30"
+            ]),
+        /* :: */[
+          Emotion.color(/* `hex */[
+                5194459,
+                "ffffff"
+              ]),
+          /* [] */0
+        ]
+      ]
+    ]);
+
+var drowpdownItemStyle = Emotion.css(undefined, /* :: */[
+      Emotion.label("drowpdownItemStyle"),
+      /* :: */[
+        Emotion.backgroundColor(/* `hex */[
+              5194459,
+              "047F30"
+            ]),
+        /* :: */[
+          Emotion.color(/* `hex */[
+                5194459,
+                "ffffff"
+              ]),
+          /* :: */[
+            Emotion.select(":hover", /* :: */[
+                  Emotion.backgroundColor(/* `hex */[
+                        5194459,
+                        "00521D"
+                      ]),
+                  /* :: */[
+                    Emotion.color(/* `hex */[
+                          5194459,
+                          "ffffff"
+                        ]),
+                    /* [] */0
+                  ]
+                ]),
+            /* [] */0
           ]
         ]
       ]
@@ -336,10 +412,10 @@ function make(isPublic, toggleShareStatus, _children) {
                                         return Curry._1(self[/* send */3], /* Toggle */0);
                                       }), undefined, undefined, undefined, /* array */[
                                       ReasonReact.element(undefined, undefined, BsReactstrap__DropdownToggle.make(true, undefined, shareBtn, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Share"])),
-                                      ReasonReact.element(undefined, undefined, BsReactstrap__DropdownMenu.make(undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                                ReasonReact.element(undefined, undefined, BsReactstrap__DropdownItem.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Facebook"])),
-                                                ReasonReact.element(undefined, undefined, BsReactstrap__DropdownItem.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Twitter"])),
-                                                ReasonReact.element(undefined, undefined, BsReactstrap__DropdownItem.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Copy URL"]))
+                                      ReasonReact.element(undefined, undefined, BsReactstrap__DropdownMenu.make(undefined, undefined, undefined, undefined, drowpdownMenuStyle, undefined, /* array */[
+                                                ReasonReact.element(undefined, undefined, BsReactstrap__DropdownItem.make(undefined, undefined, undefined, undefined, undefined, undefined, drowpdownItemStyle, undefined, undefined, /* array */["Facebook"])),
+                                                ReasonReact.element(undefined, undefined, BsReactstrap__DropdownItem.make(undefined, undefined, undefined, undefined, undefined, undefined, drowpdownItemStyle, undefined, undefined, /* array */["Twitter"])),
+                                                ReasonReact.element(undefined, undefined, BsReactstrap__DropdownItem.make(undefined, undefined, undefined, undefined, undefined, undefined, drowpdownItemStyle, undefined, undefined, /* array */["Copy URL"]))
                                               ]))
                                     ]))));
             }),
@@ -362,6 +438,8 @@ exports.shareWrapper = shareWrapper;
 exports.shareLinkTitle = shareLinkTitle;
 exports.shareLinkURL = shareLinkURL;
 exports.shareBtn = shareBtn;
+exports.drowpdownMenuStyle = drowpdownMenuStyle;
+exports.drowpdownItemStyle = drowpdownItemStyle;
 exports.inputLine = inputLine;
 exports.subInfo = subInfo;
 exports.component = component;
