@@ -7,7 +7,34 @@ var app = Emotion.css(undefined, /* :: */[
       Emotion.label("app"),
       /* :: */[
         Emotion.textAlign(/* center */98248149),
-        /* [] */0
+        /* :: */[
+          Emotion.backgroundColor(/* `hex */[
+                5194459,
+                "000000"
+              ]),
+          /* :: */[
+            Emotion.minHeight(/* `vh */[
+                  26418,
+                  100
+                ]),
+            /* :: */[
+              Emotion.minWidth(/* `vw */[
+                    26433,
+                    100
+                  ]),
+              /* :: */[
+                Emotion.overflow(/* auto */-1065951377),
+                /* :: */[
+                  Emotion.color(/* `hex */[
+                        5194459,
+                        "ffffff"
+                      ]),
+                  /* [] */0
+                ]
+              ]
+            ]
+          ]
+        ]
       ]
     ]);
 
@@ -38,23 +65,6 @@ function flexWrapper(justify, align) {
             ]);
 }
 
-var pageTitle = Emotion.css(undefined, /* :: */[
-      Emotion.label("pageTitle"),
-      /* :: */[
-        Emotion.fontSize(/* `px */[
-              25096,
-              48
-            ]),
-        /* :: */[
-          Emotion.marginBottom(/* `px */[
-                25096,
-                64
-              ]),
-          /* [] */0
-        ]
-      ]
-    ]);
-
 var pageSubTitle = Emotion.css(undefined, /* :: */[
       Emotion.label("pageSubTitle"),
       /* :: */[
@@ -78,6 +88,5 @@ var pageSubTitle = Emotion.css(undefined, /* :: */[
 exports.app = app;
 exports.userIcon = userIcon;
 exports.flexWrapper = flexWrapper;
-exports.pageTitle = pageTitle;
 exports.pageSubTitle = pageSubTitle;
 /* app Not a pure module */

@@ -2,29 +2,35 @@
 'use strict';
 
 var ApolloLinks = require("reason-apollo/src/ApolloLinks.bs.js");
+var Caml_option = require("bs-platform/lib/js/caml_option.js");
 var ApolloLink = require("apollo-link");
 var ReasonApollo = require("reason-apollo/src/ReasonApollo.bs.js");
+var OnegraphAuth = require("onegraph-auth");
 var ApolloInMemoryCache = require("reason-apollo/src/ApolloInMemoryCache.bs.js");
+var OneGraphAuth$ReactTemplate = require("./OneGraphAuth.bs.js");
 
 var inMemoryCache = ApolloInMemoryCache.createInMemoryCache(undefined, undefined, /* () */0);
 
 var httpLink = ApolloLinks.createHttpLink("https://serve.onegraph.com/dynamic?app_id=bafd4254-c229-48c2-8c53-44a01477a43e", undefined, undefined, undefined, "include", undefined, /* () */0);
 
+var auth = new OnegraphAuth.default(OneGraphAuth$ReactTemplate.config);
+
 var authLink = ApolloLinks.createContextLink((function (param) {
         return {
-                headers: (function (prim) {
-                    return prim.authHeaders();
-                  })
+                headers: {
+                  authorization: Caml_option.undefined_to_opt(auth.authHeaders().Authentication)
+                }
               };
       }));
 
 var instance = ReasonApollo.createApolloClient(ApolloLink.from(/* array */[
-          httpLink,
-          authLink
+          authLink,
+          httpLink
         ]), inMemoryCache, undefined, undefined, undefined, undefined, /* () */0);
 
 exports.inMemoryCache = inMemoryCache;
 exports.httpLink = httpLink;
+exports.auth = auth;
 exports.authLink = authLink;
 exports.instance = instance;
 /* inMemoryCache Not a pure module */

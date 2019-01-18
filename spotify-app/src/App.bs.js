@@ -4,15 +4,51 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
+var Emotion = require("bs-emotion/src/Emotion.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var LogIn$ReactTemplate = require("./LogIn.bs.js");
 var Client$ReactTemplate = require("./Client.bs.js");
 var AppStyle$ReactTemplate = require("./AppStyle.bs.js");
 var LinkShare$ReactTemplate = require("./LinkShare.bs.js");
 var GetUsername$ReactTemplate = require("./GetUsername.bs.js");
-var CurrentlyPlaying$ReactTemplate = require("./CurrentlyPlaying.bs.js");
+var GetCurrentlyPlayingQuery$ReactTemplate = require("./GetCurrentlyPlayingQuery.bs.js");
 
-var userIcon = require("./img/user.png");
+var pageTitle = Emotion.css(undefined, /* :: */[
+      Emotion.label("pageTitle"),
+      /* :: */[
+        Emotion.fontSize(/* `px */[
+              25096,
+              56
+            ]),
+        /* :: */[
+          Emotion.marginBottom(/* `px */[
+                25096,
+                16
+              ]),
+          /* [] */0
+        ]
+      ]
+    ]);
+
+var pageSubTitle = Emotion.css(undefined, /* :: */[
+      Emotion.label("pageSubTitle"),
+      /* :: */[
+        Emotion.fontSize(/* `px */[
+              25096,
+              32
+            ]),
+        /* :: */[
+          Emotion.marginBottom(/* `px */[
+                25096,
+                64
+              ]),
+          /* :: */[
+            Emotion.fontWeight(200),
+            /* [] */0
+          ]
+        ]
+      ]
+    ]);
 
 var component = ReasonReact.reducerComponent("App");
 
@@ -23,7 +59,7 @@ function make(_children) {
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
-              self[/* state */1][/* auth */1].isLoggedIn("gmail").then((function (loginStatus) {
+              self[/* state */1][/* auth */1].isLoggedIn("spotify").then((function (loginStatus) {
                         console.log(loginStatus);
                         Curry._1(self[/* send */3], /* SetLogInStatus */[loginStatus]);
                         return Promise.resolve(/* () */0);
@@ -43,10 +79,12 @@ function make(_children) {
                         }, match ? React.createElement("div", undefined, ReasonReact.element(undefined, undefined, GetUsername$ReactTemplate.make(self[/* state */1][/* auth */1], (function (status) {
                                           return Curry._1(self[/* send */3], /* SetLogInStatus */[status]);
                                         }), /* array */[])), React.createElement("h1", {
-                                    className: AppStyle$ReactTemplate.pageTitle
-                                  }, "Welcome to SpotDJ"), ReasonReact.element(undefined, undefined, LinkShare$ReactTemplate.make(self[/* state */1][/* isPublic */2], (function (param) {
+                                    className: pageTitle
+                                  }, "SpotDJ"), React.createElement("h2", {
+                                    className: pageSubTitle
+                                  }, "Share your Spotify music live"), ReasonReact.element(undefined, undefined, LinkShare$ReactTemplate.make(self[/* state */1][/* isPublic */2], (function (param) {
                                           return Curry._1(self[/* send */3], /* ToggleShareStatus */0);
-                                        }), /* array */[])), ReasonReact.element(undefined, undefined, CurrentlyPlaying$ReactTemplate.make(/* array */[]))) : ReasonReact.element(undefined, undefined, LogIn$ReactTemplate.make(self[/* state */1][/* auth */1], (function (status) {
+                                        }), /* array */[])), ReasonReact.element(undefined, undefined, GetCurrentlyPlayingQuery$ReactTemplate.make(/* array */[]))) : ReasonReact.element(undefined, undefined, LogIn$ReactTemplate.make(self[/* state */1][/* auth */1], (function (status) {
                                       return Curry._1(self[/* send */3], /* SetLogInStatus */[status]);
                                     }), /* array */[])));
             }),
@@ -80,7 +118,8 @@ function make(_children) {
 var Css = 0;
 
 exports.Css = Css;
-exports.userIcon = userIcon;
+exports.pageTitle = pageTitle;
+exports.pageSubTitle = pageSubTitle;
 exports.component = component;
 exports.make = make;
-/* userIcon Not a pure module */
+/* pageTitle Not a pure module */

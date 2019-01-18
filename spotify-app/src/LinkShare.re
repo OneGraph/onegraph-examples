@@ -7,14 +7,58 @@ type action =
 
 type state = {isDropdownOpen: bool};
 
-let linkSharing = [%css [marginBottom(`px(64))]];
+let linkSharing = [%css
+  [
+    width(`pct(50.)),
+    backgroundColor(`hex("e0e0e0")),
+    color(`hex("333333")),
+    borderRadius(`px(5)),
+    margin3(`px(0), `auto, `px(64)),
+    boxShadow(
+      ~inset=true,
+      ~x=`px(2),
+      ~y=`px(2),
+      ~blur=`px(4),
+      `hex("00000040"),
+    ),
+    padding2(`px(16), `px(0)),
+  ]
+];
+
+let shareWrapper = [%css [position(`relative)]];
+
+let shareLinkTitle = [%css [fontSize(`px(24)), marginBottom(`px(16))]];
 
 let shareLinkURL = [%css
   [
-    border(`px(0), `none, `hex("ffffff")),
-    borderBottom(`px(1), `solid, `hex("cfcfcf")),
+    border(`px(0), `none, `hex("1DB954")),
     padding2(`px(0), `px(8)),
     width(`px(280)),
+    backgroundColor(`hex("ffffff00")),
+    outlineStyle(`none),
+    color(`hex("7d7d7d")),
+    marginBottom(`px(16)),
+  ]
+];
+
+let shareBtn = [%css
+  [
+    backgroundColor(`hex("1DB954")),
+    borderStyle(`none),
+    marginBottom(`px(16)),
+    boxShadow(~x=`px(0), ~y=`px(2), ~blur=`px(4), `hex("00000040")),
+  ]
+];
+
+let inputLine = [%css
+  [
+    position(`absolute),
+    width(`pct(100.)),
+    border(`px(1), `solid, `hex("1DB95480")),
+    bottom(`px(0)),
+    width(`px(280)),
+    transform(`translateX(`px(-33))),
+    boxShadow(~x=`px(0), ~y=`px(2), ~blur=`px(4), `hex("00000040")),
   ]
 ];
 
@@ -47,50 +91,45 @@ let make = (~isPublic, ~toggleShareStatus, _children) => {
   render: self =>
     ReasonReact.(
       <div className=linkSharing>
-        <p className=Css.pageSubTitle>
+        <p className=shareLinkTitle>
           {string("Share the following link to invite people to your music")}
         </p>
-        <Button
-          color={isPublic ? "danger" : "success"}
-          size="sm"
-          onClick={_e => toggleShareStatus()}>
-          {
-            isPublic ?
-              ReasonReact.string("Stop Sharing") :
-              ReasonReact.string("Share Publicaly")
-          }
-        </Button>
+        /*<Button
+            color={isPublic ? "danger" : "success"}
+            size="sm"
+            onClick={_e => toggleShareStatus()}>
+            {
+              isPublic ?
+                ReasonReact.string("Stop Sharing") :
+                ReasonReact.string("Share Publicaly")
+            }
+          </Button>*/
         <div
-          style={
-            ReactDOMRe.Style.make(~width="fit-content", ~margin="auto", ())
+          className={
+            Cn.make([
+              Css.flexWrapper(~justify=`center, ~align=`flexEnd),
+              shareWrapper,
+            ])
           }>
-          <div className={Css.flexWrapper(~justify=`center, ~align=`flexEnd)}>
-            <input
-              className=shareLinkURL
-              value="www.example.com/?userId"
-              readOnly=true
-            />
-            <Dropdown
-              isOpen={self.state.isDropdownOpen}
-              toggle={() => self.send(Toggle)}
-              size="sm">
-              <DropdownToggle caret=true> {string("Share")} </DropdownToggle>
-              <DropdownMenu>
-                <DropdownItem> {string("Facebook")} </DropdownItem>
-                <DropdownItem> {string("Twitter")} </DropdownItem>
-                <DropdownItem> {string("Copy URL")} </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-          <div
-            className={
-              Cn.make([
-                Css.flexWrapper(~justify=`flexStart, ~align=`flexStart),
-                subInfo,
-              ])
-            }>
-            <p> <i> {string("240 Listners")} </i> </p>
-          </div>
+          <input
+            className=shareLinkURL
+            value="www.example.com/?userId"
+            readOnly=true
+          />
+          <hr className=inputLine />
+          <Dropdown
+            isOpen={self.state.isDropdownOpen}
+            toggle={() => self.send(Toggle)}
+            size="sm">
+            <DropdownToggle className=shareBtn caret=true>
+              {string("Share")}
+            </DropdownToggle>
+            <DropdownMenu>
+              <DropdownItem> {string("Facebook")} </DropdownItem>
+              <DropdownItem> {string("Twitter")} </DropdownItem>
+              <DropdownItem> {string("Copy URL")} </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </div>
       </div>
     ),

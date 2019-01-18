@@ -5,8 +5,10 @@ var Cn = require("re-classnames/src/Cn.bs.js");
 var Block = require("bs-platform/lib/js/block.js");
 var React = require("react");
 var Emotion = require("bs-emotion/src/Emotion.bs.js");
+var Caml_option = require("bs-platform/lib/js/caml_option.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var AppStyle$ReactTemplate = require("./AppStyle.bs.js");
+var BsReactstrap__Progress = require("@ahrefs/bs-reactstrap/src/BsReactstrap__Progress.bs.js");
 
 var songImage = require("./img/now-playing-ex.png");
 
@@ -16,114 +18,122 @@ var like = require("./img/like.png");
 
 var share = require("./img/share.png");
 
-var songInfo = Emotion.css(undefined, /* :: */[
-      Emotion.label("songInfo"),
+var playerWrapper = Emotion.css(undefined, /* :: */[
+      Emotion.label("playerWrapper"),
       /* :: */[
-        Emotion.alignItems(/* center */98248149),
+        Emotion.width(/* `px */[
+              25096,
+              300
+            ]),
         /* :: */[
-          Emotion.width(/* `pct */[
-                5591841,
-                100
+          Emotion.position(/* relative */903134412),
+          /* :: */[
+            Emotion.margin3(/* `px */[
+                  25096,
+                  0
+                ], /* auto */-1065951377, /* `px */[
+                  25096,
+                  64
+                ]),
+            /* [] */0
+          ]
+        ]
+      ]
+    ]);
+
+var songNameStyle = Emotion.css(undefined, /* :: */[
+      Emotion.label("songNameStyle"),
+      /* :: */[
+        Emotion.fontSize(/* `px */[
+              25096,
+              24
+            ]),
+        /* :: */[
+          Emotion.marginBottom(/* `px */[
+                25096,
+                0
               ]),
           /* :: */[
-            Emotion.padding(/* `px */[
-                  25096,
-                  16
+            Emotion.textAlign(/* left */-944764921),
+            /* [] */0
+          ]
+        ]
+      ]
+    ]);
+
+var artistNameStyle = Emotion.css(undefined, /* :: */[
+      Emotion.label("artistNameStyle"),
+      /* :: */[
+        Emotion.fontSize(/* `px */[
+              25096,
+              14
+            ]),
+        /* :: */[
+          Emotion.marginBottom(/* `px */[
+                25096,
+                0
+              ]),
+          /* :: */[
+            Emotion.textAlign(/* left */-944764921),
+            /* [] */0
+          ]
+        ]
+      ]
+    ]);
+
+var audioWaveStyle = Emotion.css(undefined, /* :: */[
+      Emotion.label("audioWaveStyle"),
+      /* :: */[
+        Emotion.height(/* `px */[
+              25096,
+              48
+            ]),
+        /* [] */0
+      ]
+    ]);
+
+var actionBtnStyle = Emotion.css(undefined, /* :: */[
+      Emotion.label("actionBtnStyle"),
+      /* :: */[
+        Emotion.width(/* `px */[
+              25096,
+              32
+            ]),
+        /* :: */[
+          Emotion.border(/* `px */[
+                25096,
+                2
+              ], /* solid */12956715, /* `hex */[
+                5194459,
+                "ffffff"
+              ]),
+          /* :: */[
+            Emotion.borderRadius(/* `pct */[
+                  5591841,
+                  50
                 ]),
             /* :: */[
-              Emotion.position(/* absolute */-1013592457),
+              Emotion.padding(/* `px */[
+                    25096,
+                    4
+                  ]),
               /* :: */[
-                Emotion.bottom(/* `px */[
+                Emotion.margin(/* `px */[
                       25096,
-                      0
+                      4
                     ]),
                 /* :: */[
-                  Emotion.color(/* `hex */[
-                        5194459,
-                        "ffffff"
-                      ]),
-                  /* :: */[
-                    Emotion.select(".audio-wave", /* :: */[
-                          Emotion.width(/* `px */[
-                                25096,
-                                48
-                              ]),
-                          /* [] */0
-                        ]),
-                    /* :: */[
-                      Emotion.select(".action-btn-circle", /* :: */[
-                            Emotion.width(/* `px */[
-                                  25096,
-                                  32
-                                ]),
-                            /* :: */[
-                              Emotion.border(/* `px */[
-                                    25096,
-                                    2
-                                  ], /* solid */12956715, /* `hex */[
-                                    5194459,
-                                    "ffffff"
-                                  ]),
-                              /* :: */[
-                                Emotion.borderRadius(/* `pct */[
-                                      5591841,
-                                      50
-                                    ]),
-                                /* :: */[
-                                  Emotion.padding(/* `px */[
-                                        25096,
-                                        4
-                                      ]),
-                                  /* :: */[
-                                    Emotion.select(":hover", /* :: */[
-                                          Emotion.cursor(/* pointer */-786317123),
-                                          /* :: */[
-                                            Emotion.backgroundColor(/* `hex */[
-                                                  5194459,
-                                                  "525252"
-                                                ]),
-                                            /* [] */0
-                                          ]
-                                        ]),
-                                    /* [] */0
-                                  ]
-                                ]
-                              ]
-                            ]
-                          ]),
-                      /* :: */[
-                        Emotion.select(".song-name", /* :: */[
-                              Emotion.fontSize(/* `px */[
-                                    25096,
-                                    24
-                                  ]),
-                              /* :: */[
-                                Emotion.marginBottom(/* `px */[
-                                      25096,
-                                      0
-                                    ]),
-                                /* [] */0
-                              ]
-                            ]),
+                  Emotion.select(":hover", /* :: */[
+                        Emotion.cursor(/* pointer */-786317123),
                         /* :: */[
-                          Emotion.select(".singer-name", /* :: */[
-                                Emotion.fontSize(/* `px */[
-                                      25096,
-                                      14
-                                    ]),
-                                /* :: */[
-                                  Emotion.marginBottom(/* `px */[
-                                        25096,
-                                        0
-                                      ]),
-                                  /* [] */0
-                                ]
+                          Emotion.backgroundColor(/* `hex */[
+                                5194459,
+                                "525252"
                               ]),
                           /* [] */0
                         ]
-                      ]
-                    ]
-                  ]
+                      ]),
+                  /* [] */0
                 ]
               ]
             ]
@@ -132,70 +142,37 @@ var songInfo = Emotion.css(undefined, /* :: */[
       ]
     ]);
 
-var songImageFilter = Emotion.css(undefined, /* :: */[
-      Emotion.label("songImageFilter"),
+var progressBarStyle = Emotion.css(undefined, /* :: */[
+      Emotion.label("progressBarStyle"),
+      /* :: */[
+        Emotion.width(/* `px */[
+              25096,
+              200
+            ]),
+        /* :: */[
+          Emotion.height(/* `px */[
+                25096,
+                4
+              ]),
+          /* [] */0
+        ]
+      ]
+    ]);
+
+var albumImage = Emotion.css(undefined, /* :: */[
+      Emotion.label("albumImage"),
       /* :: */[
         Emotion.width(/* `pct */[
               5591841,
               100
             ]),
-        /* :: */[
-          Emotion.height(/* `pct */[
-                5591841,
-                100
-              ]),
-          /* :: */[
-            Emotion.position(/* absolute */-1013592457),
-            /* :: */[
-              Emotion.top(/* `px */[
-                    25096,
-                    0
-                  ]),
-              /* :: */[
-                Emotion.backgroundImage(/* `linearGradient */[
-                      616379637,
-                      /* tuple */[
-                        /* `deg */[
-                          4995526,
-                          -180
-                        ],
-                        /* :: */[
-                          /* tuple */[
-                            0,
-                            /* `rgba */[
-                              -878128972,
-                              /* tuple */[
-                                255,
-                                255,
-                                255,
-                                0.00
-                              ]
-                            ]
-                          ],
-                          /* :: */[
-                            /* tuple */[
-                              85,
-                              /* `hex */[
-                                5194459,
-                                "000000"
-                              ]
-                            ],
-                            /* [] */0
-                          ]
-                        ]
-                      ]
-                    ]),
-                /* [] */0
-              ]
-            ]
-          ]
-        ]
+        /* [] */0
       ]
     ]);
 
 var component = ReasonReact.reducerComponent("User");
 
-function make(_children) {
+function make(songName, artistName, isPlaying, progressPct, imageUrl, _children) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -210,44 +187,38 @@ function make(_children) {
               return React.createElement("div", {
                           className: "current-playing"
                         }, React.createElement("div", {
-                              style: {
-                                margin: "auto",
-                                position: "relative",
-                                width: "300px"
-                              }
+                              className: playerWrapper
                             }, React.createElement("img", {
-                                  style: {
-                                    width: "100%"
-                                  },
-                                  alt: "Song Image",
-                                  src: songImage
-                                }), React.createElement("div", {
-                                  className: songImageFilter
+                                  className: albumImage,
+                                  alt: "Album Image",
+                                  src: imageUrl
                                 }), React.createElement("div", {
                                   className: Cn.make(/* :: */[
-                                        AppStyle$ReactTemplate.flexWrapper(/* spaceAround */-485895757, /* center */98248149),
-                                        /* :: */[
-                                          songInfo,
-                                          /* [] */0
-                                        ]
+                                        AppStyle$ReactTemplate.flexWrapper(/* spaceBetween */516682146, /* center */98248149),
+                                        /* [] */0
                                       ])
-                                }, React.createElement("img", {
-                                      className: "audio-wave",
+                                }, React.createElement("div", undefined, React.createElement("h3", {
+                                          className: songNameStyle
+                                        }, songName), React.createElement("p", {
+                                          className: artistNameStyle
+                                        }, artistName)), React.createElement("img", {
+                                      className: audioWaveStyle,
                                       alt: "Audio Wave",
                                       src: audioWave
-                                    }), React.createElement("div", undefined, React.createElement("h3", {
-                                          className: "song-name"
-                                        }, "Song Name"), React.createElement("p", {
-                                          className: "singer-name"
-                                        }, "Author Name")), React.createElement("img", {
-                                      className: "action-btn-circle",
-                                      alt: "Like Icon",
-                                      src: like
-                                    }), React.createElement("img", {
-                                      className: "action-btn-circle",
+                                    })), React.createElement("div", {
+                                  className: Cn.make(/* :: */[
+                                        AppStyle$ReactTemplate.flexWrapper(/* spaceBetween */516682146, /* center */98248149),
+                                        /* [] */0
+                                      ])
+                                }, ReasonReact.element(undefined, undefined, BsReactstrap__Progress.make(undefined, undefined, undefined, Caml_option.some(progressPct), undefined, undefined, undefined, "success", progressBarStyle, undefined, undefined, /* array */[])), React.createElement("img", {
+                                      className: actionBtnStyle,
                                       alt: "Share Icon",
                                       src: share
-                                    }))), React.createElement("p", undefined, "Played by userABC"));
+                                    }), React.createElement("img", {
+                                      className: actionBtnStyle,
+                                      alt: "Like Icon",
+                                      src: like
+                                    }))));
             }),
           /* initialState */(function (param) {
               return /* record */[/* isDropdownOpen */false];
@@ -267,8 +238,13 @@ exports.songImage = songImage;
 exports.audioWave = audioWave;
 exports.like = like;
 exports.share = share;
-exports.songInfo = songInfo;
-exports.songImageFilter = songImageFilter;
+exports.playerWrapper = playerWrapper;
+exports.songNameStyle = songNameStyle;
+exports.artistNameStyle = artistNameStyle;
+exports.audioWaveStyle = audioWaveStyle;
+exports.actionBtnStyle = actionBtnStyle;
+exports.progressBarStyle = progressBarStyle;
+exports.albumImage = albumImage;
 exports.component = component;
 exports.make = make;
 /* songImage Not a pure module */

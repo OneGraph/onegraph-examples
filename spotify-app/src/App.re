@@ -1,8 +1,11 @@
 open Utils;
+open Emotion;
 
 module Css = AppStyle;
-
-let userIcon = requireAssetURI("./img/user.png");
+let pageTitle = [%css [fontSize(`px(56)), marginBottom(`px(16))]];
+let pageSubTitle = [%css
+  [fontSize(`px(32)), marginBottom(`px(64)), fontWeight(200)]
+];
 
 type state = {
   isLoggedIn: bool,
@@ -21,7 +24,7 @@ let make = _children => {
   didMount: self =>
     Js.Promise.(
       OneGraphAuth.(
-        OneGraphAuth.isLoggedIn(self.state.auth, "gmail")
+        OneGraphAuth.isLoggedIn(self.state.auth, "spotify")
         |> then_(loginStatus => {
              Js.log(loginStatus);
              self.send(SetLogInStatus(loginStatus));
@@ -48,12 +51,15 @@ let make = _children => {
                 auth={self.state.auth}
                 setLogInStatus={status => self.send(SetLogInStatus(status))}
               />
-              <h1 className=Css.pageTitle> {string("Welcome to SpotDJ")} </h1>
+              <h1 className=pageTitle> {string("SpotDJ")} </h1>
+              <h2 className=pageSubTitle>
+                {string("Share your Spotify music live")}
+              </h2>
               <LinkShare
                 isPublic={self.state.isPublic}
                 toggleShareStatus={() => self.send(ToggleShareStatus)}
               />
-              <CurrentlyPlaying />
+              <GetCurrentlyPlayingQuery />
             </div> :
             <LogIn
               auth={self.state.auth}
