@@ -398,14 +398,14 @@ function make$1(_children) {
                                                   })), (function (player) {
                                                 return player.isPlaying;
                                               })), false);
-                                    var duration = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
+                                    var durationMs = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
                                                         return me.player;
                                                       })), (function (player) {
                                                     return player.item;
                                                   })), (function (item) {
                                                 return item.durationMs;
                                               })), 0);
-                                    var progress = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
+                                    var progressMs = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
                                                     return me.player;
                                                   })), (function (player) {
                                                 return player.progressMs;
@@ -455,7 +455,7 @@ function make$1(_children) {
                                           }));
                                     var artistName = artistNameArray.join(",");
                                     var match = imageUrlArray.length > 1;
-                                    return ReasonReact.element(undefined, undefined, CurrentlyPlaying$ReactTemplate.make(songName, artistName, isPlaying, duration, progress, match ? Caml_array.caml_array_get(imageUrlArray, 1) : Caml_array.caml_array_get(imageUrlArray, 0), /* array */[]));
+                                    return ReasonReact.element(undefined, undefined, CurrentlyPlaying$ReactTemplate.make(songName, artistName, isPlaying, progressMs / durationMs * 100, match ? Caml_array.caml_array_get(imageUrlArray, 1) : Caml_array.caml_array_get(imageUrlArray, 0), /* array */[]));
                                   } else {
                                     return React.createElement("div", undefined, result[0].message);
                                   }

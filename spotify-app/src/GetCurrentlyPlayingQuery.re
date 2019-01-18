@@ -50,17 +50,20 @@ let make = _children => {
                  ->flatMap(me => me##player)
                  ->flatMap(player => player##isPlaying)
                  ->getWithDefault(false);
-               let duration =
+
+               let durationMs =
                  response##spotify##me
                  ->flatMap(me => me##player)
                  ->flatMap(player => player##item)
                  ->flatMap(item => item##durationMs)
                  ->getWithDefault(0);
-               let progress =
+
+               let progressMs =
                  response##spotify##me
                  ->flatMap(me => me##player)
                  ->flatMap(player => player##progressMs)
                  ->getWithDefault(0);
+
                let imageArray =
                  response##spotify##me
                  ->flatMap(me => me##player)
@@ -86,12 +89,14 @@ let make = _children => {
                  ->flatMap(player => player##item)
                  ->flatMap(item => item##name)
                  ->getWithDefault("");
+
                let artistArray =
                  response##spotify##me
                  ->flatMap(me => me##player)
                  ->flatMap(player => player##item)
                  ->flatMap(item => item##artists)
                  ->getWithDefault([||]);
+
                let artistNameArray =
                  Js.Array.map(
                    artist =>
@@ -102,13 +107,17 @@ let make = _children => {
                    artistArray,
                  )
                  |> Js.Array.filter(name => name !== "");
+
                let artistName = Js.Array.joinWith(",", artistNameArray);
                <CurrentlyPlaying
                  songName
                  artistName
                  isPlaying
-                 duration
-                 progress
+                 progressPct={
+                   float_of_int(progressMs)
+                   /. float_of_int(durationMs)
+                   *. 100.
+                 }
                  imageUrl={
                    Array.length(imageUrlArray) > 1 ?
                      imageUrlArray[1] : imageUrlArray[0]
