@@ -393,69 +393,85 @@ function make$1(_children) {
                                     return React.createElement("div", undefined, "Loading");
                                   } else if (result.tag) {
                                     var response = result[0];
-                                    var isPlaying = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
-                                                    return me.player;
-                                                  })), (function (player) {
-                                                return player.isPlaying;
-                                              })), false);
-                                    var durationMs = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
-                                                        return me.player;
-                                                      })), (function (player) {
-                                                    return player.item;
-                                                  })), (function (item) {
-                                                return item.durationMs;
-                                              })), 0);
-                                    var progressMs = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
-                                                    return me.player;
-                                                  })), (function (player) {
-                                                return player.progressMs;
-                                              })), 0);
-                                    var imageArray = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
-                                                            return me.player;
-                                                          })), (function (player) {
-                                                        return player.item;
-                                                      })), (function (item) {
-                                                    return item.album;
-                                                  })), (function (album) {
-                                                return album.images;
-                                              })), /* array */[]);
-                                    var imageUrlArray = imageArray.map((function (image) {
-                                              var match = image.url;
-                                              if (match !== undefined) {
-                                                return match;
-                                              } else {
-                                                return "";
-                                              }
-                                            })).filter((function (name) {
-                                            return name !== "";
+                                    var spotifyIsLaunched = Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
+                                                return me.player;
+                                              })), (function (player) {
+                                            return player.item;
                                           }));
-                                    var songName = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
-                                                        return me.player;
-                                                      })), (function (player) {
-                                                    return player.item;
-                                                  })), (function (item) {
-                                                return item.name;
-                                              })), "");
-                                    var artistArray = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
-                                                        return me.player;
-                                                      })), (function (player) {
-                                                    return player.item;
-                                                  })), (function (item) {
-                                                return item.artists;
-                                              })), /* array */[]);
-                                    var artistNameArray = artistArray.map((function (artist) {
-                                              var match = artist.name;
-                                              if (match !== undefined) {
-                                                return match;
-                                              } else {
-                                                return "";
-                                              }
-                                            })).filter((function (name) {
-                                            return name !== "";
-                                          }));
-                                    var artistName = artistNameArray.join(",");
-                                    var match = imageUrlArray.length > 1;
-                                    return ReasonReact.element(undefined, undefined, CurrentlyPlaying$ReactTemplate.make(songName, artistName, isPlaying, progressMs / durationMs * 100, match ? Caml_array.caml_array_get(imageUrlArray, 1) : Caml_array.caml_array_get(imageUrlArray, 0), /* array */[]));
+                                    if (spotifyIsLaunched !== undefined) {
+                                      var isPlaying = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
+                                                      return me.player;
+                                                    })), (function (player) {
+                                                  return player.isPlaying;
+                                                })), false);
+                                      var durationMs = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
+                                                          return me.player;
+                                                        })), (function (player) {
+                                                      return player.item;
+                                                    })), (function (item) {
+                                                  return item.durationMs;
+                                                })), 0);
+                                      var progressMs = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
+                                                      return me.player;
+                                                    })), (function (player) {
+                                                  return player.progressMs;
+                                                })), 0);
+                                      var imageArray = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
+                                                              return me.player;
+                                                            })), (function (player) {
+                                                          return player.item;
+                                                        })), (function (item) {
+                                                      return item.album;
+                                                    })), (function (album) {
+                                                  return album.images;
+                                                })), /* array */[]);
+                                      var imageUrlArray = imageArray.map((function (image) {
+                                                var match = image.url;
+                                                if (match !== undefined) {
+                                                  return match;
+                                                } else {
+                                                  return "";
+                                                }
+                                              })).filter((function (name) {
+                                              return name !== "";
+                                            }));
+                                      var songName = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
+                                                          return me.player;
+                                                        })), (function (player) {
+                                                      return player.item;
+                                                    })), (function (item) {
+                                                  return item.name;
+                                                })), "");
+                                      var artistArray = Belt_Option.getWithDefault(Belt_Option.flatMap(Belt_Option.flatMap(Belt_Option.flatMap(response.spotify.me, (function (me) {
+                                                          return me.player;
+                                                        })), (function (player) {
+                                                      return player.item;
+                                                    })), (function (item) {
+                                                  return item.artists;
+                                                })), /* array */[]);
+                                      var artistNameArray = artistArray.map((function (artist) {
+                                                var match = artist.name;
+                                                if (match !== undefined) {
+                                                  return match;
+                                                } else {
+                                                  return "";
+                                                }
+                                              })).filter((function (name) {
+                                              return name !== "";
+                                            }));
+                                      var artistName = artistNameArray.join(",");
+                                      var match = imageUrlArray.length > 1;
+                                      var tmp;
+                                      if (match) {
+                                        tmp = Caml_array.caml_array_get(imageUrlArray, 1);
+                                      } else {
+                                        var match$1 = imageUrlArray.length === 1;
+                                        tmp = match$1 ? Caml_array.caml_array_get(imageUrlArray, 0) : "";
+                                      }
+                                      return ReasonReact.element(undefined, undefined, CurrentlyPlaying$ReactTemplate.make(songName, artistName, isPlaying, progressMs / durationMs * 100, tmp, /* array */[]));
+                                    } else {
+                                      return "Nobody is listening to Spotify on this account right now.";
+                                    }
                                   } else {
                                     return React.createElement("div", undefined, result[0].message);
                                   }
