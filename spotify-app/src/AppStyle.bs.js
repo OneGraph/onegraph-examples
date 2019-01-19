@@ -54,27 +54,6 @@ function flexWrapper(justify, align) {
             ]);
 }
 
-var pageSubTitle = Emotion.css(undefined, /* :: */[
-      Emotion.label("pageSubTitle"),
-      /* :: */[
-        Emotion.fontSize(/* `px */[
-              25096,
-              24
-            ]),
-        /* :: */[
-          Emotion.marginBottom(/* `px */[
-                25096,
-                32
-              ]),
-          /* :: */[
-            Emotion.fontWeight(300),
-            /* [] */0
-          ]
-        ]
-      ]
-    ]);
-
 exports.app = app;
 exports.flexWrapper = flexWrapper;
-exports.pageSubTitle = pageSubTitle;
 /* app Not a pure module */

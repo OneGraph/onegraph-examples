@@ -14,7 +14,3 @@ let app = [%css
 let flexWrapper = (~justify, ~align) => [%css
   [display(`flex), justifyContent(justify), alignItems(align)]
 ];
-
-let pageSubTitle = [%css
-  [fontSize(`px(24)), marginBottom(`px(32)), fontWeight(300)]
-];
