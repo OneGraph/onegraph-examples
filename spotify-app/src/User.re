@@ -2,8 +2,9 @@ open Utils;
 open Emotion;
 open BsReactstrap;
 
-module Css = AppStyle;
-let userIcon = requireAssetURI("./img/user.png");
+module Css = AppStyle
+
+let userDefaultIcon = requireAssetURI("./img/user.png");
 
 type action =
   | HandleLogOut
@@ -12,6 +13,8 @@ type action =
 type state = {isDropdownOpen: bool};
 
 /*Style*/
+let userIcon = [%css [width(`px(25))]];
+
 let userAccountWrapper = [%css
   [padding4(`px(16), `px(0), `px(0), `px(24)), marginRight(`px(48))]
 ];
@@ -63,7 +66,7 @@ let make = (~auth, ~setLogInStatus, ~userName, _children) => {
                   userAccountWrapper,
                 ])
               }>
-              <img className=Css.userIcon src=userIcon alt="user icon" />
+              <img className=userIcon src=userDefaultIcon alt={"user icon"} />
               <p
                 style={
                   ReactDOMRe.Style.make(~margin="0px", ~flex="0 0 auto", ())

@@ -13,7 +13,18 @@ var BsReactstrap__DropdownItem = require("@ahrefs/bs-reactstrap/src/BsReactstrap
 var BsReactstrap__DropdownMenu = require("@ahrefs/bs-reactstrap/src/BsReactstrap__DropdownMenu.bs.js");
 var BsReactstrap__DropdownToggle = require("@ahrefs/bs-reactstrap/src/BsReactstrap__DropdownToggle.bs.js");
 
-var userIcon = require("./img/user.png");
+var userDefaultIcon = require("./img/user.png");
+
+var userIcon = Emotion.css(undefined, /* :: */[
+      Emotion.label("userIcon"),
+      /* :: */[
+        Emotion.width(/* `px */[
+              25096,
+              25
+            ]),
+        /* [] */0
+      ]
+    ]);
 
 var userAccountWrapper = Emotion.css(undefined, /* :: */[
       Emotion.label("userAccountWrapper"),
@@ -72,9 +83,9 @@ function make(auth, setLogInStatus, userName, _children) {
                                                     ]
                                                   ]), undefined, undefined, undefined, undefined, undefined, "div", undefined, /* array */[
                                                 React.createElement("img", {
-                                                      className: AppStyle$ReactTemplate.userIcon,
+                                                      className: userIcon,
                                                       alt: "user icon",
-                                                      src: userIcon
+                                                      src: userDefaultIcon
                                                     }),
                                                 React.createElement("p", {
                                                       style: {
@@ -118,8 +129,9 @@ function make(auth, setLogInStatus, userName, _children) {
 var Css = 0;
 
 exports.Css = Css;
+exports.userDefaultIcon = userDefaultIcon;
 exports.userIcon = userIcon;
 exports.userAccountWrapper = userAccountWrapper;
 exports.component = component;
 exports.make = make;
-/* userIcon Not a pure module */
+/* userDefaultIcon Not a pure module */

@@ -11,8 +11,6 @@ let app = [%css
   ]
 ];
 
-let userIcon = [%css [width(`px(25))]];
-
 let flexWrapper = (~justify, ~align) => [%css
   [display(`flex), justifyContent(justify), alignItems(align)]
 ];

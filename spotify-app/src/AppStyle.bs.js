@@ -38,17 +38,6 @@ var app = Emotion.css(undefined, /* :: */[
       ]
     ]);
 
-var userIcon = Emotion.css(undefined, /* :: */[
-      Emotion.label("userIcon"),
-      /* :: */[
-        Emotion.width(/* `px */[
-              25096,
-              25
-            ]),
-        /* [] */0
-      ]
-    ]);
-
 function flexWrapper(justify, align) {
   return Emotion.css(undefined, /* :: */[
               Emotion.label("flexWrapper"),
@@ -86,7 +75,6 @@ var pageSubTitle = Emotion.css(undefined, /* :: */[
     ]);
 
 exports.app = app;
-exports.userIcon = userIcon;
 exports.flexWrapper = flexWrapper;
 exports.pageSubTitle = pageSubTitle;
 /* app Not a pure module */
