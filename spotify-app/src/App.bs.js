@@ -8,7 +8,6 @@ var Emotion = require("bs-emotion/src/Emotion.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var LogIn$ReactTemplate = require("./LogIn.bs.js");
 var Client$ReactTemplate = require("./Client.bs.js");
-var AppStyle$ReactTemplate = require("./AppStyle.bs.js");
 var LinkShare$ReactTemplate = require("./LinkShare.bs.js");
 var GetUsername$ReactTemplate = require("./GetUsername.bs.js");
 var GetCurrentlyPlayingQuery$ReactTemplate = require("./GetCurrentlyPlayingQuery.bs.js");
@@ -74,9 +73,7 @@ function make(_children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
               var match = self[/* state */1][/* isLoggedIn */0];
-              return React.createElement("div", {
-                          className: AppStyle$ReactTemplate.app
-                        }, match ? React.createElement("div", undefined, ReasonReact.element(undefined, undefined, GetUsername$ReactTemplate.make(self[/* state */1][/* auth */1], (function (status) {
+              return React.createElement("div", undefined, match ? React.createElement("div", undefined, ReasonReact.element(undefined, undefined, GetUsername$ReactTemplate.make(self[/* state */1][/* auth */1], (function (status) {
                                           return Curry._1(self[/* send */3], /* SetLogInStatus */[status]);
                                         }), /* array */[])), React.createElement("h1", {
                                     className: pageTitle
@@ -115,9 +112,6 @@ function make(_children) {
         ];
 }
 
-var Css = 0;
-
-exports.Css = Css;
 exports.pageTitle = pageTitle;
 exports.pageSubTitle = pageSubTitle;
 exports.component = component;

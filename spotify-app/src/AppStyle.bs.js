@@ -3,41 +3,6 @@
 
 var Emotion = require("bs-emotion/src/Emotion.bs.js");
 
-var app = Emotion.css(undefined, /* :: */[
-      Emotion.label("app"),
-      /* :: */[
-        Emotion.textAlign(/* center */98248149),
-        /* :: */[
-          Emotion.backgroundColor(/* `hex */[
-                5194459,
-                "000000"
-              ]),
-          /* :: */[
-            Emotion.minHeight(/* `vh */[
-                  26418,
-                  100
-                ]),
-            /* :: */[
-              Emotion.minWidth(/* `vw */[
-                    26433,
-                    100
-                  ]),
-              /* :: */[
-                Emotion.overflow(/* auto */-1065951377),
-                /* :: */[
-                  Emotion.color(/* `hex */[
-                        5194459,
-                        "ffffff"
-                      ]),
-                  /* [] */0
-                ]
-              ]
-            ]
-          ]
-        ]
-      ]
-    ]);
-
 function flexWrapper(justify, align) {
   return Emotion.css(undefined, /* :: */[
               Emotion.label("flexWrapper"),
@@ -54,6 +19,5 @@ function flexWrapper(justify, align) {
             ]);
 }
 
-exports.app = app;
 exports.flexWrapper = flexWrapper;
-/* app Not a pure module */
+/* Emotion Not a pure module */

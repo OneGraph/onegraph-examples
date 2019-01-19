@@ -1,7 +1,6 @@
 open Utils;
 open Emotion;
 
-module Css = AppStyle;
 let pageTitle = [%css [fontSize(`px(56)), marginBottom(`px(16))]];
 let pageSubTitle = [%css
   [fontSize(`px(32)), marginBottom(`px(64)), fontWeight(200)]
@@ -43,7 +42,7 @@ let make = _children => {
     },
   render: self =>
     ReasonReact.(
-      <div className=Css.app>
+      <div>
         {
           self.state.isLoggedIn ?
             <div>
