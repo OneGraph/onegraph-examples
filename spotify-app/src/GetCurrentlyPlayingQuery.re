@@ -36,7 +36,7 @@ let component = ReasonReact.statelessComponent("GetCurrentlyPlaying");
 
 let make = _children => {
   ...component,
-  render: self =>
+  render: _self =>
     <GetCurrentlyPlayingQuery>
       ...{
         ({result}) =>
@@ -53,7 +53,7 @@ let make = _children => {
 
             switch (spotifyIsLaunched) {
             | None => ReasonReact.string("Nobody is listening to Spotify on this account right now.")
-            | Some(item) => {
+            | Some(_item) => {
               let isPlaying =
                 response##spotify##me
                 ->flatMap(me => me##player)

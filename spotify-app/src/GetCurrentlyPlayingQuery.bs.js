@@ -376,7 +376,7 @@ function make$1(_children) {
           /* willUnmount */component[/* willUnmount */6],
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
-          /* render */(function (self) {
+          /* render */(function (_self) {
               return ReasonReact.element(undefined, undefined, Curry.app(GetCurrentlyPlayingQuery[/* make */3], [
                               undefined,
                               undefined,

@@ -1,4 +1,3 @@
-open Utils;
 open Emotion;
 
 let pageTitle = [%css [fontSize(`px(56)), marginBottom(`px(16))]];
@@ -22,16 +21,14 @@ let make = _children => {
   initialState: () => {isLoggedIn: false, auth: Client.auth, isPublic: true},
   didMount: self =>
     Js.Promise.(
-      OneGraphAuth.(
-        OneGraphAuth.isLoggedIn(self.state.auth, "spotify")
-        |> then_(loginStatus => {
-             Js.log(loginStatus);
-             self.send(SetLogInStatus(loginStatus));
-             resolve();
-           })
-        |> catch(err => resolve(Js.log(err)))
-        |> ignore
-      )
+      OneGraphAuth.isLoggedIn(self.state.auth, "spotify")
+      |> then_(loginStatus => {
+            Js.log(loginStatus);
+            self.send(SetLogInStatus(loginStatus));
+            resolve();
+          })
+      |> catch(err => resolve(Js.log(err)))
+      |> ignore
     ),
   reducer: (action, state) =>
     switch (action) {
