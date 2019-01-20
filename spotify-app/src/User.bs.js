@@ -7,13 +7,24 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Emotion = require("bs-emotion/src/Emotion.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var AppStyle$ReactTemplate = require("./AppStyle.bs.js");
 var BsReactstrap__Dropdown = require("@ahrefs/bs-reactstrap/src/BsReactstrap__Dropdown.bs.js");
+var SharedCss$ReactTemplate = require("./SharedCss.bs.js");
 var BsReactstrap__DropdownItem = require("@ahrefs/bs-reactstrap/src/BsReactstrap__DropdownItem.bs.js");
 var BsReactstrap__DropdownMenu = require("@ahrefs/bs-reactstrap/src/BsReactstrap__DropdownMenu.bs.js");
 var BsReactstrap__DropdownToggle = require("@ahrefs/bs-reactstrap/src/BsReactstrap__DropdownToggle.bs.js");
 
-var userIcon = require("./img/user.png");
+var userDefaultIcon = require("./img/user.png");
+
+var userIcon = Emotion.css(undefined, /* :: */[
+      Emotion.label("userIcon"),
+      /* :: */[
+        Emotion.width(/* `px */[
+              25096,
+              25
+            ]),
+        /* [] */0
+      ]
+    ]);
 
 var userAccountWrapper = Emotion.css(undefined, /* :: */[
       Emotion.label("userAccountWrapper"),
@@ -56,7 +67,7 @@ function make(auth, setLogInStatus, userName, _children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
               return React.createElement("header", {
-                          className: AppStyle$ReactTemplate.flexWrapper(/* flexEnd */924268066, /* center */98248149)
+                          className: SharedCss$ReactTemplate.flexWrapper(/* flexEnd */924268066, /* center */98248149)
                         }, React.createElement("div", {
                               style: {
                                 width: "100px"
@@ -65,16 +76,16 @@ function make(auth, setLogInStatus, userName, _children) {
                                         return Curry._1(self[/* send */3], /* Toggle */1);
                                       }), undefined, undefined, undefined, /* array */[
                                       ReasonReact.element(undefined, undefined, BsReactstrap__DropdownToggle.make(true, undefined, Cn.make(/* :: */[
-                                                    AppStyle$ReactTemplate.flexWrapper(/* flexEnd */924268066, /* center */98248149),
+                                                    SharedCss$ReactTemplate.flexWrapper(/* flexEnd */924268066, /* center */98248149),
                                                     /* :: */[
                                                       userAccountWrapper,
                                                       /* [] */0
                                                     ]
                                                   ]), undefined, undefined, undefined, undefined, undefined, "div", undefined, /* array */[
                                                 React.createElement("img", {
-                                                      className: AppStyle$ReactTemplate.userIcon,
+                                                      className: userIcon,
                                                       alt: "user icon",
-                                                      src: userIcon
+                                                      src: userDefaultIcon
                                                     }),
                                                 React.createElement("p", {
                                                       style: {
@@ -115,11 +126,9 @@ function make(auth, setLogInStatus, userName, _children) {
         ];
 }
 
-var Css = 0;
-
-exports.Css = Css;
+exports.userDefaultIcon = userDefaultIcon;
 exports.userIcon = userIcon;
 exports.userAccountWrapper = userAccountWrapper;
 exports.component = component;
 exports.make = make;
-/* userIcon Not a pure module */
+/* userDefaultIcon Not a pure module */

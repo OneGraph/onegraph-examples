@@ -1,13 +1,14 @@
 module GetUsername = [%graphql
-  {|query findUsername {
-     me {
-     spotify {
-     id
-     email
-     }
-     }
-}|}
-];
+  {|
+  query findUsername {
+    me {
+      spotify {
+        id
+        displayName
+      }
+    }
+  }
+|}];
 
 module GetUserNameQuery = ReasonApollo.CreateQuery(GetUsername);
 
@@ -25,8 +26,8 @@ let make = (~auth, ~setLogInStatus, _children) => {
                <div> {ReasonReact.string(error##message)} </div>
              | Data(response) =>
                switch (response##me##spotify) {
-               | Some(gmail) =>
-                 switch (gmail##id) {
+               | Some(spotify) =>
+                 switch (spotify##displayName) {
                  | Some(name) =>
                    <User key=name auth setLogInStatus userName=name />
 

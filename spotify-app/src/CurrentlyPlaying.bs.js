@@ -7,8 +7,8 @@ var React = require("react");
 var Emotion = require("bs-emotion/src/Emotion.bs.js");
 var Caml_option = require("bs-platform/lib/js/caml_option.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var AppStyle$ReactTemplate = require("./AppStyle.bs.js");
 var BsReactstrap__Progress = require("@ahrefs/bs-reactstrap/src/BsReactstrap__Progress.bs.js");
+var SharedCss$ReactTemplate = require("./SharedCss.bs.js");
 
 var songImage = require("./img/now-playing-ex.png");
 
@@ -194,7 +194,7 @@ function make(songName, artistName, isPlaying, progressPct, imageUrl, _children)
                                   src: imageUrl
                                 }), React.createElement("div", {
                                   className: Cn.make(/* :: */[
-                                        AppStyle$ReactTemplate.flexWrapper(/* spaceBetween */516682146, /* center */98248149),
+                                        SharedCss$ReactTemplate.flexWrapper(/* spaceBetween */516682146, /* center */98248149),
                                         /* [] */0
                                       ])
                                 }, React.createElement("div", undefined, React.createElement("h3", {
@@ -207,7 +207,7 @@ function make(songName, artistName, isPlaying, progressPct, imageUrl, _children)
                                       src: audioWave
                                     })), React.createElement("div", {
                                   className: Cn.make(/* :: */[
-                                        AppStyle$ReactTemplate.flexWrapper(/* spaceBetween */516682146, /* center */98248149),
+                                        SharedCss$ReactTemplate.flexWrapper(/* spaceBetween */516682146, /* center */98248149),
                                         /* [] */0
                                       ])
                                 }, ReasonReact.element(undefined, undefined, BsReactstrap__Progress.make(undefined, undefined, undefined, Caml_option.some(progressPct), undefined, undefined, undefined, "success", progressBarStyle, undefined, undefined, /* array */[])), React.createElement("img", {
@@ -231,9 +231,6 @@ function make(songName, artistName, isPlaying, progressPct, imageUrl, _children)
         ];
 }
 
-var Css = 0;
-
-exports.Css = Css;
 exports.songImage = songImage;
 exports.audioWave = audioWave;
 exports.like = like;

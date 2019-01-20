@@ -11,7 +11,7 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 var ReasonApollo = require("reason-apollo/src/ReasonApollo.bs.js");
 var User$ReactTemplate = require("./User.bs.js");
 
-var ppx_printed_query = "query findUsername  {\nme  {\nspotify  {\nid  \nemail  \n}\n\n}\n\n}\n";
+var ppx_printed_query = "query findUsername  {\nme  {\nspotify  {\nid  \ndisplayName  \n}\n\n}\n\n}\n";
 
 function parse(value) {
   var match = Js_json.decodeObject(value);
@@ -47,7 +47,7 @@ function parse(value) {
               } else {
                 tmp$3 = undefined;
               }
-              var match$9 = Js_dict.get(value$2, "email");
+              var match$9 = Js_dict.get(value$2, "displayName");
               var tmp$4;
               if (match$9 !== undefined) {
                 var value$4 = Caml_option.valFromOption(match$9);
@@ -63,7 +63,7 @@ function parse(value) {
               }
               tmp$2 = {
                 id: tmp$3,
-                email: tmp$4
+                displayName: tmp$4
               };
             } else {
               tmp$2 = Js_exn.raiseError("graphql_ppx: Object is not a value");
@@ -158,7 +158,7 @@ function make$1(auth, setLogInStatus, _children) {
                                   } else if (result.tag) {
                                     var match = result[0].me.spotify;
                                     if (match !== undefined) {
-                                      var match$1 = Caml_option.valFromOption(match).id;
+                                      var match$1 = Caml_option.valFromOption(match).displayName;
                                       if (match$1 !== undefined) {
                                         var name = match$1;
                                         return ReasonReact.element(name, undefined, User$ReactTemplate.make(auth, setLogInStatus, name, /* array */[]));
