@@ -6,12 +6,9 @@ let spotifyLogo = requireAssetURI("./img/spotify-logo.png");
 
 let spotifyBtn = [%css
   [
-    backgroundColor(`hex("1DB954")),
-    borderStyle(`none),
     display(`flex),
     alignItems(`center),
     margin4(`px(48), `auto, `px(32), `auto),
-    select("hover", [important(backgroundColor(`hex("1ED760")))]),
   ]
 ];
 
@@ -40,7 +37,7 @@ let make = (~auth, ~setLogInStatus, _children) => {
     ReasonReact.(
       <div>
         <Button
-          className=spotifyBtn
+          className={Cn.make([SharedCss.button, spotifyBtn])}
           onClick={() => handleLogIn(auth, setLogInStatus)}>
           <img
             style={
