@@ -6,10 +6,13 @@ let soundWaveWrapper = [%css
     height(`px(50)),
     padding(`px(2)),
     transform(`rotate(`deg(180.))),
+    borderTop(`px(1), `solid, `hex("7ED321")),
   ]
 ];
 
 let soundCol = [%css [flexShrink(1.), overflow(`hidden)]];
+
+let soundColOnPause = [%css [height(`pct(22.)), opacity(0.3)]];
 
 /*Top to bottom*/
 let swing1 =
@@ -36,15 +39,15 @@ let swing3 =
   keyframes([
     (0, [height(`pct(75.))]),
     (25, [height(`pct(53.))]),
-    (50, [height(`pct(45.))]),
-    (75, [height(`pct(78.))]),
-    (100, [height(`pct(100.))]),
+    (50, [height(`pct(36.))]),
+    (75, [height(`pct(50.))]),
+    (100, [height(`pct(80.))]),
   ]);
 
 let col1Animation = [%css
   [
     animationName(swing1),
-    animationDuration(`ms(300)),
+    animationDuration(`ms(500)),
     animationIterationCount(`infinite),
     animationDirection(`alternate),
   ]
@@ -53,7 +56,7 @@ let col1Animation = [%css
 let col2Animation = [%css
   [
     animationName(swing2),
-    animationDuration(`ms(300)),
+    animationDuration(`ms(500)),
     animationIterationCount(`infinite),
     animationDirection(`alternate),
   ]
@@ -62,7 +65,7 @@ let col2Animation = [%css
 let col3Animation = [%css
   [
     animationName(swing3),
-    animationDuration(`ms(600)),
+    animationDuration(`ms(800)),
     animationIterationCount(`infinite),
     animationDirection(`alternate),
   ]
@@ -98,7 +101,12 @@ let make = (~isPlaying, _children) => {
               SharedCss.flexWrapper(~justify=`center, ~align=`flexStart),
             ])
           }>
-          <div className={Cn.make([soundCol, col1Animation])}>
+          <div
+            className={
+              isPlaying ?
+                Cn.make([soundCol, col1Animation]) :
+                Cn.make([soundCol, soundColOnPause])
+            }>
             <div className={Cn.make([green, soundBlock])} />
             <div className={Cn.make([green, soundBlock])} />
             <div className={Cn.make([green, soundBlock])} />
@@ -108,7 +116,12 @@ let make = (~isPlaying, _children) => {
             <div className={Cn.make([red, soundBlock])} />
             <div className={Cn.make([red, soundBlock])} />
           </div>
-          <div className={Cn.make([soundCol, col2Animation])}>
+          <div
+            className={
+              isPlaying ?
+                Cn.make([soundCol, col2Animation]) :
+                Cn.make([soundCol, soundColOnPause])
+            }>
             <div className={Cn.make([green, soundBlock])} />
             <div className={Cn.make([green, soundBlock])} />
             <div className={Cn.make([green, soundBlock])} />
@@ -118,7 +131,12 @@ let make = (~isPlaying, _children) => {
             <div className={Cn.make([red, soundBlock])} />
             <div className={Cn.make([red, soundBlock])} />
           </div>
-          <div className={Cn.make([soundCol, col3Animation])}>
+          <div
+            className={
+              isPlaying ?
+                Cn.make([soundCol, col3Animation]) :
+                Cn.make([soundCol, soundColOnPause])
+            }>
             <div className={Cn.make([green, soundBlock])} />
             <div className={Cn.make([green, soundBlock])} />
             <div className={Cn.make([green, soundBlock])} />
