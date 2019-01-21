@@ -15,3 +15,17 @@ let button = [%css
     select(":focus", [important(backgroundColor(`hex("18a94b")))]),
   ]
 ];
+
+let appear = keyframes([
+  (0, [ opacity(0.), visibility(`hidden) ]),
+  (1, [ opacity(0.), visibility(`visible) ]),
+  (100, [ opacity(1.) ]),
+]);
+
+let appearAnimation = (~direction) => [%css [
+  animationName(appear),
+  animationDuration (`ms(400)),
+  animationFillMode(`forwards),
+  animationTimingFunction(`easeOut),
+  animationDirection(direction)
+]];
