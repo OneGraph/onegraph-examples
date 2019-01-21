@@ -5,11 +5,21 @@ let pageSubTitle = [%css
   [fontSize(`px(32)), marginBottom(`px(64)), fontWeight(200)]
 ];
 
+let main = [%css [position(`relative)]];
+let welcome = [%css [
+  position(`absolute),
+  marginLeft(`auto),
+  marginRight(`auto),
+  left(`zero),
+  right(`zero)
+]];
+
 type state = {
   isLoggedIn: bool,
   auth: OneGraphAuth.auth,
   isPublic: bool,
 };
+
 type action =
   | SetLogInStatus(bool)
   | ToggleShareStatus;
@@ -40,28 +50,52 @@ let make = _children => {
   render: self =>
     ReasonReact.(
       <div>
-        {
-          self.state.isLoggedIn ?
-            <div>
-              <GetUsername
+        <header className=SharedCss.flexWrapper(~justify=`center, ~align=`center)>
+          <h1 className=pageTitle>{string("SpotDJ")}</h1>
+        </header>
+        <main className=main>
+          <div className={
+            Cn.make([
+              SharedCss.appearAnimation(~direction=self.state.isLoggedIn ? `reverse : `normal),
+              welcome
+            ])
+          }>
+            <h2 className=pageSubTitle>
+              {string("Share your Spotify music live")}
+            </h2>
+              <LogIn
                 auth={self.state.auth}
                 setLogInStatus={status => self.send(SetLogInStatus(status))}
               />
-              <h1 className=pageTitle> {string("SpotDJ")} </h1>
-              <h2 className=pageSubTitle>
-                {string("Share your Spotify music live")}
-              </h2>
-              <LinkShare
-                isPublic={self.state.isPublic}
-                toggleShareStatus={() => self.send(ToggleShareStatus)}
-              />
-              <GetCurrentlyPlayingQuery />
-            </div> :
-            <LogIn
-              auth={self.state.auth}
-              setLogInStatus={status => self.send(SetLogInStatus(status))}
-            />
-        }
+          </div>
+          {self.state.isLoggedIn ?
+            <div className=SharedCss.appearAnimation(~direction=`normal)>
+              <GetCurrentlyPlayingQuery>
+                ...{({ userName, songName, artistName, isPlaying, progressPct, imageUrl }) =>
+                  <div>
+                    <User
+                      auth={self.state.auth}
+                      setLogInStatus={status => self.send(SetLogInStatus(status))}
+                      userName
+                    />
+                    <CurrentlyPlaying
+                      songName
+                      artistName
+                      isPlaying
+                      progressPct
+                      imageUrl
+                    />
+                    <LinkShare
+                      isPublic={self.state.isPublic}
+                      toggleShareStatus={() => self.send(ToggleShareStatus)}
+                    />
+                  </div>
+                }
+              </GetCurrentlyPlayingQuery>
+            </div>
+            : ReasonReact.null
+          }
+        </main>
       </div>
     ),
 };
