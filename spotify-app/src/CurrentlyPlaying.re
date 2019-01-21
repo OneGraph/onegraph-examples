@@ -3,9 +3,9 @@ open Utils;
 open Emotion;
 
 let songImage = requireAssetURI("./img/now-playing-ex.png");
-let audioWave = requireAssetURI("./img/audio-wave.png");
 let like = requireAssetURI("./img/like.png");
 let share = requireAssetURI("./img/share.png");
+let pause = requireAssetURI("./img/pause.png");
 
 type action =
   | Toggle;
@@ -41,6 +41,10 @@ let actionBtnStyle = [%css
   ]
 ];
 
+let pauseBtnStyle = [%css
+  [width(`px(40)), position(`absolute), right(`px(6)), opacity(0.85)]
+];
+
 let progressBarStyle = [%css [width(`px(200)), height(`px(4))]];
 
 let albumImage = [%css [width(`pct(100.))]];
@@ -70,7 +74,12 @@ let make =
               <h3 className=songNameStyle> {string(songName)} </h3>
               <p className=artistNameStyle> {string(artistName)} </p>
             </div>
-            <img className=audioWaveStyle src=audioWave alt="Audio Wave" />
+            {
+              isPlaying ?
+                null :
+                <img className=pauseBtnStyle src=pause alt="Pause Icon" />
+            }
+            <SoundWave isPlaying />
           </div>
           <div
             className={
