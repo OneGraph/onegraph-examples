@@ -1,6 +1,5 @@
 open Utils;
 open Emotion;
-open BsReactstrap;
 
 let userDefaultIcon = requireAssetURI("./img/user.png");
 
@@ -11,11 +10,16 @@ type action =
 type state = {isDropdownOpen: bool};
 
 /*Style*/
-let userIcon = [%css [width(`px(25))]];
-
-let userAccountWrapper = [%css
-  [padding4(`px(16), `px(0), `px(0), `px(24)), marginRight(`px(48))]
-];
+let userIcon = [%css [width(`px(25)), marginRight(`em(0.25))]];
+let anchor = [%css [cursor(`pointer)]];
+let separator = [%css [
+  width(`em(1.)),
+  backgroundColor(`hex("fff")),
+  height(`px(1)),
+  verticalAlign(`middle),
+  margin4(`zero, `em(0.5), `zero, `em(0.5)),
+  display(`inlineBlock),
+]];
 
 let component = ReasonReact.reducerComponent("User");
 
@@ -50,35 +54,17 @@ let make = (~auth, ~setLogInStatus, ~userName, _children) => {
     ),
   render: self =>
     ReasonReact.(
-      <header className={SharedCss.flexWrapper(~justify=`flexEnd, ~align=`center)}>
-        <div style={ReactDOMRe.Style.make(~width="100px", ())}>
-          <Dropdown
-            isOpen={self.state.isDropdownOpen}
-            toggle={() => self.send(Toggle)}>
-            <DropdownToggle
-              caret=true
-              tag="div"
-              className={
-                Cn.make([
-                  SharedCss.flexWrapper(~justify=`flexEnd, ~align=`center),
-                  userAccountWrapper,
-                ])
-              }>
-              <img className=userIcon src=userDefaultIcon alt={"user icon"} />
-              <p
-                style={
-                  ReactDOMRe.Style.make(~margin="0px", ~flex="0 0 auto", ())
-                }>
-                {ReasonReact.string(userName)}
-              </p>
-            </DropdownToggle>
-            <DropdownMenu right=true>
-              <DropdownItem onClick={() => self.send(HandleLogOut)}>
-                {string("Sign Out")}
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        </div>
-      </header>
+          <p>
+            {string("Listening as ")}
+            <img className=userIcon src=userDefaultIcon alt={"user icon"} />
+            {string(userName)}
+            <span className=separator />
+            <a
+              className=anchor
+              onClick={(_e) => self.send(HandleLogOut)}
+            >
+              {string("Sign Out")}
+            </a>
+          </p>
     ),
 };
