@@ -44,28 +44,10 @@ let swing3 =
     (100, [height(`pct(80.))]),
   ]);
 
-let col1Animation = [%css
+let colAnimation = (~name, ~durationMs) => [%css
   [
-    animationName(swing1),
-    animationDuration(`ms(500)),
-    animationIterationCount(`infinite),
-    animationDirection(`alternate),
-  ]
-];
-
-let col2Animation = [%css
-  [
-    animationName(swing2),
-    animationDuration(`ms(500)),
-    animationIterationCount(`infinite),
-    animationDirection(`alternate),
-  ]
-];
-
-let col3Animation = [%css
-  [
-    animationName(swing3),
-    animationDuration(`ms(800)),
+    animationName(name),
+    animationDuration(`ms(durationMs)),
     animationIterationCount(`infinite),
     animationDirection(`alternate),
   ]
@@ -104,7 +86,10 @@ let make = (~isPlaying, _children) => {
           <div
             className={
               isPlaying ?
-                Cn.make([soundCol, col1Animation]) :
+                Cn.make([
+                  soundCol,
+                  colAnimation(~name=swing1, ~durationMs=500),
+                ]) :
                 Cn.make([soundCol, soundColOnPause])
             }>
             <div className={Cn.make([green, soundBlock])} />
@@ -119,7 +104,10 @@ let make = (~isPlaying, _children) => {
           <div
             className={
               isPlaying ?
-                Cn.make([soundCol, col2Animation]) :
+                Cn.make([
+                  soundCol,
+                  colAnimation(~name=swing2, ~durationMs=500),
+                ]) :
                 Cn.make([soundCol, soundColOnPause])
             }>
             <div className={Cn.make([green, soundBlock])} />
@@ -134,7 +122,10 @@ let make = (~isPlaying, _children) => {
           <div
             className={
               isPlaying ?
-                Cn.make([soundCol, col3Animation]) :
+                Cn.make([
+                  soundCol,
+                  colAnimation(~name=swing3, ~durationMs=800),
+                ]) :
                 Cn.make([soundCol, soundColOnPause])
             }>
             <div className={Cn.make([green, soundBlock])} />
