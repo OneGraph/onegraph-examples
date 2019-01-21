@@ -43,7 +43,7 @@ let actionBtnStyle = [%css
 
 let progressBarStyle = [%css [width(`px(200)), height(`px(4))]];
 
-let albumImage = [%css [width(`pct(100.))]];
+let albumImage = [%css [width(`pct(100.)), height(`px(300))]];
 
 let component = ReasonReact.reducerComponent("User");
 
@@ -61,11 +61,7 @@ let make =
         <div className=playerWrapper>
           <img className=albumImage src=imageUrl alt="Album Image" />
           <div
-            className={
-              Cn.make([
-                SharedCss.flexWrapper(~justify=`spaceBetween, ~align=`center),
-              ])
-            }>
+            className={SharedCss.flexWrapper(~justify=`spaceBetween, ~align=`center)}>
             <div>
               <h3 className=songNameStyle> {string(songName)} </h3>
               <p className=artistNameStyle> {string(artistName)} </p>
