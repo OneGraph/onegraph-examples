@@ -2,8 +2,7 @@ open Utils;
 open Emotion;
 open BsReactstrap;
 
-module Css = AppStyle;
-let userIcon = requireAssetURI("./img/user.png");
+let userDefaultIcon = requireAssetURI("./img/user.png");
 
 type action =
   | HandleLogOut
@@ -12,6 +11,8 @@ type action =
 type state = {isDropdownOpen: bool};
 
 /*Style*/
+let userIcon = [%css [width(`px(25))]];
+
 let userAccountWrapper = [%css
   [padding4(`px(16), `px(0), `px(0), `px(24)), marginRight(`px(48))]
 ];
@@ -49,7 +50,7 @@ let make = (~auth, ~setLogInStatus, ~userName, _children) => {
     ),
   render: self =>
     ReasonReact.(
-      <header className={Css.flexWrapper(~justify=`flexEnd, ~align=`center)}>
+      <header className={SharedCss.flexWrapper(~justify=`flexEnd, ~align=`center)}>
         <div style={ReactDOMRe.Style.make(~width="100px", ())}>
           <Dropdown
             isOpen={self.state.isDropdownOpen}
@@ -59,11 +60,11 @@ let make = (~auth, ~setLogInStatus, ~userName, _children) => {
               tag="div"
               className={
                 Cn.make([
-                  Css.flexWrapper(~justify=`flexEnd, ~align=`center),
+                  SharedCss.flexWrapper(~justify=`flexEnd, ~align=`center),
                   userAccountWrapper,
                 ])
               }>
-              <img className=Css.userIcon src=userIcon alt="user icon" />
+              <img className=userIcon src=userDefaultIcon alt={"user icon"} />
               <p
                 style={
                   ReactDOMRe.Style.make(~margin="0px", ~flex="0 0 auto", ())

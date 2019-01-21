@@ -1,6 +1,5 @@
 open BsReactstrap;
 open Emotion;
-module Css = AppStyle;
 
 type action =
   | Toggle;
@@ -125,7 +124,7 @@ let make = (~isPublic, ~toggleShareStatus, _children) => {
         <div
           className={
             Cn.make([
-              Css.flexWrapper(~justify=`center, ~align=`flexEnd),
+              SharedCss.flexWrapper(~justify=`center, ~align=`flexEnd),
               shareWrapper,
             ])
           }>

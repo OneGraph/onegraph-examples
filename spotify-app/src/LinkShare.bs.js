@@ -7,8 +7,8 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Emotion = require("bs-emotion/src/Emotion.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var AppStyle$ReactTemplate = require("./AppStyle.bs.js");
 var BsReactstrap__Dropdown = require("@ahrefs/bs-reactstrap/src/BsReactstrap__Dropdown.bs.js");
+var SharedCss$ReactTemplate = require("./SharedCss.bs.js");
 var BsReactstrap__DropdownItem = require("@ahrefs/bs-reactstrap/src/BsReactstrap__DropdownItem.bs.js");
 var BsReactstrap__DropdownMenu = require("@ahrefs/bs-reactstrap/src/BsReactstrap__DropdownMenu.bs.js");
 var BsReactstrap__DropdownToggle = require("@ahrefs/bs-reactstrap/src/BsReactstrap__DropdownToggle.bs.js");
@@ -396,7 +396,7 @@ function make(isPublic, toggleShareStatus, _children) {
                               className: shareLinkTitle
                             }, "Share the following link to invite people to your music"), React.createElement("div", {
                               className: Cn.make(/* :: */[
-                                    AppStyle$ReactTemplate.flexWrapper(/* center */98248149, /* flexEnd */924268066),
+                                    SharedCss$ReactTemplate.flexWrapper(/* center */98248149, /* flexEnd */924268066),
                                     /* :: */[
                                       shareWrapper,
                                       /* [] */0
@@ -430,9 +430,6 @@ function make(isPublic, toggleShareStatus, _children) {
         ];
 }
 
-var Css = 0;
-
-exports.Css = Css;
 exports.linkSharing = linkSharing;
 exports.shareWrapper = shareWrapper;
 exports.shareLinkTitle = shareLinkTitle;

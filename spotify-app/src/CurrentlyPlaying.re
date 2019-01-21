@@ -2,7 +2,6 @@ open BsReactstrap;
 open Utils;
 open Emotion;
 
-module Css = AppStyle;
 let songImage = requireAssetURI("./img/now-playing-ex.png");
 let audioWave = requireAssetURI("./img/audio-wave.png");
 let like = requireAssetURI("./img/like.png");
@@ -64,7 +63,7 @@ let make =
           <div
             className={
               Cn.make([
-                Css.flexWrapper(~justify=`spaceBetween, ~align=`center),
+                SharedCss.flexWrapper(~justify=`spaceBetween, ~align=`center),
               ])
             }>
             <div>
@@ -76,7 +75,7 @@ let make =
           <div
             className={
               Cn.make([
-                Css.flexWrapper(~justify=`spaceBetween, ~align=`center),
+                SharedCss.flexWrapper(~justify=`spaceBetween, ~align=`center),
               ])
             }>
             <Progress
