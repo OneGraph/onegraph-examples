@@ -1,5 +1,12 @@
 open Emotion;
 
+let header = (~centered) => [%css [
+  transform(translateY(centered ? `vh(20.) : `zero)),
+  transitionProperty("transform"),
+  transitionDuration((`ms(600))),
+  transitionTimingFunction(`easeOut)
+]];
+
 let pageTitle = [%css [fontSize(`px(56)), marginBottom(`px(16))]];
 let pageSubTitle = [%css
   [fontSize(`px(32)), marginBottom(`px(64)), fontWeight(200)]
@@ -58,7 +65,13 @@ let make = _children => {
   render: self =>
     ReasonReact.(
       <div>
-        <header className=SharedCss.flexWrapper(~justify=`center, ~align=`center)>
+        <header className={
+          Cn.make([
+            SharedCss.flexWrapper(~justify=`center, ~align=`center),
+            SharedCss.appearAnimation(~direction=`normal, ~delayMs=0),
+            header(~centered=self.state.logInStatus == HandshakingToken)
+          ])
+        }>
           <h1 className=pageTitle>{string("SpotDJ")}</h1>
         </header>
         <main className=main>
@@ -66,7 +79,7 @@ let make = _children => {
             self.state.logInStatus == LoggedOut,
             <div className={
               Cn.make([
-                SharedCss.appearAnimation(~direction=`normal, ~delayMs=200),
+                SharedCss.appearAnimation(~direction=`normal, ~delayMs=400),
                 welcome
               ])
             }>
