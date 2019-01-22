@@ -22,10 +22,13 @@ let appear = keyframes([
   (100, [ opacity(1.) ]),
 ]);
 
-let appearAnimation = (~direction) => [%css [
-  animationName(appear),
-  animationDuration (`ms(400)),
-  animationFillMode(`forwards),
-  animationTimingFunction(`easeOut),
-  animationDirection(direction)
-]];
+let appearAnimation = (~delayMs: int=0, ~direction) =>
+  [%css [
+    opacity(direction == `normal ? 0. : 1.),
+    animationName(appear),
+    animationDuration (`ms(400)),
+    animationDelay(`ms(delayMs)),
+    animationFillMode(`forwards),
+    animationTimingFunction(`easeOut),
+    animationDirection(direction)
+  ]]

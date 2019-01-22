@@ -56,7 +56,7 @@ let make = _children => {
         <main className=main>
           <div className={
             Cn.make([
-              SharedCss.appearAnimation(~direction=self.state.isLoggedIn ? `reverse : `normal),
+              SharedCss.appearAnimation(~direction=self.state.isLoggedIn ? `reverse : `normal, ~delayMs=200),
               welcome
             ])
           }>
@@ -69,10 +69,9 @@ let make = _children => {
               />
           </div>
           {self.state.isLoggedIn ?
-            <div className=SharedCss.appearAnimation(~direction=`normal)>
-              <GetCurrentlyPlayingQuery>
-                ...{({ userName, songName, artistName, isPlaying, progressPct, imageUrl }) =>
-                  <div>
+            <GetCurrentlyPlayingQuery>
+            ...{({ userName, songName, artistName, isPlaying, progressPct, imageUrl }) =>
+                <div className=SharedCss.appearAnimation(~direction=`normal, ~delayMs=0)>
                     <User
                       auth={self.state.auth}
                       setLogInStatus={status => self.send(SetLogInStatus(status))}
@@ -92,7 +91,6 @@ let make = _children => {
                   </div>
                 }
               </GetCurrentlyPlayingQuery>
-            </div>
             : ReasonReact.null
           }
         </main>
