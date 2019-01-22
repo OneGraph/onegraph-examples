@@ -14,31 +14,32 @@ let spotifyBtn = [%css
 
 let component = ReasonReact.statelessComponent("Login");
 
-let handleLogIn = (auth, setLogInStatus) => {
+let handleLogIn = (auth, logIn) => {
   open Js.Promise;
   open OneGraphAuth;
 
-  Js.log("Clicked Login!!");
+
   auth
   |> login(_, "spotify")
   |> then_(() => isLoggedIn(auth, "spotify"))
-  |> then_(loginStatus => {
-       Js.log(loginStatus);
-       setLogInStatus(loginStatus);
+  |> then_(isLoggedIn => {
+       if (isLoggedIn) {
+         logIn();
+       }
        resolve();
      })
   |> catch(err => resolve(Js.log(err)))
   |> ignore;
 };
 
-let make = (~auth, ~setLogInStatus, _children) => {
+let make = (~auth, ~logIn, _children) => {
   ...component,
   render: _self =>
     ReasonReact.(
       <div>
         <Button
           className={Cn.make([SharedCss.button, spotifyBtn])}
-          onClick={() => handleLogIn(auth, setLogInStatus)}>
+          onClick={() => handleLogIn(auth, logIn)}>
           <img
             style={
               ReactDOMRe.Style.make(~width="24px", ~marginRight="8px", ())

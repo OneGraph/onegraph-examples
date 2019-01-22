@@ -14,27 +14,35 @@ let welcome = [%css [
   right(`zero)
 ]];
 
+type logInStatus =
+  | HandshakingToken
+  | LoggedIn
+  | LoggedOut;
+
 type state = {
-  isLoggedIn: bool,
+  logInStatus: logInStatus,
   auth: OneGraphAuth.auth,
   isPublic: bool,
 };
 
 type action =
-  | SetLogInStatus(bool)
+  | SetLogInStatus(logInStatus)
   | ToggleShareStatus;
 
 let component = ReasonReact.reducerComponent("App");
 
+let renderIf = (condition: bool, element: ReasonReact.reactElement) =>
+  condition ? element : ReasonReact.null
+
 let make = _children => {
   ...component,
-  initialState: () => {isLoggedIn: false, auth: Client.auth, isPublic: true},
+  initialState: () => {logInStatus: HandshakingToken, auth: Client.auth, isPublic: true},
   didMount: self =>
     Js.Promise.(
       OneGraphAuth.isLoggedIn(self.state.auth, "spotify")
-      |> then_(loginStatus => {
-            Js.log(loginStatus);
-            self.send(SetLogInStatus(loginStatus));
+      |> then_((isLoggedIn:bool) => {
+            let logInStatus = isLoggedIn ? LoggedIn : LoggedOut;
+            self.send(SetLogInStatus(logInStatus));
             resolve();
           })
       |> catch(err => resolve(Js.log(err)))
@@ -42,8 +50,8 @@ let make = _children => {
     ),
   reducer: (action, state) =>
     switch (action) {
-    | SetLogInStatus(isLoggedIn) =>
-      ReasonReact.Update({...state, isLoggedIn})
+    | SetLogInStatus(logInStatus) =>
+      ReasonReact.Update({...state, logInStatus})
     | ToggleShareStatus =>
       ReasonReact.Update({...state, isPublic: !state.isPublic})
     },
@@ -54,27 +62,31 @@ let make = _children => {
           <h1 className=pageTitle>{string("SpotDJ")}</h1>
         </header>
         <main className=main>
-          <div className={
-            Cn.make([
-              SharedCss.appearAnimation(~direction=self.state.isLoggedIn ? `reverse : `normal, ~delayMs=200),
-              welcome
-            ])
-          }>
-            <h2 className=pageSubTitle>
-              {string("Share your Spotify music live")}
-            </h2>
-              <LogIn
-                auth={self.state.auth}
-                setLogInStatus={status => self.send(SetLogInStatus(status))}
-              />
-          </div>
-          {self.state.isLoggedIn ?
+          {renderIf(
+            self.state.logInStatus == LoggedOut,
+            <div className={
+              Cn.make([
+                SharedCss.appearAnimation(~direction=`normal, ~delayMs=200),
+                welcome
+              ])
+            }>
+              <h2 className=pageSubTitle>
+                {string("Share your Spotify music live")}
+              </h2>
+                <LogIn
+                  auth={self.state.auth}
+                  logIn={() => self.send(SetLogInStatus(LoggedIn))}
+                />
+            </div>
+          )}
+          {renderIf(
+            self.state.logInStatus == LoggedIn,
             <GetCurrentlyPlayingQuery>
             ...{({ userName, songName, artistName, isPlaying, progressPct, imageUrl }) =>
                 <div className=SharedCss.appearAnimation(~direction=`normal, ~delayMs=0)>
                     <User
                       auth={self.state.auth}
-                      setLogInStatus={status => self.send(SetLogInStatus(status))}
+                      logOut={() => self.send(SetLogInStatus(LoggedOut))}
                       userName
                     />
                     <CurrentlyPlaying
@@ -91,8 +103,7 @@ let make = _children => {
                   </div>
                 }
               </GetCurrentlyPlayingQuery>
-            : ReasonReact.null
-          }
+          )}
         </main>
       </div>
     ),

@@ -23,7 +23,7 @@ let separator = [%css [
 
 let component = ReasonReact.reducerComponent("User");
 
-let make = (~auth, ~setLogInStatus, ~userName, _children) => {
+let make = (~auth, ~logOut, ~userName, _children) => {
   ...component,
   initialState: () => {isDropdownOpen: false},
   reducer: (action, state) =>
@@ -31,16 +31,16 @@ let make = (~auth, ~setLogInStatus, ~userName, _children) => {
       OneGraphAuth.(
         switch (action) {
         | HandleLogOut =>
-          Js.log("Clicked LogOut!!");
           ReasonReact.SideEffects(
             (
               _state =>
                 auth
                 |> logout(_, "spotify")
                 |> then_(() => isLoggedIn(auth, "spotify"))
-                |> then_(loginStatus => {
-                     Js.log(loginStatus);
-                     setLogInStatus(loginStatus);
+                |> then_(isLoggedIn => {
+                     if(!isLoggedIn) {
+                       logOut();
+                     }
                      resolve();
                    })
                 |> catch(err => resolve(Js.log(err)))
