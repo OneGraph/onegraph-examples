@@ -1,16 +1,11 @@
-open Utils;
 open Emotion;
 
-let userDefaultIcon = requireAssetURI("./img/user.png");
-
-type action =
-  | HandleLogOut
-  | Toggle;
-
-type state = {isDropdownOpen: bool};
-
 /*Style*/
-let userIcon = [%css [width(`px(25)), marginRight(`em(0.25))]];
+let userIcon = [%css [
+  width(`px(25)),
+  margin4(`zero, `em(0.25), `zero, `em(0.5)),
+  borderRadius(`pct(50.))
+]];
 let anchor = [%css [cursor(`pointer)]];
 let separator = [%css [
   width(`em(1.)),
@@ -21,47 +16,37 @@ let separator = [%css [
   display(`inlineBlock),
 ]];
 
-let component = ReasonReact.reducerComponent("User");
+let handleLogOut = (auth, logOut) =>
+  Js.Promise.(
+    OneGraphAuth.(
+      auth
+        |> logout(_, "spotify")
+        |> then_(() => isLoggedIn(auth, "spotify"))
+        |> then_(isLoggedIn => {
+            if(!isLoggedIn) {
+              logOut();
+            }
+            resolve();
+          })
+        |> catch(err => resolve(Js.log(err)))
+        |> ignore
+    )
+  )
 
-let make = (~auth, ~logOut, ~userName, _children) => {
+let component = ReasonReact.statelessComponent("User");
+
+let make = (~auth, ~logOut, ~userName, ~userIconUrl, _children) => {
   ...component,
-  initialState: () => {isDropdownOpen: false},
-  reducer: (action, state) =>
-    Js.Promise.(
-      OneGraphAuth.(
-        switch (action) {
-        | HandleLogOut =>
-          ReasonReact.SideEffects(
-            (
-              _state =>
-                auth
-                |> logout(_, "spotify")
-                |> then_(() => isLoggedIn(auth, "spotify"))
-                |> then_(isLoggedIn => {
-                     if(!isLoggedIn) {
-                       logOut();
-                     }
-                     resolve();
-                   })
-                |> catch(err => resolve(Js.log(err)))
-                |> ignore
-            ),
-          );
-        | Toggle =>
-          ReasonReact.Update({isDropdownOpen: !state.isDropdownOpen})
-        }
-      )
-    ),
   render: self =>
     ReasonReact.(
           <p>
-            {string("Listening as ")}
-            <img className=userIcon src=userDefaultIcon alt={"user icon"} />
+            {string("Listening as")}
+            <img className=userIcon src=userIconUrl alt={"user icon"} />
             {string(userName)}
             <span className=separator />
             <a
               className=anchor
-              onClick={(_e) => self.send(HandleLogOut)}
+              onClick={(_e) => handleLogOut(auth, logOut)}
             >
               {string("Sign Out")}
             </a>

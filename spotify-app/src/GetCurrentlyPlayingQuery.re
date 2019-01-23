@@ -7,6 +7,9 @@ module GetCurrentlyPlaying = [%graphql
       me {
         id
         displayName
+        images {
+          url
+        }
         player {
           isPlaying
           currentlyPlayingType
@@ -34,11 +37,12 @@ module GetCurrentlyPlaying = [%graphql
 
 type formattedData = {
   userName: string,
+  userIconUrl: string,
   songName: string,
   artistName: string,
   isPlaying: bool,
   progressPct: float,
-  imageUrl: string
+  albumImageUrl: string
 };
 
 module GetCurrentlyPlayingQuery =
@@ -64,6 +68,17 @@ let make = (
               response##spotify##me
               ->flatMap(me => me##displayName)
               ->getWithDefault("")
+
+            let userImages =
+              response##spotify##me
+              ->flatMap(me => me##images)
+              ->getWithDefault([||]);
+
+            let userDefaultIcon = Utils.requireAssetURI("./img/user.png");
+            let userIconUrl = Utils.getImageUrl(
+              ~images=userImages,
+              ~defaultImage=userDefaultIcon
+            );
 
             let spotifyIsLaunched =
               response##spotify##me
@@ -98,7 +113,7 @@ let make = (
                   /. float_of_int(durationMs)
                   *. 100.
 
-              let imageArray =
+              let albumImages =
                 response##spotify##me
                 ->flatMap(me => me##player)
                 ->flatMap(player => player##item)
@@ -106,16 +121,11 @@ let make = (
                 ->flatMap(album => album##images)
                 ->getWithDefault([||]);
 
-              let imageUrlArray =
-                Js.Array.map(
-                  image =>
-                    switch (image##url) {
-                    | Some(url) => url
-                    | None => ""
-                    },
-                  imageArray,
-                )
-                |> Js.Array.filter(name => name !== "");
+              let defaultAlbumImage = Utils.requireAssetURI("./img/now-playing-ex.png");
+              let albumImageUrl = Utils.getImageUrl(
+                ~images=albumImages,
+                ~defaultImage=defaultAlbumImage
+              );
 
               let songName =
                 response##spotify##me
@@ -145,20 +155,14 @@ let make = (
 
               let artistName = Js.Array.joinWith(",", artistNameArray);
 
-              let imageUrl =
-                Array.length(imageUrlArray) > 1
-                  ? imageUrlArray[1]
-                  : Array.length(imageUrlArray) == 1
-                    ? imageUrlArray[0]
-                    : ""
-
               children({
                 userName,
+                userIconUrl,
                 songName,
                 artistName,
                 isPlaying,
                 progressPct,
-                imageUrl
+                albumImageUrl
               });
               }
             }

@@ -2,7 +2,6 @@ open BsReactstrap;
 open Utils;
 open Emotion;
 
-let songImage = requireAssetURI("./img/now-playing-ex.png");
 let audioWave = requireAssetURI("./img/audio-wave.png");
 let like = requireAssetURI("./img/like.png");
 let share = requireAssetURI("./img/share.png");
@@ -48,7 +47,7 @@ let albumImage = [%css [width(`pct(100.)), height(`px(300))]];
 let component = ReasonReact.reducerComponent("User");
 
 let make =
-    (~songName, ~artistName, ~isPlaying, ~progressPct, ~imageUrl, _children) => {
+    (~songName, ~artistName, ~isPlaying, ~progressPct, ~albumImageUrl, _children) => {
   ...component,
   initialState: () => {isDropdownOpen: false},
   reducer: (action, state) =>
@@ -59,7 +58,7 @@ let make =
     ReasonReact.(
       <div className="current-playing">
         <div className=playerWrapper>
-          <img className=albumImage src=imageUrl alt="Album Image" />
+          <img className=albumImage src=albumImageUrl alt="Album Image" />
           <div
             className={SharedCss.flexWrapper(~justify=`spaceBetween, ~align=`center)}>
             <div>

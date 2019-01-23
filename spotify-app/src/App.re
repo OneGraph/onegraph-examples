@@ -95,19 +95,20 @@ let make = _children => {
           {renderIf(
             self.state.logInStatus == LoggedIn,
             <GetCurrentlyPlayingQuery>
-            ...{({ userName, songName, artistName, isPlaying, progressPct, imageUrl }) =>
+            ...{({ userName, userIconUrl, songName, artistName, isPlaying, progressPct, albumImageUrl }) =>
                 <div className=SharedCss.appearAnimation(~direction=`normal, ~delayMs=0)>
                     <User
                       auth={self.state.auth}
                       logOut={() => self.send(SetLogInStatus(LoggedOut))}
                       userName
+                      userIconUrl
                     />
                     <CurrentlyPlaying
                       songName
                       artistName
                       isPlaying
                       progressPct
-                      imageUrl
+                      albumImageUrl
                     />
                     <LinkShare
                       isPublic={self.state.isPublic}
