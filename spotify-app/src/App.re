@@ -23,10 +23,10 @@ let make = _children => {
     Js.Promise.(
       OneGraphAuth.isLoggedIn(self.state.auth, "spotify")
       |> then_(loginStatus => {
-            Js.log(loginStatus);
-            self.send(SetLogInStatus(loginStatus));
-            resolve();
-          })
+           Js.log(loginStatus);
+           self.send(SetLogInStatus(loginStatus));
+           resolve();
+         })
       |> catch(err => resolve(Js.log(err)))
       |> ignore
     ),
