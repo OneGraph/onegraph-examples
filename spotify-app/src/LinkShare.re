@@ -40,18 +40,6 @@ let shareLinkURL = [%css
   ]
 ];
 
-let shareBtn = [%css
-  [
-    backgroundColor(`hex("1DB954")),
-    borderStyle(`none),
-    marginBottom(`px(16)),
-    boxShadow(~x=`px(0), ~y=`px(2), ~blur=`px(4), `hex("00000040")),
-    select(":hover", [backgroundColor(`hex("18a94b"))]),
-    select(":active", [important(backgroundColor(`hex("18a94b")))]),
-    select(":focus", [important(backgroundColor(`hex("18a94b")))]),
-  ]
-];
-
 let drowpdownMenuStyle = [%css
   [backgroundColor(`hex("047F30")), color(`hex("ffffff"))]
 ];
@@ -138,7 +126,7 @@ let make = (~isPublic, ~toggleShareStatus, _children) => {
             isOpen={self.state.isDropdownOpen}
             toggle={() => self.send(Toggle)}
             size="sm">
-            <DropdownToggle className=shareBtn caret=true>
+            <DropdownToggle className=SharedCss.button caret=true>
               {string("Share")}
             </DropdownToggle>
             <DropdownMenu className=drowpdownMenuStyle>

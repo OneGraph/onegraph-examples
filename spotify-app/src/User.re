@@ -1,84 +1,55 @@
-open Utils;
 open Emotion;
-open BsReactstrap;
-
-let userDefaultIcon = requireAssetURI("./img/user.png");
-
-type action =
-  | HandleLogOut
-  | Toggle;
-
-type state = {isDropdownOpen: bool};
 
 /*Style*/
-let userIcon = [%css [width(`px(25))]];
+let userIcon = [%css [
+  width(`px(25)),
+  margin4(`zero, `em(0.25), `zero, `em(0.5)),
+  borderRadius(`pct(50.))
+]];
+let anchor = [%css [cursor(`pointer)]];
+let separator = [%css [
+  width(`em(1.)),
+  backgroundColor(`hex("fff")),
+  height(`px(1)),
+  verticalAlign(`middle),
+  margin4(`zero, `em(0.5), `zero, `em(0.5)),
+  display(`inlineBlock),
+]];
 
-let userAccountWrapper = [%css
-  [padding4(`px(16), `px(0), `px(0), `px(24)), marginRight(`px(48))]
-];
+let handleLogOut = (auth, logOut) =>
+  Js.Promise.(
+    OneGraphAuth.(
+      auth
+        |> logout(_, "spotify")
+        |> then_(() => isLoggedIn(auth, "spotify"))
+        |> then_(isLoggedIn => {
+            if(!isLoggedIn) {
+              logOut();
+            }
+            resolve();
+          })
+        |> catch(err => resolve(Js.log(err)))
+        |> ignore
+    )
+  )
 
-let component = ReasonReact.reducerComponent("User");
+let component = ReasonReact.statelessComponent("User");
 
-let make = (~auth, ~setLogInStatus, ~userName, _children) => {
+let make = (~auth, ~logOut, ~userName, ~userIconUrl, _children) => {
   ...component,
-  initialState: () => {isDropdownOpen: false},
-  reducer: (action, state) =>
-    Js.Promise.(
-      OneGraphAuth.(
-        switch (action) {
-        | HandleLogOut =>
-          Js.log("Clicked LogOut!!");
-          ReasonReact.SideEffects(
-            (
-              _state =>
-                auth
-                |> logout(_, "spotify")
-                |> then_(() => isLoggedIn(auth, "spotify"))
-                |> then_(loginStatus => {
-                     Js.log(loginStatus);
-                     setLogInStatus(loginStatus);
-                     resolve();
-                   })
-                |> catch(err => resolve(Js.log(err)))
-                |> ignore
-            ),
-          );
-        | Toggle =>
-          ReasonReact.Update({isDropdownOpen: !state.isDropdownOpen})
-        }
-      )
-    ),
   render: self =>
     ReasonReact.(
-      <header className={SharedCss.flexWrapper(~justify=`flexEnd, ~align=`center)}>
-        <div style={ReactDOMRe.Style.make(~width="100px", ())}>
-          <Dropdown
-            isOpen={self.state.isDropdownOpen}
-            toggle={() => self.send(Toggle)}>
-            <DropdownToggle
-              caret=true
-              tag="div"
-              className={
-                Cn.make([
-                  SharedCss.flexWrapper(~justify=`flexEnd, ~align=`center),
-                  userAccountWrapper,
-                ])
-              }>
-              <img className=userIcon src=userDefaultIcon alt={"user icon"} />
-              <p
-                style={
-                  ReactDOMRe.Style.make(~margin="0px", ~flex="0 0 auto", ())
-                }>
-                {ReasonReact.string(userName)}
-              </p>
-            </DropdownToggle>
-            <DropdownMenu right=true>
-              <DropdownItem onClick={() => self.send(HandleLogOut)}>
-                {string("Sign Out")}
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        </div>
-      </header>
+          <p>
+            {string("Listening as")}
+            <img className=userIcon src=userIconUrl alt={"user icon"} />
+            {string(userName)}
+            <span className=separator />
+            <a
+              className=anchor
+              onClick={(_e) => handleLogOut(auth, logOut)}
+            >
+              {string("Sign Out")}
+            </a>
+          </p>
     ),
 };
