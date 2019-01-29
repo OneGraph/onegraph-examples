@@ -24,7 +24,8 @@
     "bs-emotion",
     "@ahrefs/bs-reactstrap",
     "re-classnames",
-    "reason-apollo"
+    "reason-apollo",
+    "bs-uuid"
   ],
   "refmt": 3,
   "ppx-flags": ["bs-emotion-ppx/ppx", "graphql_ppx/ppx"]
