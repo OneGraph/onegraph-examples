@@ -1,5 +1,4 @@
 open Emotion;
-open PeerJsBinding;
 
 let header = (~centered) => [%css
   [
@@ -33,7 +32,7 @@ type logInStatus =
 
 type playerStatus = {
   isPlaying: bool,
-  trackId: option(string),
+  trackId: string,
   positionMs: int,
 };
 
@@ -63,12 +62,12 @@ let make = _children => {
     isPublic: true,
     playerStatus: {
       isPlaying: false,
-      trackId: None,
+      trackId: "",
       positionMs: 0,
     },
     peerId: BsUuid.Uuid.V4.create(),
   },
-  didMount: self => {
+  didMount: self =>
     Js.Promise.(
       OneGraphAuth.isLoggedIn(self.state.auth, "spotify")
       |> then_((isLoggedIn: bool) => {
@@ -78,73 +77,84 @@ let make = _children => {
          })
       |> catch(err => resolve(Js.log(err)))
       |> ignore
-    );
-  },
+    ),
   reducer: (action, state) =>
     switch (action) {
     | SetLogInStatus(logInStatus) =>
       ReasonReact.Update({...state, logInStatus})
     | ToggleShareStatus =>
       ReasonReact.Update({...state, isPublic: !state.isPublic})
+    | NotePlayerStatus(playerStatus) =>
+      ReasonReact.Update({...state, playerStatus})
     },
   render: self =>
     ReasonReact.(
       <div>
         <header
-          className={Cn.make([
-            SharedCss.flexWrapper(~justify=`center, ~align=`center),
-            SharedCss.appearAnimation(~direction=`normal, ~delayMs=0),
-            header(~centered=self.state.logInStatus == HandshakingToken),
-          ])}>
+          className={
+            Cn.make([
+              SharedCss.flexWrapper(~justify=`center, ~align=`center),
+              SharedCss.appearAnimation(~direction=`normal, ~delayMs=0),
+              header(~centered=self.state.logInStatus == HandshakingToken),
+            ])
+          }>
           <h1 className=pageTitle> {string("SpotDJ")} </h1>
         </header>
         <main className=main>
-          {switch (self.state.logInStatus) {
-           | HandshakingToken => <div> {string("Handshaking")} </div>
-           | LoggedOut =>
-             <div
-               className={Cn.make([
-                 SharedCss.appearAnimation(~direction=`normal, ~delayMs=400),
-                 welcome,
-               ])}>
-               <h2 className=pageSubTitle>
-                 {string("Share your Spotify music live")}
-               </h2>
-               <LogIn
-                 auth={self.state.auth}
-                 logIn={() => self.send(SetLogInStatus(LoggedIn))}
-               />
-             </div>
-           | LoggedIn =>
-             <GetCurrentlyPlayingQuery>
-               ...{(
-                 {
-                   userName,
-                   userIconUrl,
-                   songName,
-                   artistName,
-                   isPlaying,
-                   progressPct,
-                   albumImageUrl,
-                   trackId,
-                   positionMs,
-                 },
-               ) =>
-                 <CurrentlyPlayingContainer
-                   auth={self.state.auth}
-                   artistName
-                   isPlaying
-                   progressPct
-                   songName
-                   userName
-                   userIconUrl
-                   albumImageUrl
-                   positionMs
-                   trackId
-                 />
-               }
-             </GetCurrentlyPlayingQuery>
-           }}
+          {
+            switch (self.state.logInStatus) {
+            | HandshakingToken => <div> {string("Handshaking")} </div>
+            | LoggedOut =>
+              <div
+                className={
+                  Cn.make([
+                    SharedCss.appearAnimation(
+                      ~direction=`normal,
+                      ~delayMs=400,
+                    ),
+                    welcome,
+                  ])
+                }>
+                <h2 className=pageSubTitle>
+                  {string("Share your Spotify music live")}
+                </h2>
+                <LogIn
+                  auth={self.state.auth}
+                  logIn=(() => self.send(SetLogInStatus(LoggedIn)))
+                />
+              </div>
+            | LoggedIn =>
+              <GetCurrentlyPlayingQuery>
+                ...(
+                     (
+                       {
+                         userName,
+                         userIconUrl,
+                         songName,
+                         artistName,
+                         isPlaying,
+                         progressPct,
+                         albumImageUrl,
+                         trackId,
+                         positionMs,
+                       },
+                     ) =>
+                       <CurrentlyPlayingContainer
+                         auth={self.state.auth}
+                         artistName
+                         isPlaying
+                         progressPct
+                         songName
+                         userName
+                         userIconUrl
+                         albumImageUrl
+                         positionMs
+                         trackId
+                       />
+                   )
+              </GetCurrentlyPlayingQuery>
+            }
+          }
         </main>
       </div>
     ),
