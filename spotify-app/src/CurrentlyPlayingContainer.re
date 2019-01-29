@@ -65,12 +65,16 @@ let make =
 
       let intervalId =
         Js.Global.setInterval(
-          () => PeerJsBinding.broadcast(myPeer, "hello over there!"),
+          () =>
+            PeerJsBinding.broadcast(
+              myPeer,
+              {isPlaying, trackId, positionMs},
+            ),
           1000,
         );
       self.onUnmount(() => Js.Global.clearInterval(intervalId));
     | Listener(djId) =>
-      let connection = openConnection(myPeer, self.state.peerId, djId);
+      let connection = openConnection(myPeer, self.state.peerId, djId, auth);
       Js.log3("I'm a listener to with connection:", djId, connection);
       self.send(SetPeer(myPeer));
     };
@@ -84,12 +88,7 @@ let make =
     <div>
       <div
         className={SharedCss.appearAnimation(~direction=`normal, ~delayMs=0)}>
-        <pre>
-          {string(
-             getWithDefault(trackId, "No trackId")
-             ++ string_of_int(positionMs),
-           )}
-        </pre>
+        <pre> {string(trackId ++ string_of_int(positionMs))} </pre>
         <User auth userName userIconUrl />
         <CurrentlyPlaying
           songName
@@ -111,3 +110,24 @@ let make =
    />
 
  */
+
+/*
+ fetch(
+   "https://serve.onegraph.com/dynamic?app_id=" + appId + "&show_metrics=true",
+   {
+     "credentials": "omit",
+     "headers": {
+       "accept": "application/json",
+       "accept-language": "en-US,en;q=0.9,ja;q=0.8,zh-CN;q=0.7,zh;q=0.6",
+       "authentication": "Bearer " + auth,
+       "content-type": "application/json",
+       "show_beta_schema": "false",
+     },
+     "referrer": "https://www.onegraph.com/dashboard/app/bafd4254-c229-48c2-8c53-44a01477a43e/OneGraphiQL",
+     "referrerPolicy": "no-referrer-when-downgrade",
+     "body": "{\"query\":\"mutation startPlay(\\n  $trackId: String!\\n  $positionMs: Int!\\n) {\\n  spotify {\\n    playTrack(\\n      input: { trackIds: $trackId, positionMs: $positionMs }\\n    ) {\\n      player {\\n        isPlaying\\n      }\\n    }\\n  }\\n}\\n\",\"variables\":{\"trackId\":\"abc\",\"positionMs\":100},\"operationName\":\"startPlay\"}",
+     "method": "POST",
+     "mode": "cors",
+   },
+ );
+    */
