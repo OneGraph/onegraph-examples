@@ -4,6 +4,9 @@
 /* require an asset (eg. an image) and return exported string value (image URI) */
 [@bs.val] external requireAssetURI: string => string = "require";
 
+[@bs.val] [@bs.scope ("window", "location")]
+external windowHref: string = "href";
+
 let getImageUrl = (~images, ~defaultImage) => {
   let urls =
     Js.Array.map(
@@ -16,9 +19,6 @@ let getImageUrl = (~images, ~defaultImage) => {
     )
     |> Js.Array.filter(url => url !== "");
 
-  Array.length(urls) > 1
-    ? urls[1]
-    : Array.length(urls) == 1
-      ? urls[0]
-      : defaultImage;
-}
+  Array.length(urls) > 1 ?
+    urls[1] : Array.length(urls) == 1 ? urls[0] : defaultImage;
+};

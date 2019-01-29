@@ -1,11 +1,14 @@
 open Emotion;
+open PeerJsBinding;
 
-let header = (~centered) => [%css [
-  transform(translateY(centered ? `vh(20.) : `zero)),
-  transitionProperty("transform"),
-  transitionDuration((`ms(600))),
-  transitionTimingFunction(`easeOut)
-]];
+let header = (~centered) => [%css
+  [
+    transform(translateY(centered ? `vh(20.) : `zero)),
+    transitionProperty("transform"),
+    transitionDuration(`ms(600)),
+    transitionTimingFunction(`easeOut),
+  ]
+];
 
 let pageTitle = [%css [fontSize(`px(56)), marginBottom(`px(16))]];
 let pageSubTitle = [%css
@@ -13,13 +16,15 @@ let pageSubTitle = [%css
 ];
 
 let main = [%css [position(`relative)]];
-let welcome = [%css [
-  position(`absolute),
-  marginLeft(`auto),
-  marginRight(`auto),
-  left(`zero),
-  right(`zero)
-]];
+let welcome = [%css
+  [
+    position(`absolute),
+    marginLeft(`auto),
+    marginRight(`auto),
+    left(`zero),
+    right(`zero),
+  ]
+];
 
 type logInStatus =
   | HandshakingToken
@@ -27,9 +32,10 @@ type logInStatus =
   | LoggedOut;
 
 type state = {
-  logInStatus: logInStatus,
+  logInStatus,
   auth: OneGraphAuth.auth,
   isPublic: bool,
+  peerId: BsUuid.Uuid.V4.t,
 };
 
 type action =
@@ -39,22 +45,39 @@ type action =
 let component = ReasonReact.reducerComponent("App");
 
 let renderIf = (condition: bool, element: ReasonReact.reactElement) =>
-  condition ? element : ReasonReact.null
+  condition ? element : ReasonReact.null;
 
 let make = _children => {
   ...component,
-  initialState: () => {logInStatus: HandshakingToken, auth: Client.auth, isPublic: true},
-  didMount: self =>
+  initialState: () => {
+    logInStatus: HandshakingToken,
+    auth: Client.auth,
+    isPublic: true,
+    peerId: BsUuid.Uuid.V4.create(),
+  },
+  didMount: self => {
+    let url = Utils.windowHref;
+    /*Ex. http://localhost:8000/?abcdDjID*/
+    let parsedUrl = Js.String.split("/?", url);
+    let myPeer = newPeer();
+
+    onRecieveConnRequest(myPeer, "abc", Some(11));
+
+    if (Array.length(parsedUrl) > 1 && String.length(parsedUrl[1]) > 5) {
+      openConnection(myPeer, self.state.peerId, parsedUrl[1]);
+    };
+
     Js.Promise.(
       OneGraphAuth.isLoggedIn(self.state.auth, "spotify")
-      |> then_((isLoggedIn:bool) => {
-            let logInStatus = isLoggedIn ? LoggedIn : LoggedOut;
-            self.send(SetLogInStatus(logInStatus));
-            resolve();
-          })
+      |> then_((isLoggedIn: bool) => {
+           let logInStatus = isLoggedIn ? LoggedIn : LoggedOut;
+           self.send(SetLogInStatus(logInStatus));
+           resolve();
+         })
       |> catch(err => resolve(Js.log(err)))
       |> ignore
-    ),
+    );
+  },
   reducer: (action, state) =>
     switch (action) {
     | SetLogInStatus(logInStatus) =>
@@ -65,59 +88,89 @@ let make = _children => {
   render: self =>
     ReasonReact.(
       <div>
-        <header className={
-          Cn.make([
-            SharedCss.flexWrapper(~justify=`center, ~align=`center),
-            SharedCss.appearAnimation(~direction=`normal, ~delayMs=0),
-            header(~centered=self.state.logInStatus == HandshakingToken)
-          ])
-        }>
-          <h1 className=pageTitle>{string("SpotDJ")}</h1>
+        <header
+          className={
+            Cn.make([
+              SharedCss.flexWrapper(~justify=`center, ~align=`center),
+              SharedCss.appearAnimation(~direction=`normal, ~delayMs=0),
+              header(~centered=self.state.logInStatus == HandshakingToken),
+            ])
+          }>
+          <h1 className=pageTitle> {string("SpotDJ")} </h1>
         </header>
         <main className=main>
-          {renderIf(
-            self.state.logInStatus == LoggedOut,
-            <div className={
-              Cn.make([
-                SharedCss.appearAnimation(~direction=`normal, ~delayMs=400),
-                welcome
-              ])
-            }>
-              <h2 className=pageSubTitle>
-                {string("Share your Spotify music live")}
-              </h2>
+          {
+            renderIf(
+              self.state.logInStatus == LoggedOut,
+              <div
+                className={
+                  Cn.make([
+                    SharedCss.appearAnimation(
+                      ~direction=`normal,
+                      ~delayMs=400,
+                    ),
+                    welcome,
+                  ])
+                }>
+                <h2 className=pageSubTitle>
+                  {string("Share your Spotify music live")}
+                </h2>
                 <LogIn
                   auth={self.state.auth}
                   logIn={() => self.send(SetLogInStatus(LoggedIn))}
                 />
-            </div>
-          )}
-          {renderIf(
-            self.state.logInStatus == LoggedIn,
-            <GetCurrentlyPlayingQuery>
-            ...{({ userName, userIconUrl, songName, artistName, isPlaying, progressPct, albumImageUrl }) =>
-                <div className=SharedCss.appearAnimation(~direction=`normal, ~delayMs=0)>
-                    <User
-                      auth={self.state.auth}
-                      logOut={() => self.send(SetLogInStatus(LoggedOut))}
-                      userName
-                      userIconUrl
-                    />
-                    <CurrentlyPlaying
-                      songName
-                      artistName
-                      isPlaying
-                      progressPct
-                      albumImageUrl
-                    />
-                    <LinkShare
-                      isPublic={self.state.isPublic}
-                      toggleShareStatus={() => self.send(ToggleShareStatus)}
-                    />
-                  </div>
-                }
-              </GetCurrentlyPlayingQuery>
-          )}
+              </div>,
+            )
+          }
+          {
+            renderIf(
+              self.state.logInStatus == LoggedIn,
+              <GetCurrentlyPlayingQuery>
+                ...{
+                     (
+                       {
+                         userName,
+                         userIconUrl,
+                         songName,
+                         artistName,
+                         isPlaying,
+                         progressPct,
+                         albumImageUrl,
+                       },
+                     ) =>
+                       <div
+                         className={
+                           SharedCss.appearAnimation(
+                             ~direction=`normal,
+                             ~delayMs=0,
+                           )
+                         }>
+                         <User
+                           auth={self.state.auth}
+                           logOut={
+                             () => self.send(SetLogInStatus(LoggedOut))
+                           }
+                           userName
+                           userIconUrl
+                         />
+                         <CurrentlyPlaying
+                           songName
+                           artistName
+                           isPlaying
+                           progressPct
+                           albumImageUrl
+                         />
+                         <LinkShare
+                           isPublic={self.state.isPublic}
+                           toggleShareStatus={
+                             () => self.send(ToggleShareStatus)
+                           }
+                         />
+                       </div>
+                   }
+              </GetCurrentlyPlayingQuery>,
+            )
+          }
         </main>
       </div>
     ),
