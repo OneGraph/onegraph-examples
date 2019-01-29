@@ -20,6 +20,7 @@
     "@ahrefs/bs-reactstrap": "^0.5.9",
     "apollo-client": "^2.4.8",
     "bs-emotion": "^0.1.1",
+    "bs-fetch": "^0.3.1",
     "bs-uuid": "^0.3.1",
     "get_in_ppx": "^1.0.2",
     "graphql": "^14.0.2",
