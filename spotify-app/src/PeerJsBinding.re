@@ -36,7 +36,7 @@ type options = {
 };
 
 [@bs.new] [@bs.scope "window"]
-external newPeer: (Js.Nullable.t(string), options) => peer = "Peer";
+external newPeer: (BsUuid.Uuid.V4.t, options) => peer = "Peer";
 
 [@bs.send] external peerConnect: (peer, id) => dataConnection = "connect";
 [@bs.send]
@@ -112,17 +112,19 @@ let openConnection = (peer, requesterId, djId, auth) => {
   conn;
 };
 
-let onReceiveConnRequest = (peer, playerStatus) =>
-  peerOn(
-    peer,
-    "connection",
-    conn => {
-      connOn(conn, "data", data =>
-        Js.log2("On Recieved Conn Request, Got some data from a peer:", data)
-      );
-      connSendTrack(conn, playerStatus);
-    },
-  );
+/*
+ let onReceiveConnRequest = (peer, playerStatus) =>
+   peerOn(
+     peer,
+     "connection",
+     conn => {
+       connOn(conn, "data", data =>
+         Js.log2("On Recieved Conn Request, Got some data from a peer:", data)
+       );
+       connSendTrack(conn, playerStatus);
+     },
+   );
+    */
 
 type connectionsMap = Js.Dict.t(array(dataConnection));
 

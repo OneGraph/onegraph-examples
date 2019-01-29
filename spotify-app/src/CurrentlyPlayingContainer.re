@@ -56,9 +56,7 @@ let make =
     let options: PeerJsBinding.options =
       PeerJsBinding.options(~key="abc", ());
 
-    let apiKey = Js.Nullable.null;
-
-    let myPeer = newPeer(apiKey, options);
+    let myPeer = newPeer(self.state.peerId, options);
     Js.log2("myPeer", myPeer);
 
     switch (userKind) {
