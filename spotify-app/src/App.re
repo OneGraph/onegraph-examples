@@ -39,15 +39,13 @@ type playerStatus = {
 type state = {
   logInStatus,
   auth: OneGraphAuth.auth,
-  isPublic: bool,
   peerId: BsUuid.Uuid.V4.t,
   playerStatus,
 };
 
 type action =
   | NotePlayerStatus(playerStatus)
-  | SetLogInStatus(logInStatus)
-  | ToggleShareStatus;
+  | SetLogInStatus(logInStatus);
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -59,7 +57,6 @@ let make = _children => {
   initialState: () => {
     logInStatus: HandshakingToken,
     auth: Client.auth,
-    isPublic: true,
     playerStatus: {
       isPlaying: false,
       trackId: "",
@@ -82,8 +79,7 @@ let make = _children => {
     switch (action) {
     | SetLogInStatus(logInStatus) =>
       ReasonReact.Update({...state, logInStatus})
-    | ToggleShareStatus =>
-      ReasonReact.Update({...state, isPublic: !state.isPublic})
+
     | NotePlayerStatus(playerStatus) =>
       ReasonReact.Update({...state, playerStatus})
     },

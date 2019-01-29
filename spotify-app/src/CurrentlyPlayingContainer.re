@@ -10,6 +10,7 @@ type state = {
   peer: option(PeerJsBinding.peer),
   peerId: BsUuid.Uuid.V4.t,
   userKind,
+  isPublic: bool,
 };
 
 type action =
@@ -40,6 +41,7 @@ let make =
     peer: None,
     peerId: BsUuid.Uuid.V4.create(),
     userKind: DJ,
+    isPublic: true,
   },
   didMount: self => {
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
@@ -82,9 +84,10 @@ let make =
   reducer: (action, state) =>
     switch (action) {
     | SetPeer(peer) => ReasonReact.Update({...state, peer: Some(peer)})
-    | ToggleShareStatus => ReasonReact.NoUpdate
+    | ToggleShareStatus =>
+      ReasonReact.Update({...state, isPublic: !state.isPublic})
     },
-  render: _self =>
+  render: self =>
     <div>
       <div
         className={SharedCss.appearAnimation(~direction=`normal, ~delayMs=0)}>
@@ -97,37 +100,11 @@ let make =
           progressPct
           albumImageUrl
         />
+        <LinkShare
+          isPublic={self.state.isPublic}
+          toggleShareStatus={() => self.send(ToggleShareStatus)}
+          peerId={self.state.peerId}
+        />
       </div>
     </div>,
 };
-
-/*
-   <LinkShare
-   isPublic=self.state.isPublic
-   toggleShareStatus=(
-   () => self.send(ToggleShareStatus)
-   )
-   />
-
- */
-
-/*
- fetch(
-   "https://serve.onegraph.com/dynamic?app_id=" + appId + "&show_metrics=true",
-   {
-     "credentials": "omit",
-     "headers": {
-       "accept": "application/json",
-       "accept-language": "en-US,en;q=0.9,ja;q=0.8,zh-CN;q=0.7,zh;q=0.6",
-       "authentication": "Bearer " + auth,
-       "content-type": "application/json",
-       "show_beta_schema": "false",
-     },
-     "referrer": "https://www.onegraph.com/dashboard/app/bafd4254-c229-48c2-8c53-44a01477a43e/OneGraphiQL",
-     "referrerPolicy": "no-referrer-when-downgrade",
-     "body": "{\"query\":\"mutation startPlay(\\n  $trackId: String!\\n  $positionMs: Int!\\n) {\\n  spotify {\\n    playTrack(\\n      input: { trackIds: $trackId, positionMs: $positionMs }\\n    ) {\\n      player {\\n        isPlaying\\n      }\\n    }\\n  }\\n}\\n\",\"variables\":{\"trackId\":\"abc\",\"positionMs\":100},\"operationName\":\"startPlay\"}",
-     "method": "POST",
-     "mode": "cors",
-   },
- );
-    */
