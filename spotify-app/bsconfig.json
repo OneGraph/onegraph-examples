@@ -28,5 +28,6 @@
     "bs-uuid"
   ],
   "refmt": 3,
-  "ppx-flags": ["bs-emotion-ppx/ppx", "graphql_ppx/ppx"]
+  "ppx-flags": ["bs-emotion-ppx/ppx", "graphql_ppx/ppx", "get_in_ppx/ppx"],
+  "bsc-flags": ["-bs-super-errors"]
 }

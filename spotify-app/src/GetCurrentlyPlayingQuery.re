@@ -36,13 +36,15 @@ module GetCurrentlyPlaying = [%graphql
 ];
 
 type formattedData = {
-  userName: string,
-  userIconUrl: string,
-  songName: string,
+  albumImageUrl: string,
   artistName: string,
   isPlaying: bool,
+  positionMs: int,
   progressPct: float,
-  albumImageUrl: string
+  songName: string,
+  trackId: option(string),
+  userIconUrl: string,
+  userName: string,
 };
 
 module GetCurrentlyPlayingQuery =
@@ -141,6 +143,14 @@ let make = (
                 ->flatMap(item => item##artists)
                 ->getWithDefault([||]);
 
+                let trackId =
+                  response##spotify##me
+                  ->flatMap(me => me##player)
+                  ->flatMap(player => player##item)
+                  ->flatMap(item => item##id);
+
+
+
               let artistNameArray =
                 Js.Array.map(
                   artist =>
@@ -156,13 +166,15 @@ let make = (
               let artistName = Js.Array.joinWith(",", artistNameArray);
 
               children({
-                userName,
-                userIconUrl,
-                songName,
+                albumImageUrl,
                 artistName,
                 isPlaying,
+                positionMs: progressMs,
                 progressPct,
-                albumImageUrl
+                songName,
+                trackId,
+                userName,
+                userIconUrl,
               });
               }
             }

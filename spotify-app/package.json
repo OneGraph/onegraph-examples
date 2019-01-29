@@ -5,10 +5,11 @@
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
+    "refmt": "refmt --in-place",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "webpack": "webpack -w",
+    "webpack": "webpack -w --display-error-details",
     "webpack:production": "NODE_ENV=production webpack",
-    "server": "webpack-dev-server"
+    "server": "webpack-dev-server --display-error-details"
   },
   "keywords": [
     "BuckleScript"
@@ -20,6 +21,7 @@
     "apollo-client": "^2.4.8",
     "bs-emotion": "^0.1.1",
     "bs-uuid": "^0.3.1",
+    "get_in_ppx": "^1.0.2",
     "graphql": "^14.0.2",
     "graphql-tag": "^2.10.0",
     "onegraph-auth": "^0.2.20",
