@@ -86,7 +86,7 @@ let subInfo = [%css
 
 let component = ReasonReact.reducerComponent("User");
 
-let make = (~isPublic, ~toggleShareStatus, ~peerId, _children) => {
+let make = (~peerId, _children) => {
   ...component,
   initialState: () => {isDropdownOpen: false},
   reducer: (action, state) =>
@@ -118,7 +118,7 @@ let make = (~isPublic, ~toggleShareStatus, ~peerId, _children) => {
           }>
           <input
             className=shareLinkURL
-            value={"www.example.com/?dj=" ++ BsUuid.Uuid.V4.toString(peerId)}
+            value={"www.example.com/?dj=" ++ peerId}
             readOnly=true
           />
           <hr className=inputLine />
