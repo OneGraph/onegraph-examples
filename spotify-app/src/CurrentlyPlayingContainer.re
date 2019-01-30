@@ -61,27 +61,21 @@ let make =
     let peerId =
       switch (Js.nullToOption(maybePeerId)) {
       | None =>
-        Js.log("newId");
         let newId = BsUuid.Uuid.V4.create();
         Utils.sessionStorageSetItem(
           "spotDjPeerId",
           BsUuid.Uuid.V4.toString(newId),
         );
         newId;
-      | Some(id) =>
-        Js.log("oldId");
-        id;
+      | Some(id) => id
       };
 
     let myPeer = newPeer(peerId, options);
     self.send(SetPeer(myPeer, peerId));
-    Js.log2("myPeer", myPeer);
-    Js.log(peerId);
 
     switch (userKind) {
     | DJ =>
       Js.log("I'm a DJ");
-
       let intervalId =
         Js.Global.setInterval(
           () =>
