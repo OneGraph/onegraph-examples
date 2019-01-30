@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "build": "bsb -make-world",
+    "now-build": "bsb -make-world && NODE_ENV=production webpack && mv build dist",
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
     "refmt": "refmt --in-place",
