@@ -15,7 +15,6 @@ export function addMetricsWatcher(f) {
   const watcherId = (id++).toString(36)
   metricsWatchers[watcherId] = f
   return () => {
-    console.log('deleting', watcherId)
     delete metricsWatchers[watcherId]
   }
 }
