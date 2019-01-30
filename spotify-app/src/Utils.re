@@ -7,6 +7,13 @@
 [@bs.val] [@bs.scope ("window", "location")]
 external windowHref: string = "href";
 
+[@bs.val] [@bs.scope ("window", "sessionStorage")]
+external sessionStorageSetItem: (string, string) => unit = "setItem";
+
+[@bs.val] [@bs.scope ("window", "sessionStorage")]
+external sessionStorageGetItem: string => Js.null(BsUuid.Uuid.V4.t) =
+  "getItem";
+
 let getImageUrl = (~images, ~defaultImage) => {
   let urls =
     Js.Array.map(

@@ -8,13 +8,13 @@ type userKind =
 
 type state = {
   peer: option(PeerJsBinding.peer),
-  peerId: BsUuid.Uuid.V4.t,
+  peerId: option(BsUuid.Uuid.V4.t),
   userKind,
   isPublic: bool,
 };
 
 type action =
-  | SetPeer(peer)
+  | SetPeer(peer, BsUuid.Uuid.V4.t)
   | ToggleShareStatus;
 
 let component = ReasonReact.reducerComponent("App");
@@ -39,7 +39,7 @@ let make =
   ...component,
   initialState: () => {
     peer: None,
-    peerId: BsUuid.Uuid.V4.create(),
+    peerId: None,
     userKind: DJ,
     isPublic: true,
   },
@@ -56,8 +56,26 @@ let make =
     let options: PeerJsBinding.options =
       PeerJsBinding.options(~key="abc", ());
 
-    let myPeer = newPeer(self.state.peerId, options);
+    let maybePeerId = Utils.sessionStorageGetItem("spotDjPeerId");
+    let peerId =
+      switch (Js.nullToOption(maybePeerId)) {
+      | None =>
+        Js.log("newId");
+        let newId = BsUuid.Uuid.V4.create();
+        Utils.sessionStorageSetItem(
+          "spotDjPeerId",
+          BsUuid.Uuid.V4.toString(newId),
+        );
+        newId;
+      | Some(id) =>
+        Js.log("oldId");
+        id;
+      };
+
+    let myPeer = newPeer(peerId, options);
+    self.send(SetPeer(myPeer, peerId));
     Js.log2("myPeer", myPeer);
+    Js.log(peerId);
 
     switch (userKind) {
     | DJ =>
@@ -74,14 +92,14 @@ let make =
         );
       self.onUnmount(() => Js.Global.clearInterval(intervalId));
     | Listener(djId) =>
-      let connection = openConnection(myPeer, self.state.peerId, djId, auth);
+      let connection = openConnection(myPeer, peerId, djId, auth);
       Js.log3("I'm a listener to with connection:", djId, connection);
-      self.send(SetPeer(myPeer));
     };
   },
   reducer: (action, state) =>
     switch (action) {
-    | SetPeer(peer) => ReasonReact.Update({...state, peer: Some(peer)})
+    | SetPeer(peer, peerId) =>
+      ReasonReact.Update({...state, peer: Some(peer), peerId: Some(peerId)})
     | ToggleShareStatus =>
       ReasonReact.Update({...state, isPublic: !state.isPublic})
     },
@@ -99,9 +117,12 @@ let make =
           albumImageUrl
         />
         <LinkShare
-          isPublic={self.state.isPublic}
-          toggleShareStatus={() => self.send(ToggleShareStatus)}
-          peerId={self.state.peerId}
+          peerId={
+            switch (self.state.peerId) {
+            | Some(peerId) => BsUuid.Uuid.V4.toString(peerId)
+            | None => ""
+            }
+          }
         />
       </div>
     </div>,
