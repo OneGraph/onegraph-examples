@@ -34,6 +34,7 @@ let make =
       ~trackId,
       ~userName,
       ~userIconUrl,
+      ~setLogOut,
       _children,
     ) => {
   ...component,
@@ -108,7 +109,7 @@ let make =
       <div
         className={SharedCss.appearAnimation(~direction=`normal, ~delayMs=0)}>
         <pre> {string(trackId ++ string_of_int(positionMs))} </pre>
-        <User auth userName userIconUrl />
+        <User auth userName userIconUrl setLogOut />
         <CurrentlyPlaying
           songName
           artistName

@@ -20,7 +20,7 @@ let separator = [%css
   ]
 ];
 
-let handleLogOut = (auth, logOut) =>
+let handleLogOut = (auth, setLogOut) =>
   Js.Promise.(
     OneGraphAuth.(
       auth
@@ -28,7 +28,7 @@ let handleLogOut = (auth, logOut) =>
       |> then_(() => isLoggedIn(auth, "spotify"))
       |> then_(isLoggedIn => {
            if (!isLoggedIn) {
-             logOut();
+             setLogOut();
            };
            resolve();
          })
@@ -39,7 +39,7 @@ let handleLogOut = (auth, logOut) =>
 
 let component = ReasonReact.statelessComponent("User");
 
-let make = (~auth as _, ~userName, ~userIconUrl, _children) => {
+let make = (~auth, ~userName, ~userIconUrl, ~setLogOut, _children) => {
   ...component,
   render: _self =>
     ReasonReact.(
@@ -48,9 +48,9 @@ let make = (~auth as _, ~userName, ~userIconUrl, _children) => {
         <img className=userIcon src=userIconUrl alt="user icon" />
         {string(userName)}
         <span className=separator />
-        <a className=anchor>
-          /* onClick={(_e) => () handleLogOut(auth, logOut)} */
-           {string("Sign Out")} </a>
+        <a className=anchor onClick={_e => handleLogOut(auth, setLogOut)}>
+          {string("Sign Out")}
+        </a>
       </p>
     ),
 };

@@ -146,6 +146,9 @@ let make = _children => {
                          albumImageUrl
                          positionMs
                          trackId
+                         setLogOut={
+                           () => self.send(SetLogInStatus(LoggedOut))
+                         }
                        />
                    )
               </GetCurrentlyPlayingQuery>
