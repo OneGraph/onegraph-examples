@@ -1,7 +1,47 @@
 import fetch from 'node-fetch'
-import { ApolloClient, InMemoryCache, HttpLink } from 'apollo-boost'
+import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from 'apollo-boost'
 
 import { APP_ID } from '../../env'
+
+const link = new HttpLink({
+  uri: 'https://serve.onegraph.com/dynamic?show_metrics=true&app_id=' + APP_ID,
+})
+
+const metricsWatchers = {}
+
+let id = 0
+
+export function addMetricsWatcher(f) {
+  const watcherId = (id++).toString(36)
+  metricsWatchers[watcherId] = f
+  return () => {
+    console.log('deleting', watcherId)
+    delete metricsWatchers[watcherId]
+  }
+}
+
+function runWatchers(requestMetrics) {
+  for (const watcherId of Object.keys(metricsWatchers)) {
+    try {
+      metricsWatchers[watcherId](requestMetrics)
+    } catch (e) {
+      console.error('error running metrics watcher', e)
+    }
+  }
+}
+
+const trackMetrics = new ApolloLink((operation, forward) => {
+  return forward(operation).map(response => {
+    runWatchers(
+      response
+        ? response.extensions
+          ? response.extensions.metrics
+          : null
+        : null
+    )
+    return response
+  })
+})
 
 let apolloClient = null
 
@@ -15,10 +55,7 @@ function create(initialState) {
   return new ApolloClient({
     connectToDevTools: process.browser,
     ssrMode: !process.browser, // Disables forceFetch on the server (so queries are only run once)
-    link: new HttpLink({
-      uri:
-        'https://serve.onegraph.com/dynamic?show_metrics=true&app_id=' + APP_ID,
-    }),
+    link: trackMetrics.concat(link),
     cache: new InMemoryCache().restore(initialState || {}),
   })
 }

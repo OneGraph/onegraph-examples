@@ -28,6 +28,8 @@ import ReadmeFile from '../sections/ReadmeFile'
 import Conditional from '../components/Conditional'
 import Spacer from '../components/Spacer'
 
+import { addMetricsWatcher } from '../integration/apolloClient'
+
 // one request for the all data including 2 different services
 // this is both convenient and mind-blowing
 const GET_STATS = gql`
@@ -128,7 +130,14 @@ const getDateString = date =>
 const Page = ({ initialSearch }) => {
   const { status, login, logout, headers } = useContext(AuthContext)
   const [search, updateSearch] = useState(initialSearch)
+  const [requestMetrics, updateRequestMetrics] = useState(null)
   const { css, theme } = useFela()
+
+  useEffect(() => {
+    return addMetricsWatcher(requestMetrics =>
+      updateRequestMetrics(requestMetrics)
+    )
+  })
 
   // this will update the URL query parameter so that
   // we can share a direct URL to a specific package
@@ -157,6 +166,8 @@ const Page = ({ initialSearch }) => {
     // only run if the search input changes
     [search]
   )
+
+  console.log('requestMetrics', requestMetrics)
 
   return (
     <div
