@@ -1,14 +1,3 @@
-type peer;
-type dataConnection;
-type data;
-type playerStatus = {
-  isPlaying: bool,
-  trackId: string,
-  positionMs: int,
-};
-
-type id = string;
-
 ignore("peerjs/dist/peer.js");
 
 [@bs.deriving abstract]
@@ -35,95 +24,105 @@ type options = {
   debug: int,
 };
 
-[@bs.new] [@bs.scope "window"]
-external newPeer: (BsUuid.Uuid.V4.t, options) => peer = "Peer";
+module Uuid = {
+  include BsUuid.Uuid.V4;
 
-[@bs.send] external peerConnect: (peer, id) => dataConnection = "connect";
-[@bs.send]
-external peerOn: (peer, string, dataConnection => unit) => unit = "on";
-[@bs.send] external peerDisconnect: peer => unit = "disconnect";
-
-[@bs.send]
-external connOn: (dataConnection, string, playerStatus => unit) => unit = "on";
-
-[@bs.send]
-external connSendId: (dataConnection, BsUuid.Uuid.V4.t) => unit = "send";
-
-[@bs.send]
-external connSendTrack: (dataConnection, playerStatus) => unit = "send";
-
-[@bs.send] external connSend: (dataConnection, string) => unit = "send";
-
-let controlPlayer = (token, playerStatus) => {
-  let startPlayQuery =
-    "{\"query\":\"mutation startPlay(\\n  $trackId: String!\\n  $positionMs: Int!\\n) {\\n  spotify {\\n    playTrack(\\n      input: { trackIds: $trackId, positionMs: $positionMs }\\n    ) {\\n      player {\\n        isPlaying\\n      }\\n    }\\n  }\\n}\\n\",\"variables\":{\"trackId\":\""
-    ++ playerStatus.trackId
-    ++ "\",\"positionMs\":"
-    ++ string_of_int(playerStatus.positionMs)
-    ++ "},\"operationName\":\"startPlay\"}";
-
-  let pauseQuery = "{\"query\":\"mutation pause {\\n  spotify {\\n    pausePlayer {\\n      player {\\n        isPlaying\\n      }\\n    }\\n  }\\n}\\n\",\"variables\":null,\"operationName\":\"pause\"}";
-
-  Js.Promise.(
-    Fetch.fetchWithInit(
-      "https://serve.onegraph.com/dynamic?app_id="
-      ++ OneGraphAuth.appId
-      ++ "&show_metrics=true",
-      Fetch.RequestInit.make(
-        ~method_=Post,
-        ~body=
-          Fetch.BodyInit.make(
-            playerStatus.isPlaying ? startPlayQuery : pauseQuery,
-          ),
-        ~headers=
-          Fetch.HeadersInit.make({
-            "accept": "application/json",
-            "accept-language": "en-US,en;q=0.9,ja;q=0.8,zh-CN;q=0.7,zh;q=0.6",
-            "authentication": "Bearer " ++ token,
-            "content-type": "application/json",
-            "show_beta_schema": "false",
-          }),
-        (),
-      ),
-    )
-    |> then_(Fetch.Response.json)
-    |> ignore
-  );
+  external ofString: string => t = "%identity";
 };
 
-let openConnection = (peer, requesterId, djId, auth) => {
-  let conn = peerConnect(peer, djId);
-  connOn(conn, "open", _data => connSendId(conn, requesterId));
+type switchboard;
+
+module Impl = {
+  type dataConnection;
+  type data;
+
+  type id = string;
+
+  [@bs.send]
+  external connectToPeer: (switchboard, id) => dataConnection = "connect";
+  [@bs.send]
+  external peerOn: (switchboard, string, dataConnection => unit) => unit =
+    "on";
+  [@bs.send] external peerDisconnect: switchboard => unit = "disconnect";
+
+  [@bs.send]
+  external connOn:
+    (
+      dataConnection,
+      [@bs.string] [
+        | [@bs.as "data"] `Data
+        | [@bs.as "open"] `Open
+        | [@bs.as "close"] `Close
+        | [@bs.as "error"] `Error
+      ],
+      string => unit
+    ) =>
+    unit =
+    "on";
+
+  /* [@bs.send] */
+  /* external connSendId: (dataConnection, BsUuid.Uuid.V4.t) => unit = "send"; */
+
+  /* [@bs.send] */
+  /* external connSendTrack: (dataConnection, playerStatus) => unit = "send"; */
+
+  [@bs.send] external connSend: (dataConnection, string) => unit = "send";
+
+  [@bs.get]
+  external localId: switchboard => [@bs.nullable] option(string) = "id";
+
+  type connectionsMap = Js.Dict.t(array(dataConnection));
+
+  [@bs.get] external connections: switchboard => connectionsMap = "";
+};
+
+[@bs.new] [@bs.scope "window"]
+external newSwitchBoard: (Uuid.t, options) => switchboard = "Peer";
+
+open Impl;
+
+let connect =
+    (
+      ~onOpen: option(string => unit)=?,
+      ~onClose: option(string => unit)=?,
+      ~onError: option(string => unit)=?,
+      ~me,
+      ~toPeerId,
+      ~onData,
+      (),
+    ) => {
+  let _localId = me |> localId |> Belt.Option.map(_, Uuid.ofString);
+
+  let conn = connectToPeer(me, toPeerId);
+  switch (onOpen) {
+  | None => ()
+  | Some(onOpen) => connOn(conn, `Open, onOpen)
+  };
+
+  connOn(conn, `Data, onData);
   connOn(
     conn,
-    "data",
-    data => {
-      Js.log2("Got some data from a peer:", data);
-      let token =
-        switch (OneGraphAuth.authToken(auth)) {
-        | Some(token) => token
-        | None => ""
-        };
-      controlPlayer(token, data);
-    },
+    `Error,
+    Belt.Option.getWithDefault(onError, err => Js.log2("PeerJS error", err)),
   );
-  connOn(conn, "error", err => Js.log2("PeerJS error", err));
-  connOn(conn, "close", _data => Js.log("Connection Lost"));
+  connOn(
+    conn,
+    `Close,
+    Belt.Option.getWithDefault(onClose, data =>
+      Js.log2("Connection to peer Lost", data)
+    ),
+  );
+
   conn;
 };
 
-type connectionsMap = Js.Dict.t(array(dataConnection));
-
-[@bs.get] external connections: peer => connectionsMap = "";
-
-let broadcast = (peer, playerStatus) => {
+let broadcast = (peer, data) => {
   let conns = connections(peer);
   conns
   |> Js.Dict.keys
   |> Array.map(key => Js.Dict.unsafeGet(conns, key))
   |> Array.iter(peerConns =>
-       peerConns
-       |> Array.iter(peerConn => connSendTrack(peerConn, playerStatus))
+       peerConns |> Array.iter(peerConn => connSend(peerConn, data))
      );
   Js.log2("Broadcast conns", conns);
 };

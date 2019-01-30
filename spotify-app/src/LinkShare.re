@@ -94,6 +94,8 @@ let shareSocialMedia = (url, name, properties) =>
 
 let component = ReasonReact.reducerComponent("User");
 
+let sharingLink = djId => Utils.Window.({j|$protocol//$host?dj=$djId|j});
+
 let make = (~peerId, _children) => {
   ...component,
   initialState: () => {isDropdownOpen: false},
@@ -101,74 +103,69 @@ let make = (~peerId, _children) => {
     switch (action) {
     | Toggle => ReasonReact.Update({isDropdownOpen: !state.isDropdownOpen})
     },
-  render: self =>
-    ReasonReact.(
-      <div className=linkSharing>
-        <p className=shareLinkTitle>
-          {string("Share the following link to invite people to your music")}
-        </p>
-        <div
-          className={
-            Cn.make([
-              SharedCss.flexWrapper(~justify=`center, ~align=`flexEnd),
-              shareWrapper,
-            ])
-          }>
-          <input
-            className=shareLinkURL
-            value={"www.example.com/?dj=" ++ peerId}
-            readOnly=true
-          />
-          <hr className=inputLine />
-          <Dropdown
-            isOpen={self.state.isDropdownOpen}
-            toggle={() => self.send(Toggle)}
-            size="sm">
-            <DropdownToggle className=SharedCss.button caret=true>
-              {string("Share")}
-            </DropdownToggle>
-            <DropdownMenu className=drowpdownMenuStyle>
-              <DropdownItem className=drowpdownItemStyle>
-                <div
-                  onClick={
-                    _e =>
-                      shareSocialMedia(
-                        "https://www.facebook.com/sharer/sharer.php?u=www.example.com/?dj="
-                        ++ peerId,
-                        "Share SpotDJ Channel",
-                        "menubar=1,resizable=1,width=560,height=450",
-                      )
-                  }>
-                  {string("Facebook")}
-                </div>
-              </DropdownItem>
-              <DropdownItem className=drowpdownItemStyle>
-                <div
-                  onClick={
-                    _e =>
-                      shareSocialMedia(
-                        "https://twitter.com/intent/tweet?text=Join%20me%20on%20SpotDj%20Here:%20www.example.com/?dj="
-                        ++ peerId,
-                        "Share SpotDJ Channel",
-                        "menubar=1,resizable=1,width=350,height=250",
-                      )
-                  }>
-                  {string("Twitter")}
-                </div>
-              </DropdownItem>
-              <DropdownItem className=drowpdownItemStyle>
-                <div
-                  onClick={
-                    _e => copyUrlToClipboard("www.example.com/?dj=" ++ peerId)
-                  }>
-                  {string("Copy URL")}
-                </div>
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        </div>
+  render: self => {
+    open ReasonReact;
+    let sharingLink = sharingLink(peerId);
+
+    <div className=linkSharing>
+      <p className=shareLinkTitle>
+        {string("Share the following link to invite people to your music")}
+      </p>
+      <div
+        className={
+          Cn.make([
+            SharedCss.flexWrapper(~justify=`center, ~align=`flexEnd),
+            shareWrapper,
+          ])
+        }>
+        <input className=shareLinkURL value=sharingLink readOnly=true />
+        <hr className=inputLine />
+        <Dropdown
+          isOpen={self.state.isDropdownOpen}
+          toggle={() => self.send(Toggle)}
+          size="sm">
+          <DropdownToggle className=SharedCss.button caret=true>
+            {string("Share")}
+          </DropdownToggle>
+          <DropdownMenu className=drowpdownMenuStyle>
+            <DropdownItem className=drowpdownItemStyle>
+              <div
+                onClick={
+                  _e =>
+                    shareSocialMedia(
+                      "https://www.facebook.com/sharer/sharer.php?u=www.example.com/?dj="
+                      ++ peerId,
+                      "Share SpotDJ Channel",
+                      "menubar=1,resizable=1,width=560,height=450",
+                    )
+                }>
+                {string("Facebook")}
+              </div>
+            </DropdownItem>
+            <DropdownItem className=drowpdownItemStyle>
+              <div
+                onClick={
+                  _e =>
+                    shareSocialMedia(
+                      "https://twitter.com/intent/tweet?text=Join%20me%20on%20SpotDj%20Here:%20www.example.com/?dj="
+                      ++ peerId,
+                      "Share SpotDJ Channel",
+                      "menubar=1,resizable=1,width=350,height=250",
+                    )
+                }>
+                {string("Twitter")}
+              </div>
+            </DropdownItem>
+            <DropdownItem className=drowpdownItemStyle>
+              <div onClick={_e => copyUrlToClipboard(sharingLink)}>
+                {string("Copy URL")}
+              </div>
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
       </div>
-    ),
+    </div>;
+  },
 };
 
 /*

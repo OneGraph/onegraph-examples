@@ -4,8 +4,14 @@
 /* require an asset (eg. an image) and return exported string value (image URI) */
 [@bs.val] external requireAssetURI: string => string = "require";
 
-[@bs.val] [@bs.scope ("window", "location")]
-external windowHref: string = "href";
+module Window = {
+  [@bs.val] [@bs.scope ("window", "location")] external href: string = "href";
+
+  [@bs.val] [@bs.scope ("window", "location")]
+  external protocol: string = "protocol";
+
+  [@bs.val] [@bs.scope ("window", "location")] external host: string = "host";
+};
 
 [@bs.val] [@bs.scope ("window", "sessionStorage")]
 external sessionStorageSetItem: (string, string) => unit = "setItem";

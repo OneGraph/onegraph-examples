@@ -1,27 +1,25 @@
 open PeerJsBinding;
 open ReasonReact;
-open Belt.Option;
-
 type userKind =
   | DJ
   | Listener(string);
 
 type state = {
-  peer: option(PeerJsBinding.peer),
+  switchboard: option(PeerJsBinding.switchboard),
   peerId: option(BsUuid.Uuid.V4.t),
   userKind,
-  isPublic: bool,
 };
 
 type action =
   | NotifyPeers
-  | SetPeer(peer, BsUuid.Uuid.V4.t)
-  | ToggleShareStatus;
+  | ExamineDJState(SpotifyControls.playerStatus)
+  | PausePlayer
+  | SyncPlayer(SpotifyControls.playerStatus)
+  | SetSwitchboard(switchboard, BsUuid.Uuid.V4.t);
 
 let component = ReasonReact.reducerComponent("App");
 
-let renderIf = (condition: bool, element: ReasonReact.reactElement) =>
-  condition ? element : ReasonReact.null;
+let msDiffThreshold = 5000;
 
 let make =
     (
@@ -39,12 +37,7 @@ let make =
       _children,
     ) => {
   ...component,
-  initialState: () => {
-    peer: None,
-    peerId: None,
-    userKind: DJ,
-    isPublic: true,
-  },
+  initialState: () => {switchboard: None, peerId: None, userKind: DJ},
   didMount: self => {
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
     let query = QueryString.parseQueryString(url.search);
@@ -71,8 +64,18 @@ let make =
       | Some(id) => id
       };
 
-    let myPeer = newPeer(peerId, options);
-    self.send(SetPeer(myPeer, peerId));
+    let me = newSwitchBoard(peerId, options);
+    self.send(SetSwitchboard(me, peerId));
+
+    let onData = data => {
+      Js.log2("Received data", data);
+      switch (Serialize.messageOfString(data)) {
+      | DjPlayerState(playerStatus) =>
+        self.send(ExamineDJState(playerStatus))
+      | Unrecognized(raw) => Js.log2("Unrecognized message from peer: ", raw)
+      | Malformed(raw) => Js.log2("Malformed message from peer: ", raw)
+      };
+    };
 
     switch (userKind) {
     | DJ =>
@@ -81,25 +84,70 @@ let make =
         Js.Global.setInterval(() => self.send(NotifyPeers), 1000);
       self.onUnmount(() => Js.Global.clearInterval(intervalId));
     | Listener(djId) =>
-      let connection = openConnection(myPeer, peerId, djId, auth);
-      Js.log3("I'm a listener to with connection:", djId, connection);
+      let connection = connect(~me, ~toPeerId=djId, ~onData, ());
+      Js.log(
+        {j|My switchboard $me has a connection $connection to dj $djId|j},
+      );
     };
   },
   reducer: (action, state) =>
     switch (action) {
     | NotifyPeers =>
-      ReasonReact.SideEffects(
-        ({state}) =>
-          switch (state.peer) {
-          | Some(peer) =>
-            PeerJsBinding.broadcast(peer, {isPlaying, trackId, positionMs})
-          | None => ()
-          },
+      SideEffects(
+        (
+          ({state}) =>
+            switch (state.switchboard) {
+            | None => ()
+            | Some(switchboard) =>
+              let rawMessage =
+                Serialize.stringOfMessage(
+                  DjPlayerState({isPlaying, trackId, positionMs}),
+                );
+              broadcast(switchboard, rawMessage);
+            }
+        ),
       )
-    | SetPeer(peer, peerId) =>
-      ReasonReact.Update({...state, peer: Some(peer), peerId: Some(peerId)})
-    | ToggleShareStatus =>
-      ReasonReact.Update({...state, isPublic: !state.isPublic})
+    | SetSwitchboard(switchboard, peerId) =>
+      Update({
+        ...state,
+        switchboard: Some(switchboard),
+        peerId: Some(peerId),
+      })
+    | ExamineDJState(dj) =>
+      /* Determine if we should run a OneGraph Spotify mutation to sync players, and if so, which mutation */
+      let djAction =
+        switch (
+          dj.isPlaying,
+          isPlaying,
+          dj.trackId == trackId,
+          abs(dj.positionMs - positionMs) > msDiffThreshold,
+        ) {
+        | (false, true, _, _) => Some(PausePlayer)
+        | (true, false, _, _)
+        | (true, true, false, _)
+        | (true, true, true, true) => Some(SyncPlayer(dj))
+        | (true, true, true, false)
+        | (false, false, _, _) => None
+        };
+
+      switch (djAction) {
+      | None => NoUpdate
+      | Some(message) => SideEffects((self => self.send(message)))
+      };
+
+    /* Listener actions */
+    | PausePlayer =>
+      SideEffects(
+        (
+          _ =>
+            SpotifyControls.pausePlayer(OneGraphAuth.authToken(auth))
+            |> ignore
+        ),
+      )
+    | SyncPlayer(playerStatus) =>
+      SideEffects(
+        (_ => SpotifyControls.startPlayer(auth, playerStatus) |> ignore),
+      )
     },
   render: self =>
     <div>

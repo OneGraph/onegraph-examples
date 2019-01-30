@@ -7,9 +7,12 @@
     "clean": "bsb -clean-world",
     "refmt": "refmt --in-place",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "tmp": "which ocamlmerlin",
+    "emacs": "emacs",
     "webpack": "webpack -w --display-error-details",
     "webpack:production": "NODE_ENV=production webpack",
-    "server": "webpack-dev-server --display-error-details"
+    "server": "webpack-dev-server --display-error-details",
+    "now-build": "bsb -make-world && mv build dist"
   },
   "keywords": [
     "BuckleScript"
@@ -39,6 +42,7 @@
     "file-loader": "^1.1.11",
     "graphql_ppx": "^0.2.8",
     "html-webpack-plugin": "^3.2.0",
+    "reason-cli": "3.3.3-macos-1",
     "webpack": "^4.0.1",
     "webpack-cli": "^3.1.1",
     "webpack-dev-server": "^3.1.8"

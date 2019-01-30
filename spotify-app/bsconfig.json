@@ -20,13 +20,13 @@
   "suffix": ".bs.js",
   "namespace": true,
   "bs-dependencies": [
-    "reason-react",
-    "bs-emotion",
     "@ahrefs/bs-reactstrap",
+    "bs-emotion",
+    "bs-fetch",
+    "bs-uuid",
     "re-classnames",
     "reason-apollo",
-    "bs-uuid",
-    "bs-fetch"
+    "reason-react"
   ],
   "refmt": 3,
   "ppx-flags": ["bs-emotion-ppx/ppx", "graphql_ppx/ppx", "get_in_ppx/ppx"],
