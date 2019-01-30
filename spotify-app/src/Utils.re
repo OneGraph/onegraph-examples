@@ -29,3 +29,9 @@ let getImageUrl = (~images, ~defaultImage) => {
   Array.length(urls) > 1 ?
     urls[1] : Array.length(urls) == 1 ? urls[0] : defaultImage;
 };
+
+[@bs.val] [@bs.scope "window"]
+external windowOpen: (string, string, string) => unit = "open";
+
+[@bs.val] [@bs.scope ("window", "navigator", "clipboard")]
+external writeText: string => Js.Promise.t(string) = "writeText";
