@@ -14,6 +14,7 @@ type state = {
 };
 
 type action =
+  | NotifyPeers
   | SetPeer(peer, BsUuid.Uuid.V4.t)
   | ToggleShareStatus;
 
@@ -77,14 +78,7 @@ let make =
     | DJ =>
       Js.log("I'm a DJ");
       let intervalId =
-        Js.Global.setInterval(
-          () =>
-            PeerJsBinding.broadcast(
-              myPeer,
-              {isPlaying, trackId, positionMs},
-            ),
-          1000,
-        );
+        Js.Global.setInterval(() => self.send(NotifyPeers), 1000);
       self.onUnmount(() => Js.Global.clearInterval(intervalId));
     | Listener(djId) =>
       let connection = openConnection(myPeer, peerId, djId, auth);
@@ -93,6 +87,15 @@ let make =
   },
   reducer: (action, state) =>
     switch (action) {
+    | NotifyPeers =>
+      ReasonReact.SideEffects(
+        ({state}) =>
+          switch (state.peer) {
+          | Some(peer) =>
+            PeerJsBinding.broadcast(peer, {isPlaying, trackId, positionMs})
+          | None => ()
+          },
+      )
     | SetPeer(peer, peerId) =>
       ReasonReact.Update({...state, peer: Some(peer), peerId: Some(peerId)})
     | ToggleShareStatus =>
