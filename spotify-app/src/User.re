@@ -20,7 +20,7 @@ let separator = [%css
   ]
 ];
 
-let handleLogOut = (auth, setLogOut) =>
+let handleLogOut = (auth, onLogOut) =>
   Js.Promise.(
     OneGraphAuth.(
       auth
@@ -28,7 +28,7 @@ let handleLogOut = (auth, setLogOut) =>
       |> then_(() => isLoggedIn(auth, "spotify"))
       |> then_(isLoggedIn => {
            if (!isLoggedIn) {
-             setLogOut();
+             onLogOut();
            };
            resolve();
          })

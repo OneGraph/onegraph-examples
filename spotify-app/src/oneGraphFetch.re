@@ -1,7 +1,3 @@
-let appId = OneGraphAuth.appId;
-
-let oneGraphUri = {j|https://serve.onegraph.com/dynamic?app_id=$appId&show_metrics=true|j};
-
 let makeHeaders = token => {
   "content-type": "application/json",
   "accept": "application/json",
@@ -12,7 +8,7 @@ let makeHeaders = token => {
 let fetch = (token, body) =>
   Fetch.(
     fetchWithInit(
-      oneGraphUri,
+      Config.oneGraphUri,
       RequestInit.make(
         ~method_=Post,
         ~body=body |> Js.Json.stringify |> BodyInit.make,

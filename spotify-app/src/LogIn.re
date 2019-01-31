@@ -21,12 +21,20 @@ let handleLogIn = (auth, logIn) =>
       |> login(_, "spotify")
       |> then_(() => isLoggedIn(auth, "spotify"))
       |> then_(isLoggedIn => {
-           if (isLoggedIn) {
-             logIn();
+           switch (isLoggedIn) {
+           | false => ()
+           | true => logIn()
            };
            resolve();
          })
-      |> catch(err => resolve(Js.log(err)))
+      |> catch(err =>
+           resolve(
+             Js.Console.error2(
+               "Error logging in to Spotify with OneGraph: ",
+               err,
+             ),
+           )
+         )
       |> ignore
     )
   );
@@ -36,6 +44,7 @@ let make = (~auth, ~onLogIn, _children) => {
   render: _self =>
     ReasonReact.(
       <div>
+        {string("Let's start the party.")}
         <Button
           className={Cn.make([SharedCss.button, spotifyBtn])}
           onClick={() => handleLogIn(auth, onLogIn)}>
@@ -46,7 +55,7 @@ let make = (~auth, ~onLogIn, _children) => {
             src=spotifyLogo
             alt="Spotify Logo"
           />
-          {string("Log In to Spotify Account")}
+          {string("Log in to your Spotify Account")}
         </Button>
       </div>
     ),

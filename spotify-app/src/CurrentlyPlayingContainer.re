@@ -64,7 +64,7 @@ let make =
   },
   didMount: self => {
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
-    let query = QueryString.parseQueryString(url.search);
+    let query = Utils.QueryString.parseQueryString(url.search);
 
     let userRole =
       switch (Js.Dict.get(query, "dj")) {

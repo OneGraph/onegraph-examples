@@ -26,10 +26,6 @@ mutation startPlayer($trackId: String!, $positionMs: Int!) {
   }
 }|};
 
-let appId = OneGraphAuth.appId;
-
-let oneGraphUri = {j|https://serve.onegraph.com/dynamic?app_id=appId&show_metrics=true|j};
-
 let makeHeaders = token => {
   "content-type": "application/json",
   "accept": "application/json",

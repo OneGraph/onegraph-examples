@@ -9,8 +9,6 @@ type authHeader = {
 
 type auth;
 
-let appId = "bafd4254-c229-48c2-8c53-44a01477a43e";
-
 [@bs.new] [@bs.module "onegraph-auth"]
 external newAuth: config => auth = "default";
 
@@ -35,4 +33,4 @@ let dangerouslyGetAuthToken = (auth: auth): string =>
   | Some(token) => token
   };
 
-let config = config(~appId);
+let config = config(~appId=Config.appId);
