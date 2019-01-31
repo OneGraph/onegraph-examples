@@ -25,7 +25,6 @@ let fetch = (token, body) =>
 
 let makePayload = (~operationName=?, ~variables=?, ~query, ()) => {
   open Js;
-  open Json;
 
   let json = Dict.empty();
   Dict.set(json, "query", Json.string(query));
