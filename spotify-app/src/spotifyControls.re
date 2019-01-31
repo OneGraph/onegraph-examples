@@ -16,7 +16,7 @@ mutation {
    }|};
 
 let startPlayerQuery = {|
-mutation startPlayer($trackId: String!, $positionMs: $Int!) {
+mutation startPlayer($trackId: String!, $positionMs: Int!) {
   spotify {
     playTrack(input: { trackIds: [$trackId], positionMs: $positionMs}) {
       player {

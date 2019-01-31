@@ -146,7 +146,14 @@ let make =
       )
     | SyncPlayer(playerStatus) =>
       SideEffects(
-        (_ => SpotifyControls.startPlayer(auth, playerStatus) |> ignore),
+        (
+          _ =>
+            SpotifyControls.startPlayer(
+              OneGraphAuth.authToken(auth),
+              playerStatus,
+            )
+            |> ignore
+        ),
       )
     },
   render: self =>
