@@ -19,7 +19,7 @@ type action =
 
 let component = ReasonReact.reducerComponent("App");
 
-let msDiffThreshold = 5000;
+let msDiffThreshold = 10000;
 
 let make =
     (
@@ -48,9 +48,6 @@ let make =
       | _ => DJ
       };
 
-    let options: PeerJsBinding.options =
-      PeerJsBinding.options(~key="abc", ());
-
     let maybePeerId = Utils.sessionStorageGetItem("spotDjPeerId");
     let peerId =
       switch (Js.nullToOption(maybePeerId)) {
@@ -64,7 +61,7 @@ let make =
       | Some(id) => id
       };
 
-    let me = newSwitchBoard(peerId, options);
+    let me = newSwitchBoard(peerId);
     self.send(SetSwitchboard(me, peerId));
 
     let onData = data => {

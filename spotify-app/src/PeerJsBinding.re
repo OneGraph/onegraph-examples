@@ -41,7 +41,20 @@ module Impl = {
   [@bs.send]
   external connectToPeer: (switchboard, id) => dataConnection = "connect";
   [@bs.send]
-  external peerOn: (switchboard, string, dataConnection => unit) => unit =
+  external switchboardOn:
+    (
+      switchboard,
+      [@bs.string] [
+        | [@bs.as "open"] `Open
+        | [@bs.as "close"] `Close
+        | [@bs.as "error"] `Error
+        | [@bs.as "connection"] `Connection
+        | [@bs.as "call"] `Call
+        | [@bs.as "disconnected"] `Disconnected
+      ],
+      dataConnection => unit
+    ) =>
+    unit =
     "on";
   [@bs.send] external peerDisconnect: switchboard => unit = "disconnect";
 
@@ -77,7 +90,10 @@ module Impl = {
 };
 
 [@bs.new] [@bs.scope "window"]
-external newSwitchBoard: (Uuid.t, options) => switchboard = "Peer";
+external newSwitchBoard: Uuid.t => switchboard = "Peer";
+
+[@bs.new] [@bs.scope "window"]
+external newSwitchBoardWithOptions: (Uuid.t, options) => switchboard = "Peer";
 
 open Impl;
 
