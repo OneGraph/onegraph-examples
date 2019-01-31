@@ -4360,11 +4360,6 @@ reason-apollo@^0.15.1:
     react-apollo "2.3.2"
     subscriptions-transport-ws "0.9.0"
 
-reason-cli@3.3.3-macos-1:
-  version "3.3.3-macos-1"
-  resolved "https://registry.yarnpkg.com/reason-cli/-/reason-cli-3.3.3-macos-1.tgz#b847a614144b3c68d8dbf4972df6bb93bc857032"
-  integrity sha512-YdX54+bG2qjwlKYpgttfdhUIpKvkxBMY4x530GOyvSNNMU7pSzuc2H5x6Bt8pxKOyq0Kz/NQk/TMXT5AITdFcg==
-
 reason-react@>=0.4.0:
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/reason-react/-/reason-react-0.5.3.tgz#10601809742fd991109ec9d69ad4baf2c3f17540"
