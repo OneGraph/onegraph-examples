@@ -1,25 +1,43 @@
-open PeerJsBinding;
 open ReasonReact;
-type userKind =
+
+type userRole =
   | DJ
   | Listener(string);
 
+type rtc = {
+  switchboard: option(PeerJs.switchboard),
+  id: option(BsUuid.Uuid.V4.t),
+};
+
 type state = {
-  switchboard: option(PeerJsBinding.switchboard),
-  peerId: option(BsUuid.Uuid.V4.t),
-  userKind,
+  userRole,
+  rtc,
 };
 
 type action =
-  | NotifyPeers
+  | NotifyListeners
   | ExamineDJState(SpotifyControls.playerStatus)
   | PausePlayer
   | SyncPlayer(SpotifyControls.playerStatus)
-  | SetSwitchboard(switchboard, BsUuid.Uuid.V4.t);
+  | InitiateSwitchboard(PeerJs.switchboard, BsUuid.Uuid.V4.t);
 
-let component = ReasonReact.reducerComponent("App");
+let component = ReasonReact.reducerComponent("CurrentlyPlayingContainer");
 
 let msDiffThreshold = 10000;
+
+let semiDurableId = () => {
+  let maybePeerId = Utils.sessionStorageGetItem("spotDjPeerId");
+  switch (Js.nullToOption(maybePeerId)) {
+  | None =>
+    let newId = BsUuid.Uuid.V4.create();
+    Utils.sessionStorageSetItem(
+      "spotDjPeerId",
+      BsUuid.Uuid.V4.toString(newId),
+    );
+    newId;
+  | Some(id) => id
+  };
+};
 
 let make =
     (
@@ -33,39 +51,35 @@ let make =
       ~trackId,
       ~userName,
       ~userIconUrl,
-      ~setLogOut,
+      ~onLogOut,
       _children,
     ) => {
   ...component,
-  initialState: () => {switchboard: None, peerId: None, userKind: DJ},
+  initialState: () => {
+    userRole: DJ,
+    rtc: {
+      switchboard: None,
+      id: None,
+    },
+  },
   didMount: self => {
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
     let query = QueryString.parseQueryString(url.search);
 
-    let userKind =
+    let userRole =
       switch (Js.Dict.get(query, "dj")) {
       | Some(Single(djId)) => Listener(djId)
       | _ => DJ
       };
 
-    let maybePeerId = Utils.sessionStorageGetItem("spotDjPeerId");
-    let peerId =
-      switch (Js.nullToOption(maybePeerId)) {
-      | None =>
-        let newId = BsUuid.Uuid.V4.create();
-        Utils.sessionStorageSetItem(
-          "spotDjPeerId",
-          BsUuid.Uuid.V4.toString(newId),
-        );
-        newId;
-      | Some(id) => id
-      };
+    let rtcId = semiDurableId();
 
-    let me = newSwitchBoard(peerId);
-    self.send(SetSwitchboard(me, peerId));
+    let me = PeerJs.newSwitchBoard(rtcId);
+
+    self.send(InitiateSwitchboard(me, rtcId));
 
     let onData = data => {
-      Js.log2("Received data", data);
+      Js.log2("Received data as listener: ", data);
       switch (Serialize.messageOfString(data)) {
       | DjPlayerState(playerStatus) =>
         self.send(ExamineDJState(playerStatus))
@@ -74,44 +88,45 @@ let make =
       };
     };
 
-    switch (userKind) {
+    switch (userRole) {
     | DJ =>
-      Js.log("I'm a DJ");
+      Js.log("Starting in DJ mode");
       let intervalId =
-        Js.Global.setInterval(() => self.send(NotifyPeers), 1000);
+        Js.Global.setInterval(() => self.send(NotifyListeners), 1000);
       self.onUnmount(() => Js.Global.clearInterval(intervalId));
     | Listener(djId) =>
-      let connection = connect(~me, ~toPeerId=djId, ~onData, ());
+      let connection = PeerJs.connect(~me, ~toPeerId=djId, ~onData, ());
       Js.log(
-        {j|My switchboard $me has a connection $connection to dj $djId|j},
+        {j|Starting in Listener mode. My switchboard $me has a connection $connection to dj $djId|j},
       );
     };
   },
   reducer: (action, state) =>
     switch (action) {
-    | NotifyPeers =>
+    /* DJ actions */
+    | NotifyListeners =>
       SideEffects(
         (
           ({state}) =>
-            switch (state.switchboard) {
+            switch (state.rtc.switchboard) {
             | None => ()
             | Some(switchboard) =>
-              let rawMessage =
+              let serializedMessage =
                 Serialize.stringOfMessage(
                   DjPlayerState({isPlaying, trackId, positionMs}),
                 );
-              broadcast(switchboard, rawMessage);
+              PeerJs.broadcast(switchboard, serializedMessage);
             }
         ),
       )
-    | SetSwitchboard(switchboard, peerId) =>
-      Update({
-        ...state,
-        switchboard: Some(switchboard),
-        peerId: Some(peerId),
-      })
+
+    /* Listener actions */
+    | InitiateSwitchboard(switchboard, id) =>
+      let rtc = {switchboard: Some(switchboard), id: Some(id)};
+      Update({...state, rtc});
     | ExamineDJState(dj) =>
-      /* Determine if we should run a OneGraph Spotify mutation to sync players, and if so, which mutation */
+      /* Determine if we should run a OneGraph Spotify mutation to sync players,
+         and if so, which mutation */
       let djAction =
         switch (
           dj.isPlaying,
@@ -132,7 +147,6 @@ let make =
       | Some(message) => SideEffects((self => self.send(message)))
       };
 
-    /* Listener actions */
     | PausePlayer =>
       SideEffects(
         (
@@ -157,8 +171,8 @@ let make =
     <div>
       <div
         className={SharedCss.appearAnimation(~direction=`normal, ~delayMs=0)}>
-        <pre> {string(trackId ++ string_of_int(positionMs))} </pre>
-        <User auth userName userIconUrl setLogOut />
+        <pre> {string({j|Track: `$trackId` @ $positionMs ms|j})} </pre>
+        <User auth userName userIconUrl onLogOut />
         <CurrentlyPlaying
           songName
           artistName
@@ -167,9 +181,9 @@ let make =
           albumImageUrl
         />
         <LinkShare
-          peerId={
-            switch (self.state.peerId) {
-            | Some(peerId) => BsUuid.Uuid.V4.toString(peerId)
+          rtcId={
+            switch (self.state.rtc.id) {
+            | Some(rtcId) => BsUuid.Uuid.V4.toString(rtcId)
             | None => ""
             }
           }

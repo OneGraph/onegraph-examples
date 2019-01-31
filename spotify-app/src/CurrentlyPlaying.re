@@ -7,11 +7,6 @@ let like = requireAssetURI("./img/like.png");
 let share = requireAssetURI("./img/share.png");
 let pause = requireAssetURI("./img/pause.png");
 
-type action =
-  | Toggle;
-
-type state = {isDropdownOpen: bool};
-
 let playerWrapper = [%css
   [
     width(`px(300)),
@@ -49,23 +44,27 @@ let progressBarStyle = [%css [width(`px(200)), height(`px(4))]];
 
 let albumImage = [%css [width(`pct(100.)), height(`px(300))]];
 
-let component = ReasonReact.reducerComponent("User");
+let component = ReasonReact.statelessComponent("CurrentlyPlaying");
 
 let make =
-    (~songName, ~artistName, ~isPlaying, ~progressPct, ~albumImageUrl, _children) => {
+    (
+      ~songName,
+      ~artistName,
+      ~isPlaying,
+      ~progressPct,
+      ~albumImageUrl,
+      _children,
+    ) => {
   ...component,
-  initialState: () => {isDropdownOpen: false},
-  reducer: (action, state) =>
-    switch (action) {
-    | Toggle => ReasonReact.Update({isDropdownOpen: !state.isDropdownOpen})
-    },
-  render: self =>
+  render: _ =>
     ReasonReact.(
       <div className="current-playing">
         <div className=playerWrapper>
           <img className=albumImage src=albumImageUrl alt="Album Image" />
           <div
-            className={SharedCss.flexWrapper(~justify=`spaceBetween, ~align=`center)}>
+            className={
+              SharedCss.flexWrapper(~justify=`spaceBetween, ~align=`center)
+            }>
             <div>
               <h3 className=songNameStyle> {string(songName)} </h3>
               <p className=artistNameStyle> {string(artistName)} </p>

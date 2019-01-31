@@ -92,11 +92,11 @@ let copyUrlToClipboard = url =>
 let shareSocialMedia = (url, name, properties) =>
   Utils.windowOpen(url, name, properties);
 
-let component = ReasonReact.reducerComponent("User");
+let component = ReasonReact.reducerComponent("LinkShare");
 
 let sharingLink = djId => Utils.Window.({j|$protocol//$host?dj=$djId|j});
 
-let make = (~peerId, _children) => {
+let make = (~rtcId, _children) => {
   ...component,
   initialState: () => {isDropdownOpen: false},
   reducer: (action, state) =>
@@ -105,7 +105,7 @@ let make = (~peerId, _children) => {
     },
   render: self => {
     open ReasonReact;
-    let sharingLink = sharingLink(peerId);
+    let sharingLink = sharingLink(rtcId);
 
     <div className=linkSharing>
       <p className=shareLinkTitle>
@@ -133,8 +133,7 @@ let make = (~peerId, _children) => {
                 onClick={
                   _e =>
                     shareSocialMedia(
-                      "https://www.facebook.com/sharer/sharer.php?u=www.example.com/?dj="
-                      ++ peerId,
+                      {j|https://www.facebook.com/sharer/sharer.php?u=$sharingLink|j},
                       "Share SpotDJ Channel",
                       "menubar=1,resizable=1,width=560,height=450",
                     )
@@ -147,8 +146,7 @@ let make = (~peerId, _children) => {
                 onClick={
                   _e =>
                     shareSocialMedia(
-                      "https://twitter.com/intent/tweet?text=Join%20me%20on%20SpotDj%20Here:%20www.example.com/?dj="
-                      ++ peerId,
+                      {j|https://twitter.com/intent/tweet?text=Join%20me%20on%20SpotDj%20Here:%20$sharingLink|j},
                       "Share SpotDJ Channel",
                       "menubar=1,resizable=1,width=350,height=250",
                     )
@@ -167,67 +165,3 @@ let make = (~peerId, _children) => {
     </div>;
   },
 };
-
-/*
-   <Button
-   color={isPublic ? "danger" : "success"}
-   size="sm"
-   onClick={_e => toggleShareStatus()}>
-   {
-   isPublic ?
-   ReasonReact.string("Stop Sharing") :
-   ReasonReact.string("Share Publicaly")
-   }
-   </Button>
- let switchBtn = [%css
-   [
-     position(`relative),
-     display(`inlineBlock),
-     width(`px(85)),
-     height(`px(25)),
-     select("input", [display(`none)]),
-   ]
- ];
-
- let sliderRound = [%css
-   [
-     position(`absolute),
-     cursor(`pointer),
-     top(`px(0)),
-     left(`px(0)),
-     right(`px(0)),
-     bottom(`px(0)),
-     backgroundColor(`hex("afafaf")),
-     textAlign(`center),
-     lineHeight(`px(25)),
-     fontSize(`px(14)),
-     color(`hex("ffffff")),
-     padding2(`px(0), `px(0)),
-     transitionDuration(`s(0.4)),
-     borderRadius(`px(34)),
-     paddingLeft(`px(20)),
-     select(
-       "before",
-       [
-         position(`absolute),
-         content(""),
-         height(`px(17)),
-         width(`px(17)),
-         left(`px(4)),
-         bottom(`px(4)),
-         backgroundColor(`hex("ffffff")),
-         transitionDuration(`s(0.4)),
-         borderRadius(`pct(50.)),
-         select("input:checked", [transform(`translateX(`px(60)))]),
-       ],
-     ),
-     select(
-       "input:checked",
-       [backgroundColor(`hex("2196f3")), paddingRight(`px(30))],
-     ),
-     select(
-       "input:focus",
-       [boxShadow(~x=`px(0), ~y=`px(0), ~blur=`px(1), `hex("2196f3"))],
-     ),
-   ]
- ];*/

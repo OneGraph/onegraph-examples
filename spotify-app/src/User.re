@@ -39,7 +39,7 @@ let handleLogOut = (auth, setLogOut) =>
 
 let component = ReasonReact.statelessComponent("User");
 
-let make = (~auth, ~userName, ~userIconUrl, ~setLogOut, _children) => {
+let make = (~auth, ~userName, ~userIconUrl, ~onLogOut, _children) => {
   ...component,
   render: _self =>
     ReasonReact.(
@@ -48,7 +48,7 @@ let make = (~auth, ~userName, ~userIconUrl, ~setLogOut, _children) => {
         <img className=userIcon src=userIconUrl alt="user icon" />
         {string(userName)}
         <span className=separator />
-        <a className=anchor onClick={_e => handleLogOut(auth, setLogOut)}>
+        <a className=anchor onClick={_e => handleLogOut(auth, onLogOut)}>
           {string("Sign Out")}
         </a>
       </p>
