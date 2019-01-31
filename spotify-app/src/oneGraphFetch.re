@@ -1,6 +1,6 @@
 let appId = OneGraphAuth.appId;
 
-let oneGraphUri = {j|https://serve.onegraph.com/dynamic?app_id=appId&show_metrics=true|j};
+let oneGraphUri = {j|https://serve.onegraph.com/dynamic?app_id=$appId&show_metrics=true|j};
 
 let makeHeaders = token => {
   "content-type": "application/json",
@@ -25,7 +25,6 @@ let fetch = (token, body) =>
 
 let makePayload = (~operationName=?, ~variables=?, ~query, ()) => {
   open Js;
-  open Json;
 
   let json = Dict.empty();
   Dict.set(json, "query", Json.string(query));
