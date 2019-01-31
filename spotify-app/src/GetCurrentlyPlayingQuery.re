@@ -35,6 +35,9 @@ module GetCurrentlyPlaying = [%graphql
 |}
 ];
 
+let defaultUserIcon = Utils.requireAssetURI("./img/user.png");
+let defaultAlbumImage = Utils.requireAssetURI("./img/now-playing-ex.png");
+
 type formattedData = {
   albumImageUrl: string,
   artistName: string,
@@ -64,112 +67,72 @@ let make = children => {
                <div> {ReasonReact.string(error##message)} </div>
              | Data(response) =>
                let userName =
-                 response##spotify##me
-                 ->flatMap(me => me##displayName)
+                 [%get_in response##spotify##me#??displayName]
                  ->getWithDefault("");
 
                let userImages =
-                 response##spotify##me
-                 ->flatMap(me => me##images)
+                 [%get_in response##spotify##me#??images]
                  ->getWithDefault([||]);
 
-               let userDefaultIcon = Utils.requireAssetURI("./img/user.png");
                let userIconUrl =
                  Utils.getImageUrl(
                    ~images=userImages,
-                   ~defaultImage=userDefaultIcon,
+                   ~defaultImage=defaultUserIcon,
                  );
 
-               let spotifyIsLaunched =
-                 response##spotify##me
-                 ->flatMap(me => me##player)
-                 ->flatMap(player => player##item);
+               let spotifyIsLaunched = [%get_in
+                 response##spotify##me#??player#??item
+               ];
 
                switch (spotifyIsLaunched) {
                | None =>
                  ReasonReact.string(
-                   "Nobody is listening to Spotify on this account right now.",
+                   "It looks like all of your Spotify players are closed. Try opening the Spotify app on your computer or phone!",
                  )
-               | Some(_item) =>
+               | Some(item) =>
                  let isPlaying =
-                   response##spotify##me
-                   ->flatMap(me => me##player)
-                   ->flatMap(player => player##isPlaying)
+                   [%get_in response##spotify##me#??player#??isPlaying]
                    ->getWithDefault(false);
 
-                 let durationMs =
-                   response##spotify##me
-                   ->flatMap(me => me##player)
-                   ->flatMap(player => player##item)
-                   ->flatMap(item => item##durationMs)
-                   ->getWithDefault(0);
+                 let durationMs = item##durationMs->getWithDefault(0);
 
-                 let progressMs =
-                   response##spotify##me
-                   ->flatMap(me => me##player)
-                   ->flatMap(player => player##progressMs)
+                 let positionMs =
+                   [%get_in response##spotify##me#??player#??progressMs]
                    ->getWithDefault(0);
 
                  let progressPct =
-                   float_of_int(progressMs)
+                   float_of_int(positionMs)
                    /. float_of_int(durationMs)
                    *. 100.;
 
                  let albumImages =
-                   response##spotify##me
-                   ->flatMap(me => me##player)
-                   ->flatMap(player => player##item)
-                   ->flatMap(item => item##album)
-                   ->flatMap(album => album##images)
-                   ->getWithDefault([||]);
+                   [%get_in item##album#??images]->getWithDefault([||]);
 
-                 let defaultAlbumImage =
-                   Utils.requireAssetURI("./img/now-playing-ex.png");
                  let albumImageUrl =
                    Utils.getImageUrl(
                      ~images=albumImages,
                      ~defaultImage=defaultAlbumImage,
                    );
 
-                 let songName =
-                   response##spotify##me
-                   ->flatMap(me => me##player)
-                   ->flatMap(player => player##item)
-                   ->flatMap(item => item##name)
-                   ->getWithDefault("");
+                 let songName = item##name->getWithDefault("");
 
-                 let artistArray =
-                   response##spotify##me
-                   ->flatMap(me => me##player)
-                   ->flatMap(player => player##item)
-                   ->flatMap(item => item##artists)
-                   ->getWithDefault([||]);
+                 let artists = item##artists->getWithDefault([||]);
 
-                 let trackId =
-                   response##spotify##me
-                   ->flatMap(me => me##player)
-                   ->flatMap(player => player##item)
-                   ->flatMap(item => item##id)
-                   ->getWithDefault("");
+                 let trackId = item##id->getWithDefault("");
 
-                 let artistNameArray =
-                   Js.Array.map(
-                     artist =>
-                       switch (artist##name) {
-                       | Some(name) => name
-                       | None => ""
-                       },
-                     artistArray,
-                   )
-                   |> Js.Array.filter(name => name !== "");
-
-                 let artistName = Js.Array.joinWith(",", artistNameArray);
+                 let artistName =
+                   artists
+                   |> Js.Array.map(artist =>
+                        getWithDefault(artist##name, "")
+                      )
+                   |> Js.Array.filter(name => name !== "")
+                   |> Js.Array.joinWith(", ");
 
                  children({
                    albumImageUrl,
                    artistName,
                    isPlaying,
-                   positionMs: progressMs,
+                   positionMs,
                    progressPct,
                    songName,
                    trackId,
