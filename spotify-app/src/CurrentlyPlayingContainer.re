@@ -15,7 +15,8 @@ type action =
   | ExamineDJState(SpotifyControls.playerStatus)
   | PausePlayer
   | SyncPlayer(SpotifyControls.playerStatus)
-  | SetSwitchboard(switchboard, BsUuid.Uuid.V4.t);
+  | SetSwitchboard(switchboard, BsUuid.Uuid.V4.t)
+  | UpdateUserKind(userKind);
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -47,6 +48,7 @@ let make =
       | Some(Single(djId)) => Listener(djId)
       | _ => DJ
       };
+    self.send(UpdateUserKind(userKind));
 
     let maybePeerId = Utils.sessionStorageGetItem("spotDjPeerId");
     let peerId =
@@ -152,6 +154,7 @@ let make =
             |> ignore
         ),
       )
+    | UpdateUserKind(userKind) => Update({...state, userKind})
     },
   render: self =>
     <div>
