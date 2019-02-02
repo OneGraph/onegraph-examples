@@ -16,19 +16,31 @@ let button = [%css
   ]
 ];
 
-let appear = keyframes([
-  (0, [ opacity(0.), visibility(`hidden) ]),
-  (1, [ opacity(0.), visibility(`visible) ]),
-  (100, [ opacity(1.) ]),
-]);
+let appear =
+  keyframes([
+    (0, [opacity(0.), visibility(`hidden)]),
+    (1, [opacity(0.), visibility(`visible)]),
+    (100, [opacity(1.)]),
+  ]);
 
-let appearAnimation = (~delayMs: int=0, ~direction) =>
-  [%css [
+let appearAnimation = (~delayMs: int=0, ~direction) => [%css
+  [
     opacity(direction == `normal ? 0. : 1.),
     animationName(appear),
-    animationDuration (`ms(400)),
+    animationDuration(`ms(400)),
     animationDelay(`ms(delayMs)),
     animationFillMode(`forwards),
     animationTimingFunction(`easeOut),
-    animationDirection(direction)
-  ]]
+    animationDirection(direction),
+  ]
+];
+
+let marginZero = [%css [margin(`px(0))]];
+
+let textBlack = [%css
+  [color(`hex("000")), select(":hover", [color(`hex("000"))])]
+];
+
+let textBold = [%css [fontWeight(600)]];
+
+let textWeak = [%css [opacity(0.8)]];

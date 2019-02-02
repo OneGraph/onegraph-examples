@@ -1,5 +1,36 @@
 open PeerJsBinding;
 open ReasonReact;
+open Utils;
+open Emotion;
+open SharedCss;
+
+let recordPlayer = requireAssetURI("./img/record-player.png");
+let headphone = requireAssetURI("./img/headphone.png");
+
+let userKindWrapper = [%css
+  [position(`fixed), top(`px(16)), left(`px(16))]
+];
+
+let userKindIcon = [%css [width(`px(24)), margin2(`px(0), `px(4))]];
+
+let userKindSwitchBtn = [%css [fontSize(`px(12)), fontWeight(600)]];
+
+let unactiveStyle = [%css [opacity(0.5)]];
+
+let statusRibon = [%css
+  [
+    fontSize(`px(32)),
+    position(`absolute),
+    left(`pct(50.)),
+    transform(`translateX(`pct(-50.))),
+    zIndex(2),
+    top(`px(200)),
+    backgroundColor(`hex("b50303")),
+    width(`px(400)),
+    color(`hex("ffffffc9")),
+  ]
+];
+
 type userKind =
   | DJ
   | Listener(string);
