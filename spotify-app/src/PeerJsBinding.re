@@ -153,3 +153,50 @@ let broadcast = (peer, data, getDjFollwerNum) => {
      );
   Js.log2("Broadcast conns", conns);
 };
+
+let initiateConnection =
+    (
+      ~switchboard,
+      ~updateIsConnectedToDjConnected,
+      ~updateIsConnectedToDjError,
+      ~updateIsConnectedToDjDjAway,
+      ~examineDJState,
+      ~djId,
+      ~onConnecting: option(unit => unit)=?,
+    ) => {
+  let onData = data => {
+    Js.log2("Received data", data);
+    updateIsConnectedToDjConnected();
+
+    switch (Serialize.messageOfString(data)) {
+    | DjPlayerState(playerStatus) => examineDJState(playerStatus)
+    | Unrecognized(raw) => Js.log2("Unrecognized message from peer: ", raw)
+    | Malformed(raw) => Js.log2("Malformed message from peer: ", raw)
+    };
+  };
+  let onError = data => {
+    Js.log2("Connection Error:", data);
+    updateIsConnectedToDjError();
+  };
+
+  let onClose = _data => {
+    Js.log("No Connection");
+    updateIsConnectedToDjDjAway();
+  };
+
+  let _connection =
+    connect(
+      ~me=switchboard,
+      ~toPeerId=djId,
+      ~onData,
+      ~onClose,
+      ~onError,
+      ~onConnecting=
+        switch (onConnecting) {
+        | Some(onConnecting) => onConnecting
+        | None => (() => ())
+        },
+      (),
+    );
+  ();
+};

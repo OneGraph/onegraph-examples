@@ -89,14 +89,12 @@ let make =
   didMount: self => {
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
     let query = QueryString.parseQueryString(url.search);
-
     let userKind =
       switch (Js.Dict.get(query, "dj")) {
       | Some(Single(djId)) => Listener(djId)
       | _ => DJ(0)
       };
     self.send(UpdateUserKind(userKind));
-
     let maybePeerId = Utils.localStorageGetItem("spotDjPeerId");
     let peerId =
       switch (Js.nullToOption(maybePeerId)) {
@@ -109,34 +107,12 @@ let make =
         newId;
       | Some(id) => id
       };
-
     let me = newSwitchBoard(peerId);
     self.send(SetSwitchboard(me, peerId));
-
-    let onData = data => {
-      Js.log2("Received data", data);
-      self.send(UpdateIsConnectedToDj(Connected));
-      switch (Serialize.messageOfString(data)) {
-      | DjPlayerState(playerStatus) =>
-        self.send(ExamineDJState(playerStatus))
-      | Unrecognized(raw) => Js.log2("Unrecognized message from peer: ", raw)
-      | Malformed(raw) => Js.log2("Malformed message from peer: ", raw)
-      };
-    };
 
     let onConnecting = () => {
       Js.log("No Connection");
       self.send(UpdateIsConnectedToDj(Connecting));
-    };
-
-    let onClose = _data => {
-      Js.log("No Connection");
-      self.send(UpdateIsConnectedToDj(DjAway));
-    };
-
-    let onError = data => {
-      Js.log2("Connection Error:", data);
-      self.send(UpdateIsConnectedToDj(Error));
     };
 
     switch (userKind) {
@@ -146,36 +122,52 @@ let make =
         Js.Global.setInterval(() => self.send(NotifyPeers), 1000);
       self.onUnmount(() => Js.Global.clearInterval(intervalId));
     | Listener(djId) =>
-      let _connection =
-        connect(
-          ~me,
-          ~toPeerId=djId,
-          ~onData,
-          ~onClose,
-          ~onError,
-          ~onConnecting,
-          (),
-        );
+      initiateConnection(
+        ~switchboard=me,
+        ~updateIsConnectedToDjConnected=
+          () => self.send(UpdateIsConnectedToDj(Connected)),
+        ~updateIsConnectedToDjError=
+          () => self.send(UpdateIsConnectedToDj(Error)),
+        ~updateIsConnectedToDjDjAway=
+          () => self.send(UpdateIsConnectedToDj(DjAway)),
+        ~examineDJState=
+          playerStatus => self.send(ExamineDJState(playerStatus)),
+        ~onConnecting,
+        ~djId,
+      );
       Js.log({j|My switchboard $me has a connection to dj $djId|j});
-    /*
-       if (self.state.isConnectedToDj === DjAway) {
-       Js.log("2DjAway");
-       let intervalId =
-       Js.Global.setInterval(
-       () => {
-       let connection =
-       connect(~me, ~toPeerId=djId, ~onData, ~onClose, ~onError, ());
-       ();
-       },
-       1000,
-       );
-       self.onUnmount(() => Js.Global.clearInterval(intervalId));
-       } else if (self.state.isConnectedToDj === Connecting) {
-       Js.log("2Connecting");
-       };
-     */
     };
   },
+  willUpdate: ({oldSelf, newSelf}) =>
+    switch (newSelf.state.userKind, newSelf.state.isConnectedToDj) {
+    | (Listener(_), DjAway) =>
+      Js.log("Dj awaying....");
+      switch (newSelf.state.switchboard) {
+      | None => ()
+      | Some(switchboard) =>
+        let url = ReasonReact.Router.dangerouslyGetInitialUrl();
+        let query = QueryString.parseQueryString(url.search);
+        let djId =
+          switch (Js.Dict.get(query, "dj")) {
+          | Some(Single(djId)) => djId
+          | _ => ""
+          };
+        initiateConnection(
+          ~switchboard,
+          ~updateIsConnectedToDjConnected=
+            () => newSelf.send(UpdateIsConnectedToDj(Connected)),
+          ~updateIsConnectedToDjError=
+            () => newSelf.send(UpdateIsConnectedToDj(Error)),
+          ~updateIsConnectedToDjDjAway=
+            () => newSelf.send(UpdateIsConnectedToDj(DjAway)),
+          ~examineDJState=
+            playerStatus => newSelf.send(ExamineDJState(playerStatus)),
+          ~djId,
+          ~onConnecting=() => (),
+        );
+      };
+    | (_, _) => Js.log("Else///")
+    },
   reducer: (action, state) =>
     switch (action) {
     | NotifyPeers =>
