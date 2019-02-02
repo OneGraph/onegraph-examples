@@ -31,6 +31,12 @@ let statusRibon = [%css
   ]
 ];
 
+type isConnected =
+  | Connected
+  | Connecting
+  | Error
+  | DjAway;
+
 type userKind =
   | DJ
   | Listener(string);
@@ -39,6 +45,7 @@ type state = {
   switchboard: option(PeerJsBinding.switchboard),
   peerId: option(BsUuid.Uuid.V4.t),
   userKind,
+  isConnectedToDj: isConnected,
 };
 
 type action =
@@ -47,7 +54,8 @@ type action =
   | PausePlayer
   | SyncPlayer(SpotifyControls.playerStatus)
   | SetSwitchboard(switchboard, BsUuid.Uuid.V4.t)
-  | UpdateUserKind(userKind);
+  | UpdateUserKind(userKind)
+  | UpdateIsConnectedToDj(isConnected);
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -69,7 +77,12 @@ let make =
       _children,
     ) => {
   ...component,
-  initialState: () => {switchboard: None, peerId: None, userKind: DJ},
+  initialState: () => {
+    switchboard: None,
+    peerId: None,
+    userKind: DJ(0),
+    isConnectedToDj: Connecting,
+  },
   didMount: self => {
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
     let query = QueryString.parseQueryString(url.search);
@@ -99,6 +112,7 @@ let make =
 
     let onData = data => {
       Js.log2("Received data", data);
+      self.send(UpdateIsConnectedToDj(Connected));
       switch (Serialize.messageOfString(data)) {
       | DjPlayerState(playerStatus) =>
         self.send(ExamineDJState(playerStatus))
@@ -107,17 +121,56 @@ let make =
       };
     };
 
+    let onConnecting = () => {
+      Js.log("No Connection");
+      self.send(UpdateIsConnectedToDj(Connecting));
+    };
+
+    let onClose = _data => {
+      Js.log("No Connection");
+      self.send(UpdateIsConnectedToDj(DjAway));
+    };
+
+    let onError = data => {
+      Js.log2("Connection Error:", data);
+      self.send(UpdateIsConnectedToDj(Error));
+    };
+
     switch (userKind) {
-    | DJ =>
+    | DJ(_) =>
       Js.log("I'm a DJ");
       let intervalId =
         Js.Global.setInterval(() => self.send(NotifyPeers), 1000);
       self.onUnmount(() => Js.Global.clearInterval(intervalId));
     | Listener(djId) =>
-      let connection = connect(~me, ~toPeerId=djId, ~onData, ());
-      Js.log(
-        {j|My switchboard $me has a connection $connection to dj $djId|j},
-      );
+      let _connection =
+        connect(
+          ~me,
+          ~toPeerId=djId,
+          ~onData,
+          ~onClose,
+          ~onError,
+          ~onConnecting,
+          (),
+        );
+      Js.log({j|My switchboard $me has a connection to dj $djId|j});
+    /*
+       if (self.state.isConnectedToDj === DjAway) {
+       Js.log("2DjAway");
+       let intervalId =
+       Js.Global.setInterval(
+       () => {
+       let connection =
+       connect(~me, ~toPeerId=djId, ~onData, ~onClose, ~onError, ());
+       ();
+       },
+       1000,
+       );
+       self.onUnmount(() => Js.Global.clearInterval(intervalId));
+       } else if (self.state.isConnectedToDj === Connecting) {
+       Js.log("2Connecting");
+       };
+     */
     };
   },
   reducer: (action, state) =>
@@ -186,20 +239,87 @@ let make =
         ),
       )
     | UpdateUserKind(userKind) => Update({...state, userKind})
+    | UpdateIsConnectedToDj(isConnectedToDj) =>
+      Update({...state, isConnectedToDj})
     },
   render: self =>
     <div>
-      <div
-        className={SharedCss.appearAnimation(~direction=`normal, ~delayMs=0)}>
+      <div className={appearAnimation(~direction=`normal, ~delayMs=0)}>
+        {
+          switch (self.state.userKind) {
+          | DJ(num) =>
+            <div className=userKindWrapper>
+              <div
+                className={flexWrapper(~justify=`flexStart, ~align=`center)}>
+                <img src=recordPlayer alt="DJ Icon" className=userKindIcon />
+                <p className=marginZero>
+                  <strong className=textBold> {string("DJ ")} </strong>
+                  <span className=textWeak>
+                    {string(" - " ++ string_of_int(num) ++ " followers")}
+                  </span>
+                </p>
+              </div>
+            </div>
+          | Listener(_) =>
+            <div className=userKindWrapper>
+              <div
+                className={flexWrapper(~justify=`flexStart, ~align=`center)}>
+                <img
+                  src=headphone
+                  alt="Listener Icon"
+                  className=userKindIcon
+                />
+                <p className=marginZero>
+                  <strong className=textBold> {string("Audience ")} </strong>
+                  <span className=textWeak>
+                    {string(" - listening with ")}
+                    <i> {string("ABC")} </i>
+                  </span>
+                </p>
+              </div>
+              <button
+                className={Cn.make([button, userKindSwitchBtn, marginZero])}>
+                <a
+                  className=textBlack
+                  href={"http://" ++ Utils.Window.host ++ "/#"}>
+                  {string("I wanna be DJ")}
+                </a>
+              </button>
+            </div>
+          }
+        }
         <pre> {string(trackId ++ string_of_int(positionMs))} </pre>
         <User auth userName userIconUrl setLogOut />
-        <CurrentlyPlaying
-          songName
-          artistName
-          isPlaying
-          progressPct
-          albumImageUrl
-        />
+        {
+          switch (self.state.userKind, self.state.isConnectedToDj) {
+          | (Listener(_), Connected) => null
+          | (Listener(_), Connecting) =>
+            <div className=statusRibon> {string("Connecting ...")} </div>
+          | (Listener(_), DjAway) =>
+            <div className=statusRibon> {string("DJ went away")} </div>
+          | (Listener(_), Error) =>
+            <div className=statusRibon>
+              {string("Whops.. Something is wrong. Try Refresh")}
+            </div>
+          | (DJ(_), _) => null
+          }
+        }
+        <div
+          className={
+            switch (self.state.userKind, self.state.isConnectedToDj) {
+            | (DJ(_), _)
+            | (Listener(_), Connected) => ""
+            | (Listener(_), _) => unactiveStyle
+            }
+          }>
+          <CurrentlyPlaying
+            songName
+            artistName
+            isPlaying
+            progressPct
+            albumImageUrl
+          />
+        </div>
         <LinkShare
           peerId={
             switch (self.state.peerId) {
