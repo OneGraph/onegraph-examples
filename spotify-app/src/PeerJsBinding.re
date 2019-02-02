@@ -40,6 +40,7 @@ module Impl = {
 
   [@bs.send]
   external connectToPeer: (switchboard, id) => dataConnection = "connect";
+
   [@bs.send]
   external switchboardOn:
     (
@@ -56,6 +57,7 @@ module Impl = {
     ) =>
     unit =
     "on";
+
   [@bs.send] external peerDisconnect: switchboard => unit = "disconnect";
 
   [@bs.send]
@@ -102,11 +104,17 @@ let connect =
       ~onOpen: option(string => unit)=?,
       ~onClose: option(string => unit)=?,
       ~onError: option(string => unit)=?,
+      ~onConnecting: option(unit => unit)=?,
       ~me,
       ~toPeerId,
       ~onData,
       (),
     ) => {
+  switch (onConnecting) {
+  | None => ()
+  | Some(onConnecting) => onConnecting()
+  };
+
   let _localId = me |> localId |> Belt.Option.map(_, Uuid.ofString);
 
   let conn = connectToPeer(me, toPeerId);
