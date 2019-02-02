@@ -44,3 +44,24 @@ let textBlack = [%css
 let textBold = [%css [fontWeight(600)]];
 
 let textWeak = [%css [opacity(0.8)]];
+
+let appearScale =
+  keyframes([
+    (
+      0,
+      [transforms([`scaleX(0.4), `translate((`pct(-80.), `pct(-50.)))])],
+    ),
+    (
+      100,
+      [transforms([`scaleX(1.), `translate((`pct(-50.), `pct(-50.)))])],
+    ),
+  ]);
+
+let scaleAnimation = [%css
+  [
+    animationName(appearScale),
+    animationDuration(`ms(400)),
+    animationFillMode(`forwards),
+    animationTimingFunction(`easeOut),
+  ]
+];

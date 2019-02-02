@@ -17,7 +17,7 @@ let userKindSwitchBtn = [%css [fontSize(`px(12)), fontWeight(600)]];
 
 let unactiveStyle = [%css [opacity(0.5)]];
 
-let statusRibon = [%css
+let statusRibon = (~ribonColor) => [%css
   [
     fontSize(`px(32)),
     position(`absolute),
@@ -25,7 +25,7 @@ let statusRibon = [%css
     transform(`translateX(`pct(-50.))),
     zIndex(2),
     top(`px(200)),
-    backgroundColor(`hex("b50303")),
+    backgroundColor(ribonColor),
     width(`px(400)),
     color(`hex("ffffffc9")),
   ]
@@ -302,12 +302,39 @@ let make =
           switch (self.state.userKind, self.state.isConnectedToDj) {
           | (Listener(_), Connected) => null
           | (Listener(_), Connecting) =>
-            <div className=statusRibon> {string("Connecting ...")} </div>
+            <div
+              key="connecting"
+              className={
+                Cn.make([
+                  statusRibon(~ribonColor=`hex("cfcfcf")),
+                  scaleAnimation,
+                ])
+              }>
+              {string("Connecting ...")}
+            </div>
           | (Listener(_), DjAway) =>
-            <div className=statusRibon> {string("DJ went away")} </div>
+            <div
+              key="offline"
+              className={
+                Cn.make([
+                  statusRibon(~ribonColor=`hex("1DB954f0")),
+                  scaleAnimation,
+                ])
+              }>
+              {string("DJ is offline")}
+            </div>
           | (Listener(_), Error) =>
-            <div className=statusRibon>
-              {string("Whops.. Something is wrong. Try Refresh")}
+            <div
+              key="error"
+              className={
+                Cn.make([
+                  statusRibon(~ribonColor=`hex("b50303")),
+                  scaleAnimation,
+                ])
+              }>
+              <small>
+                {string("Whops.. Something is wrong. Try Refresh")}
+              </small>
             </div>
           | (DJ(_), _) => null
           }
