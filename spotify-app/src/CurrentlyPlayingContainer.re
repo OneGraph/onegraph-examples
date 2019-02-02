@@ -166,6 +166,15 @@ let make =
           ~onConnecting=() => (),
         );
       };
+    | (Listener(_), Connecting) =>
+      Js.log("connecting.....");
+      let timeoutId =
+        Js.Global.setTimeout(
+          () => newSelf.send(UpdateIsConnectedToDj(DjAway)),
+          3000,
+        );
+      newSelf.onUnmount(() => Js.Global.clearTimeout(timeoutId));
+      ();
     | (_, _) => Js.log("Else///")
     },
   reducer: (action, state) =>
