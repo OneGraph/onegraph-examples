@@ -37,8 +37,10 @@ type isConnected =
   | Error
   | DjAway;
 
+type followerNum = int;
+
 type userKind =
-  | DJ
+  | DJ(followerNum)
   | Listener(string);
 
 type state = {
@@ -50,6 +52,7 @@ type state = {
 
 type action =
   | NotifyPeers
+  | UpdateDjFollowerNum(followerNum)
   | ExamineDJState(SpotifyControls.playerStatus)
   | PausePlayer
   | SyncPlayer(SpotifyControls.playerStatus)
@@ -90,16 +93,16 @@ let make =
     let userKind =
       switch (Js.Dict.get(query, "dj")) {
       | Some(Single(djId)) => Listener(djId)
-      | _ => DJ
+      | _ => DJ(0)
       };
     self.send(UpdateUserKind(userKind));
 
-    let maybePeerId = Utils.sessionStorageGetItem("spotDjPeerId");
+    let maybePeerId = Utils.localStorageGetItem("spotDjPeerId");
     let peerId =
       switch (Js.nullToOption(maybePeerId)) {
       | None =>
         let newId = BsUuid.Uuid.V4.create();
-        Utils.sessionStorageSetItem(
+        Utils.localStorageSetItem(
           "spotDjPeerId",
           BsUuid.Uuid.V4.toString(newId),
         );
@@ -178,18 +181,22 @@ let make =
     | NotifyPeers =>
       SideEffects(
         (
-          ({state}) =>
-            switch (state.switchboard) {
+          self =>
+            switch (self.state.switchboard) {
             | None => ()
             | Some(switchboard) =>
               let rawMessage =
                 Serialize.stringOfMessage(
                   DjPlayerState({isPlaying, trackId, positionMs}),
                 );
-              broadcast(switchboard, rawMessage);
+              let getDjFollowerNum = followerNum =>
+                self.send(UpdateDjFollowerNum(followerNum));
+              broadcast(switchboard, rawMessage, getDjFollowerNum);
             }
         ),
       )
+    | UpdateDjFollowerNum(followerNum) =>
+      Update({...state, userKind: DJ(followerNum)})
     | SetSwitchboard(switchboard, peerId) =>
       Update({
         ...state,
