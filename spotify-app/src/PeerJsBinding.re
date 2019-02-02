@@ -140,8 +140,11 @@ let connect =
   conn;
 };
 
-let broadcast = (peer, data) => {
+let broadcast = (peer, data, getDjFollwerNum) => {
   let conns = connections(peer);
+  let followerNum = conns |> Js.Dict.keys |> Array.length;
+
+  getDjFollwerNum(followerNum);
   conns
   |> Js.Dict.keys
   |> Array.map(key => Js.Dict.unsafeGet(conns, key))
