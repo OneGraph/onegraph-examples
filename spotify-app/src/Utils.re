@@ -20,6 +20,12 @@ external sessionStorageSetItem: (string, string) => unit = "setItem";
 external sessionStorageGetItem: string => Js.null(BsUuid.Uuid.V4.t) =
   "getItem";
 
+[@bs.val] [@bs.scope ("window", "localStorage")]
+external localStorageSetItem: (string, string) => unit = "setItem";
+
+[@bs.val] [@bs.scope ("window", "localStorage")]
+external localStorageGetItem: string => Js.null(BsUuid.Uuid.V4.t) = "getItem";
+
 let getImageUrl = (~images, ~defaultImage) => {
   let urls =
     Js.Array.map(
