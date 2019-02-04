@@ -31,11 +31,11 @@ let statusRibon = (~ribonColor) => [%css
   ]
 ];
 
-type isConnected =
+type connectionStatus =
+  | Disconnected
+  | Connecting(float)
   | Connected
-  | Connecting
-  | Error
-  | DjAway;
+  | Error;
 
 type followerNum = int;
 
@@ -45,24 +45,124 @@ type userKind =
 
 type state = {
   switchboard: option(PeerJsBinding.switchboard),
-  peerId: option(BsUuid.Uuid.V4.t),
+  switchboardId: option(BsUuid.Uuid.V4.t),
   userKind,
-  isConnectedToDj: isConnected,
+  connectionToDj: connectionStatus,
+  checkMessageIntervalId: option(Js.Global.intervalId),
+  lastMessageReceivedAt: float,
+  connectionId: int,
 };
 
 type action =
-  | NotifyPeers
-  | UpdateDjFollowerNum(followerNum)
   | ExamineDJState(SpotifyControls.playerStatus)
+  | MaintainConnection
+  | NotifyPeers
   | PausePlayer
-  | SyncPlayer(SpotifyControls.playerStatus)
+  | SetDjConnectionStatus(int, connectionStatus)
   | SetSwitchboard(switchboard, BsUuid.Uuid.V4.t)
-  | UpdateUserKind(userKind)
-  | UpdateIsConnectedToDj(isConnected);
+  | SetUserKind(userKind)
+  | SyncPlayer(SpotifyControls.playerStatus);
 
 let component = ReasonReact.reducerComponent("App");
 
 let msDiffThreshold = 10000;
+
+let initiateConnection =
+    (
+      ~switchboard,
+      ~peerId,
+      ~onConnected,
+      ~onConnecting: option(unit => unit)=?,
+      ~onDisconnected,
+      ~onConnectError,
+      ~onReceiveDjPlayerState,
+      (),
+    ) => {
+  let hasEverReceivedMessage = ref(false);
+
+  let onData = data => {
+    switch (hasEverReceivedMessage^) {
+    | false =>
+      hasEverReceivedMessage := true;
+      onConnected();
+    | true => ()
+    };
+
+    switch (Serialize.messageOfString(data)) {
+    | Unrecognized(raw) => Js.log2("Unrecognized message from peer: ", raw)
+    | Malformed(raw) => Js.log2("Malformed message from peer: ", raw)
+    | DjPlayerState(playerStatus) => onReceiveDjPlayerState(playerStatus)
+    };
+  };
+
+  let onError = data => onConnectError(data);
+
+  let onClose = data => onDisconnected(data);
+
+  let connection =
+    connect(
+      ~me=switchboard,
+      ~toPeerId=peerId,
+      ~onData,
+      ~onClose,
+      ~onError,
+      ~onConnecting?,
+      (),
+    );
+
+  connection;
+};
+
+let reestablishConnection = (state, djId) =>
+  switch (state.switchboard) {
+  | None => NoUpdate
+  | Some(switchboard) =>
+    let nextConnectionId = state.connectionId + 1;
+    let now = Js.Date.now();
+
+    UpdateWithSideEffects(
+      {
+        ...state,
+        connectionToDj: Connecting(now),
+        connectionId: nextConnectionId,
+      },
+      (
+        self => {
+          let ignoredNewConnection =
+            initiateConnection(
+              ~switchboard,
+              ~onConnected=
+                () => {
+                  Js.log2("Connected to DJ", nextConnectionId);
+                  self.send(
+                    SetDjConnectionStatus(nextConnectionId, Connected),
+                  );
+                },
+              ~onConnectError=
+                _data => {
+                  Js.log2("Error with connection to DJ", nextConnectionId);
+                  self.send(SetDjConnectionStatus(nextConnectionId, Error));
+                },
+              ~onDisconnected=
+                _data => {
+                  Js.log2("Disconnected from DJ", nextConnectionId);
+                  self.send(
+                    SetDjConnectionStatus(nextConnectionId, Disconnected),
+                  );
+                },
+              ~onReceiveDjPlayerState=
+                playerStatus => {
+                  Js.log2("Received DJ playState", nextConnectionId);
+                  self.send(ExamineDJState(playerStatus));
+                },
+              ~peerId=djId,
+              (),
+            );
+          ();
+        }
+      ),
+    );
+  };
 
 let make =
     (
@@ -82,9 +182,12 @@ let make =
   ...component,
   initialState: () => {
     switchboard: None,
-    peerId: None,
+    switchboardId: None,
     userKind: DJ(0),
-    isConnectedToDj: Connecting,
+    connectionToDj: Connecting(0.),
+    checkMessageIntervalId: None,
+    lastMessageReceivedAt: 0.0,
+    connectionId: (-1),
   },
   didMount: self => {
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
@@ -94,7 +197,7 @@ let make =
       | Some(Single(djId)) => Listener(djId)
       | _ => DJ(0)
       };
-    self.send(UpdateUserKind(userKind));
+    self.send(SetUserKind(userKind));
     let maybePeerId = Utils.localStorageGetItem("spotDjPeerId");
     let peerId =
       switch (Js.nullToOption(maybePeerId)) {
@@ -107,102 +210,55 @@ let make =
         newId;
       | Some(id) => id
       };
+
     let me = newSwitchBoard(peerId);
     self.send(SetSwitchboard(me, peerId));
-
-    let onConnecting = () => {
-      Js.log("No Connection");
-      self.send(UpdateIsConnectedToDj(Connecting));
-    };
 
     switch (userKind) {
     | DJ(_) =>
       Js.log("I'm a DJ");
+
       let intervalId =
         Js.Global.setInterval(() => self.send(NotifyPeers), 1000);
       self.onUnmount(() => Js.Global.clearInterval(intervalId));
+
     | Listener(djId) =>
-      initiateConnection(
-        ~switchboard=me,
-        ~updateIsConnectedToDjConnected=
-          () => self.send(UpdateIsConnectedToDj(Connected)),
-        ~updateIsConnectedToDjError=
-          () => self.send(UpdateIsConnectedToDj(Error)),
-        ~updateIsConnectedToDjDjAway=
-          () => self.send(UpdateIsConnectedToDj(DjAway)),
-        ~examineDJState=
-          playerStatus => self.send(ExamineDJState(playerStatus)),
-        ~onConnecting,
-        ~djId,
-      );
+      let intervalId =
+        Js.Global.setInterval(() => self.send(MaintainConnection), 1000);
+      self.onUnmount(() => Js.Global.clearInterval(intervalId));
+
       Js.log({j|My switchboard $me has a connection to dj $djId|j});
     };
   },
-  willUpdate: ({oldSelf, newSelf}) =>
-    switch (newSelf.state.userKind, newSelf.state.isConnectedToDj) {
-    | (Listener(_), DjAway) =>
-      Js.log("Dj awaying....");
-      switch (newSelf.state.switchboard) {
-      | None => ()
-      | Some(switchboard) =>
-        let url = ReasonReact.Router.dangerouslyGetInitialUrl();
-        let query = QueryString.parseQueryString(url.search);
-        let djId =
-          switch (Js.Dict.get(query, "dj")) {
-          | Some(Single(djId)) => djId
-          | _ => ""
-          };
-        initiateConnection(
-          ~switchboard,
-          ~updateIsConnectedToDjConnected=
-            () => newSelf.send(UpdateIsConnectedToDj(Connected)),
-          ~updateIsConnectedToDjError=
-            () => newSelf.send(UpdateIsConnectedToDj(Error)),
-          ~updateIsConnectedToDjDjAway=
-            () => newSelf.send(UpdateIsConnectedToDj(DjAway)),
-          ~examineDJState=
-            playerStatus => newSelf.send(ExamineDJState(playerStatus)),
-          ~djId,
-          ~onConnecting=() => (),
-        );
-      };
-    | (Listener(_), Connecting) =>
-      Js.log("connecting.....");
-      let timeoutId =
-        Js.Global.setTimeout(
-          () => newSelf.send(UpdateIsConnectedToDj(DjAway)),
-          3000,
-        );
-      newSelf.onUnmount(() => Js.Global.clearTimeout(timeoutId));
-      ();
-    | (_, _) => Js.log("Else///")
-    },
   reducer: (action, state) =>
     switch (action) {
     | NotifyPeers =>
-      SideEffects(
-        (
-          self =>
-            switch (self.state.switchboard) {
-            | None => ()
-            | Some(switchboard) =>
-              let rawMessage =
-                Serialize.stringOfMessage(
-                  DjPlayerState({isPlaying, trackId, positionMs}),
-                );
-              let getDjFollowerNum = followerNum =>
-                self.send(UpdateDjFollowerNum(followerNum));
-              broadcast(switchboard, rawMessage, getDjFollowerNum);
-            }
-        ),
-      )
-    | UpdateDjFollowerNum(followerNum) =>
-      Update({...state, userKind: DJ(followerNum)})
-    | SetSwitchboard(switchboard, peerId) =>
+      switch (state.switchboard) {
+      | None => NoUpdate
+      | Some(switchboard) =>
+        let followerNum = PeerJsBinding.getConnectedPeerCount(switchboard);
+
+        UpdateWithSideEffects(
+          {...state, userKind: DJ(followerNum)},
+          (
+            self =>
+              switch (self.state.switchboard) {
+              | None => ()
+              | Some(switchboard) =>
+                let rawMessage =
+                  Serialize.stringOfMessage(
+                    DjPlayerState({isPlaying, trackId, positionMs}),
+                  );
+                broadcast(switchboard, rawMessage);
+              }
+          ),
+        );
+      }
+    | SetSwitchboard(switchboard, switchboardId) =>
       Update({
         ...state,
         switchboard: Some(switchboard),
-        peerId: Some(peerId),
+        switchboardId: Some(switchboardId),
       })
     | ExamineDJState(dj) =>
       /* Determine if we should run a OneGraph Spotify mutation to sync players, and if so, which mutation */
@@ -221,9 +277,15 @@ let make =
         | (false, false, _, _) => None
         };
 
+      let now = Js.Date.now();
+
       switch (djAction) {
-      | None => NoUpdate
-      | Some(message) => SideEffects((self => self.send(message)))
+      | None => Update({...state, lastMessageReceivedAt: now})
+      | Some(message) =>
+        UpdateWithSideEffects(
+          {...state, lastMessageReceivedAt: now},
+          (self => self.send(message)),
+        )
       };
 
     /* Listener actions */
@@ -246,9 +308,51 @@ let make =
             |> ignore
         ),
       )
-    | UpdateUserKind(userKind) => Update({...state, userKind})
-    | UpdateIsConnectedToDj(isConnectedToDj) =>
-      Update({...state, isConnectedToDj})
+    | SetUserKind(userKind) => Update({...state, userKind})
+    | SetDjConnectionStatus(connectionId, connectionToDj) =>
+      switch (connectionId == state.connectionId) {
+      | false =>
+        Js.log3(
+          "Received DJConnectionStatus message from old connection. Old/New connectionIds:",
+          connectionId,
+          state.connectionId,
+        );
+        NoUpdate;
+      | true => Update({...state, connectionToDj})
+      }
+
+    | MaintainConnection =>
+      Js.log2("!!!!", state.connectionId);
+      switch (state.connectionToDj, state.userKind) {
+      | (_, DJ(_)) => NoUpdate
+      | (Connected, Listener(_)) =>
+        let now = Js.Date.now();
+        let elapsedMs = now -. state.lastMessageReceivedAt;
+        let djAwayMsThreshold = 1500.0;
+        Js.log2("connected:", elapsedMs);
+        switch (elapsedMs > djAwayMsThreshold) {
+        | false => NoUpdate
+        | true =>
+          SideEffects(
+            (
+              ({send}) =>
+                send(SetDjConnectionStatus(state.connectionId, Disconnected))
+            ),
+          )
+        };
+      | (Connecting(asOfMs), Listener(djId)) =>
+        let connectionTimeoutMs = 10000.0;
+        let elapsedMs = Js.Date.now() -. asOfMs;
+        Js.log2("asOfMs:", asOfMs);
+        Js.log2("elapsedMs:", elapsedMs);
+        switch (elapsedMs > connectionTimeoutMs) {
+        | false => NoUpdate
+        | true => reestablishConnection(state, djId)
+        };
+
+      | (Error, Listener(djId))
+      | (Disconnected, Listener(djId)) => reestablishConnection(state, djId)
+      };
     },
   render: self =>
     <div>
@@ -299,20 +403,37 @@ let make =
         <pre> {string(trackId ++ string_of_int(positionMs))} </pre>
         <User auth userName userIconUrl setLogOut />
         {
-          switch (self.state.userKind, self.state.isConnectedToDj) {
+          switch (self.state.userKind, self.state.connectionToDj) {
           | (Listener(_), Connected) => null
-          | (Listener(_), Connecting) =>
-            <div
-              key="connecting"
-              className={
-                Cn.make([
-                  statusRibon(~ribonColor=`hex("cfcfcf")),
-                  scaleAnimation,
-                ])
-              }>
-              {string("Connecting ...")}
-            </div>
-          | (Listener(_), DjAway) =>
+          /*Come back animation*/
+          | (Listener(_), Connecting(asOfMs)) =>
+            switch (asOfMs, self.state.connectionId < 1) {
+            | (0., _)
+            | (_, true) =>
+              <div
+                key="connecting"
+                className={
+                  Cn.make([
+                    statusRibon(~ribonColor=`hex("cfcfcf")),
+                    scaleAnimation,
+                  ])
+                }>
+                {string("Connecting ...")}
+              </div>
+            | _ =>
+              <div
+                key="offline"
+                className={
+                  Cn.make([
+                    statusRibon(~ribonColor=`hex("1DB954f0")),
+                    scaleAnimation,
+                  ])
+                }>
+                {string("DJ is offline")}
+              </div>
+            }
+
+          | (Listener(_), Disconnected) =>
             <div
               key="offline"
               className={
