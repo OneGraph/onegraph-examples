@@ -65,3 +65,51 @@ let scaleAnimation = [%css
     animationTimingFunction(`easeOut),
   ]
 ];
+
+let appearBackToFront =
+  keyframes([
+    (0, [transforms([`scale(0.6)])]),
+    (100, [transforms([`scale(1.)])]),
+  ]);
+
+let toFrontAnimation = [%css
+  [
+    animationName(appearBackToFront),
+    animationDuration(`ms(600)),
+    animationFillMode(`forwards),
+    animationTimingFunction(`easeOut),
+  ]
+];
+
+let flipToLeft = (~startScale, ~endScale) =>
+  keyframes([
+    (
+      0,
+      [
+        transforms([
+          `scale(startScale),
+          `rotateY(`deg(0.)),
+          `translate((`px(200), `px(0))),
+        ]),
+      ],
+    ),
+    (
+      100,
+      [
+        transforms([
+          `scale(endScale),
+          `rotateY(`deg(-40.)),
+          `translate((`px(0), `px(0))),
+        ]),
+      ],
+    ),
+  ]);
+
+let flipToLeftAnimation = (~startScale, ~endScale) => [%css
+  [
+    animationName(flipToLeft(~startScale, ~endScale)),
+    animationDuration(`ms(500)),
+    animationFillMode(`forwards),
+    animationTimingFunction(`easeOut),
+  ]
+];

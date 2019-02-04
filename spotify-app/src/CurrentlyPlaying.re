@@ -70,7 +70,12 @@ let make =
     ReasonReact.(
       <div className="current-playing">
         <div className=playerWrapper>
-          <img className=albumImage src=albumImageUrl alt="Album Image" />
+          <img
+            key=songName
+            className={Cn.make([albumImage, SharedCss.toFrontAnimation])}
+            src=albumImageUrl
+            alt="Album Image"
+          />
           <div
             className={
               SharedCss.flexWrapper(~justify=`spaceBetween, ~align=`center)
