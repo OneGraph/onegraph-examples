@@ -1,0 +1,95 @@
+open BsReactstrap;
+open Utils;
+open Emotion;
+
+let more = requireAssetURI("./img/more.png");
+
+let previouslyPlayed = [%css
+  [position(`absolute), perspective(`px(1000)), width(`pct(40.))]
+];
+
+let prePlayerWrapper = [%css
+  [
+    width(`px(200)),
+    position(`relative),
+    margin3(`px(0), `auto, `px(64)),
+    transformStyle(`preserve3d),
+    transform(`scale(0.7)),
+    /*  transform(`rotateY(`deg(-40.))),*/
+  ]
+];
+
+let songNameStyle = [%css
+  [fontSize(`px(24)), marginBottom(`px(0)), textAlign(`left)]
+];
+
+let artistNameStyle = [%css
+  [fontSize(`px(14)), marginBottom(`px(0)), textAlign(`left)]
+];
+
+let audioWaveStyle = [%css [height(`px(48))]];
+
+let actionBtnStyle = [%css
+  [
+    width(`px(32)),
+    border(`px(2), `solid, `hex("ffffff")),
+    borderRadius(`pct(50.)),
+    padding(`px(4)),
+    margin(`px(4)),
+    select(":hover", [cursor(`pointer), backgroundColor(`hex("525252"))]),
+  ]
+];
+
+let pauseBtnStyle = [%css
+  [width(`px(40)), position(`absolute), right(`px(6)), opacity(0.85)]
+];
+
+let progressBarStyle = [%css [width(`px(200)), height(`px(4))]];
+
+let albumImage = [%css
+  [
+    width(`pct(100.)),
+    height(`px(300)),
+    /*box-shadow: -2px 2px 4px #797979;*/
+  ]
+];
+
+let component = ReasonReact.statelessComponent("PreviouslyPlayed");
+
+let make = (~trackList, _children) => {
+  ...component,
+  render: _self =>
+    ReasonReact.(
+      <div
+        className={
+          Cn.make([
+            previouslyPlayed,
+            SharedCss.flexWrapper(~justify=`center, ~align=`center),
+          ])
+        }>
+        <div> <img src=more /> </div>
+        {
+          trackList
+          |> Array.mapi((idx, trackId) =>
+               idx === Array.length(trackList) - 1 ?
+                 null :
+                 <GetTrackInfoQuery trackId>
+                   ...{
+                        ({songName, artistName, albumImageUrl}) =>
+                          <SimpleTrack
+                            songName
+                            artistName
+                            albumImageUrl
+                            newestHistory={
+                              idx === Array.length(trackList) - 2 ?
+                                true : false
+                            }
+                          />
+                      }
+                 </GetTrackInfoQuery>
+             )
+          |> ReasonReact.array
+        }
+      </div>
+    ),
+};
