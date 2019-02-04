@@ -86,6 +86,8 @@ module Impl = {
   [@bs.get]
   external localId: switchboard => [@bs.nullable] option(string) = "id";
 
+  [@bs.get] external disconnected: switchboard => bool = "";
+
   type connectionsMap = Js.Dict.t(array(dataConnection));
 
   [@bs.get] external connections: switchboard => connectionsMap = "";
@@ -140,11 +142,15 @@ let connect =
   conn;
 };
 
-let broadcast = (peer, data, getDjFollwerNum) => {
+let getConnectedPeerCount = peer => {
   let conns = connections(peer);
-  let followerNum = conns |> Js.Dict.keys |> Array.length;
+  let connectedCount = conns |> Js.Dict.keys |> Array.length;
+  connectedCount;
+};
 
-  getDjFollwerNum(followerNum);
+let broadcast = (peer, data) => {
+  let conns = connections(peer);
+
   conns
   |> Js.Dict.keys
   |> Array.map(key => Js.Dict.unsafeGet(conns, key))
