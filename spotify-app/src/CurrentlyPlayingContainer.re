@@ -266,17 +266,14 @@ let make =
       })
     | SetPreviouseTrackId(id) =>
       Js.log("Set Pre");
-      let preTrackListLength = state.previousTrackIds |> Array.length;
-      /*Check if id already exist*/
       let idAlreadyExists = Js.Array.includes(id, state.previousTrackIds);
-
       idAlreadyExists ?
         NoUpdate :
         {
           let trackIds =
             Array.copy(state.previousTrackIds) |> Js.Array.append(id);
-          if (Array.length(trackIds) > 3) {
-            let newTrackIds = Js.Array.slice(~start=1, ~end_=4, trackIds);
+          if (Array.length(trackIds) > 4) {
+            let newTrackIds = Js.Array.slice(~start=1, ~end_=5, trackIds);
             Js.log2("Set Pre:", newTrackIds);
             Update({...state, previousTrackIds: newTrackIds});
           } else {
@@ -487,9 +484,10 @@ let make =
           | (DJ(_), _) => null
           }
         }
+        <PreviouslyPlayed trackList={self.state.previousTrackIds} />
         <div
           className={
-            switch (self.state.userKind, self.state.isConnectedToDj) {
+            switch (self.state.userKind, self.state.connectionToDj) {
             | (DJ(_), _)
             | (Listener(_), Connected) => ""
             | (Listener(_), _) => unactiveStyle
