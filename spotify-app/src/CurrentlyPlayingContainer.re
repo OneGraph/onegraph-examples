@@ -51,6 +51,7 @@ type state = {
   checkMessageIntervalId: option(Js.Global.intervalId),
   lastMessageReceivedAt: float,
   connectionId: int,
+  previousTrackIds: array(string),
 };
 
 type action =
@@ -61,7 +62,8 @@ type action =
   | SetDjConnectionStatus(int, connectionStatus)
   | SetSwitchboard(switchboard, BsUuid.Uuid.V4.t)
   | SetUserKind(userKind)
-  | SyncPlayer(SpotifyControls.playerStatus);
+  | SyncPlayer(SpotifyControls.playerStatus)
+  | SetPreviouseTrackId(string);
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -128,7 +130,7 @@ let reestablishConnection = (state, djId) =>
       },
       (
         self => {
-          let ignoredNewConnection =
+          let _ignoredNewConnection =
             initiateConnection(
               ~switchboard,
               ~onConnected=
@@ -154,6 +156,7 @@ let reestablishConnection = (state, djId) =>
                 playerStatus => {
                   Js.log2("Received DJ playState", nextConnectionId);
                   self.send(ExamineDJState(playerStatus));
+                  self.send(SetPreviouseTrackId(playerStatus.trackId));
                 },
               ~peerId=djId,
               (),
@@ -188,6 +191,7 @@ let make =
     checkMessageIntervalId: None,
     lastMessageReceivedAt: 0.0,
     connectionId: (-1),
+    previousTrackIds: [||],
   },
   didMount: self => {
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
@@ -260,7 +264,30 @@ let make =
         switchboard: Some(switchboard),
         switchboardId: Some(switchboardId),
       })
+    | SetPreviouseTrackId(id) =>
+      Js.log("Set Pre");
+      let preTrackListLength = state.previousTrackIds |> Array.length;
+      /*Check if id already exist*/
+      let idAlreadyExists = Js.Array.includes(id, state.previousTrackIds);
+
+      idAlreadyExists ?
+        NoUpdate :
+        {
+          let trackIds =
+            Array.copy(state.previousTrackIds) |> Js.Array.append(id);
+          if (Array.length(trackIds) > 3) {
+            let newTrackIds = Js.Array.slice(~start=1, ~end_=4, trackIds);
+            Js.log2("Set Pre:", newTrackIds);
+            Update({...state, previousTrackIds: newTrackIds});
+          } else {
+            let newTrackIds = trackIds;
+            Js.log2("Set Pre:", newTrackIds);
+            Update({...state, previousTrackIds: newTrackIds});
+          };
+        };
+
     | ExamineDJState(dj) =>
+      Js.log("Examin");
       /* Determine if we should run a OneGraph Spotify mutation to sync players, and if so, which mutation */
       let djAction =
         switch (
