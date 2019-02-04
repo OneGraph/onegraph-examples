@@ -35,7 +35,6 @@ type switchboard;
 module Impl = {
   type dataConnection;
   type data;
-
   type id = string;
 
   [@bs.send]
@@ -85,6 +84,8 @@ module Impl = {
 
   [@bs.get]
   external localId: switchboard => [@bs.nullable] option(string) = "id";
+
+  [@bs.get] external connIsOpen: dataConnection => bool = "open";
 
   [@bs.get] external disconnected: switchboard => bool = "";
 
@@ -144,7 +145,25 @@ let connect =
 
 let getConnectedPeerCount = peer => {
   let conns = connections(peer);
-  let connectedCount = conns |> Js.Dict.keys |> Array.length;
+  let activeConn =
+    conns
+    |> Js.Dict.keys
+    |> Array.map(key => {
+         let connection = Js.Dict.unsafeGet(conns, key);
+         let latestConnInfo = connection[Array.length(connection) - 1];
+         /*Js.Dict.unsafeGet(latestConnInfo, "open");*/
+         connIsOpen(latestConnInfo) ? Some(latestConnInfo) : None;
+       })
+    |> Array.to_list
+    |> List.filter(conn =>
+         switch (conn) {
+         | Some(_conn) => true
+         | None => false
+         }
+       )
+    |> Array.of_list;
+
+  let connectedCount = activeConn |> Array.length;
   connectedCount;
 };
 
