@@ -2,8 +2,6 @@ open BsReactstrap;
 open Utils;
 open Emotion;
 
-let more = requireAssetURI("./img/more.png");
-
 let previouslyPlayed = [%css
   [position(`absolute), perspective(`px(1000)), width(`pct(40.))]
 ];
@@ -64,10 +62,9 @@ let make = (~trackList, _children) => {
         className={
           Cn.make([
             previouslyPlayed,
-            SharedCss.flexWrapper(~justify=`center, ~align=`center),
+            SharedCss.flexWrapper(~justify=`flexEnd, ~align=`center),
           ])
         }>
-        <div> <img src=more /> </div>
         {
           trackList
           |> Array.mapi((idx, trackId) =>
@@ -84,6 +81,7 @@ let make = (~trackList, _children) => {
                               idx === Array.length(trackList) - 2 ?
                                 true : false
                             }
+                            key={string_of_int(idx)}
                           />
                       }
                  </GetTrackInfoQuery>

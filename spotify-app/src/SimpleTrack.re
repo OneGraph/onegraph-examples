@@ -4,7 +4,7 @@ let prePlayerWrapper = [%css
   [
     width(`px(200)),
     position(`relative),
-    margin3(`px(0), `auto, `px(64)),
+    margin3(`px(0), `px(0), `px(64)),
     transformStyle(`preserve3d),
     transform(`scale(0.7)),
   ]
