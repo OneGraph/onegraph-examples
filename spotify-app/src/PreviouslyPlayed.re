@@ -3,7 +3,7 @@ open Utils;
 open Emotion;
 
 let previouslyPlayed = [%css
-  [position(`absolute), perspective(`px(1000)), width(`pct(40.))]
+  [position(`absolute), perspective(`px(1000)), width(`px(600))]
 ];
 
 let prePlayerWrapper = [%css
