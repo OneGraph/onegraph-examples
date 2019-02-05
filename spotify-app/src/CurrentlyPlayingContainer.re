@@ -8,7 +8,7 @@ let recordPlayer = requireAssetURI("./img/record-player.png");
 let headphone = requireAssetURI("./img/headphone.png");
 
 let userKindWrapper = [%css
-  [position(`fixed), top(`px(16)), left(`px(16))]
+  [position(`fixed), top(`px(16)), right(`px(16))]
 ];
 
 let userKindIcon = [%css [width(`px(24)), margin2(`px(0), `px(4))]];
@@ -265,7 +265,6 @@ let make =
         switchboardId: Some(switchboardId),
       })
     | SetPreviouseTrackId(id) =>
-      Js.log("Set Pre");
       let idAlreadyExists = Js.Array.includes(id, state.previousTrackIds);
       idAlreadyExists ?
         NoUpdate :
@@ -274,17 +273,14 @@ let make =
             Array.copy(state.previousTrackIds) |> Js.Array.append(id);
           if (Array.length(trackIds) > 4) {
             let newTrackIds = Js.Array.slice(~start=1, ~end_=5, trackIds);
-            Js.log2("Set Pre:", newTrackIds);
             Update({...state, previousTrackIds: newTrackIds});
           } else {
             let newTrackIds = trackIds;
-            Js.log2("Set Pre:", newTrackIds);
             Update({...state, previousTrackIds: newTrackIds});
           };
         };
 
     | ExamineDJState(dj) =>
-      Js.log("Examin");
       /* Determine if we should run a OneGraph Spotify mutation to sync players, and if so, which mutation */
       let djAction =
         switch (
@@ -346,14 +342,12 @@ let make =
       }
 
     | MaintainConnection =>
-      Js.log2("!!!!", state.connectionId);
       switch (state.connectionToDj, state.userKind) {
       | (_, DJ(_)) => NoUpdate
       | (Connected, Listener(_)) =>
         let now = Js.Date.now();
         let elapsedMs = now -. state.lastMessageReceivedAt;
         let djAwayMsThreshold = 1500.0;
-        Js.log2("connected:", elapsedMs);
         switch (elapsedMs > djAwayMsThreshold) {
         | false => NoUpdate
         | true =>
@@ -367,8 +361,6 @@ let make =
       | (Connecting(asOfMs), Listener(djId)) =>
         let connectionTimeoutMs = 10000.0;
         let elapsedMs = Js.Date.now() -. asOfMs;
-        Js.log2("asOfMs:", asOfMs);
-        Js.log2("elapsedMs:", elapsedMs);
         switch (elapsedMs > connectionTimeoutMs) {
         | false => NoUpdate
         | true => reestablishConnection(state, djId)
@@ -376,7 +368,7 @@ let make =
 
       | (Error, Listener(djId))
       | (Disconnected, Listener(djId)) => reestablishConnection(state, djId)
-      };
+      }
     },
   render: self =>
     <div>
@@ -503,7 +495,7 @@ let make =
         </div>
         <LinkShare
           peerId={
-            switch (self.state.peerId) {
+            switch (self.state.switchboardId) {
             | Some(peerId) => BsUuid.Uuid.V4.toString(peerId)
             | None => ""
             }

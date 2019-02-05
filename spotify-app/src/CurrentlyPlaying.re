@@ -97,14 +97,16 @@ let make =
                 SharedCss.flexWrapper(~justify=`spaceBetween, ~align=`center),
               ])
             }>
-            <Progress
-              color="success"
-              className=progressBarStyle
-              value=progressPct
-            />
-            <img className=actionBtnStyle src=share alt="Share Icon" />
-            <img className=actionBtnStyle src=like alt="Like Icon" />
-          </div>
+
+              <Progress
+                color="success"
+                className=progressBarStyle
+                value=progressPct
+              />
+            </div>
+            /*
+             <img className=actionBtnStyle src=share alt="Share Icon" />
+             <img className=actionBtnStyle src=like alt="Like Icon" />*/
         </div>
       </div>
     ),
