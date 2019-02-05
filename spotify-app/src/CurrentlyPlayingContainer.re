@@ -489,6 +489,7 @@ let make =
             isPlaying
             progressPct
             albumImageUrl
+            isFirstSong={Array.length(self.state.previousTrackIds) <= 1}
           />
         </div>
         <LinkShare
