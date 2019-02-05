@@ -1,3 +1,4 @@
+open Utils;
 open BsReactstrap;
 open Emotion;
 
@@ -85,9 +86,16 @@ let subInfo = [%css
 ];
 
 let copyUrlToClipboard = url =>
-  Utils.writeText(url)
-  |> Js.Promise.then_(_e => Js.Promise.resolve())
-  |> ignore;
+  try (
+    Utils.writeText(url)
+    |> Js.Promise.then_(_e => Js.Promise.resolve())
+    |> ignore
+  ) {
+  | _ =>
+    selectElement(getElementById("shareLinkURL"), ());
+    execCommand("copy");
+    ();
+  };
 
 let shareSocialMedia = (url, name, properties) =>
   Utils.windowOpen(url, name, properties);
@@ -118,7 +126,12 @@ let make = (~peerId, _children) => {
             shareWrapper,
           ])
         }>
-        <input className=shareLinkURL value=sharingLink readOnly=true />
+        <input
+          className=shareLinkURL
+          value=sharingLink
+          readOnly=true
+          id="shareLinkURL"
+        />
         <hr className=inputLine />
         <Dropdown
           isOpen={self.state.isDropdownOpen}
@@ -128,38 +141,36 @@ let make = (~peerId, _children) => {
             {string("Share")}
           </DropdownToggle>
           <DropdownMenu className=drowpdownMenuStyle>
-            <DropdownItem className=drowpdownItemStyle>
-              <div
-                onClick={
-                  _e =>
-                    shareSocialMedia(
-                      "https://www.facebook.com/sharer/sharer.php?u=www.example.com/?dj="
-                      ++ peerId,
-                      "Share SpotDJ Channel",
-                      "menubar=1,resizable=1,width=560,height=450",
-                    )
-                }>
-                {string("Facebook")}
-              </div>
+            <DropdownItem
+              className=drowpdownItemStyle
+              onClick={
+                _e =>
+                  shareSocialMedia(
+                    "https://www.facebook.com/sharer/sharer.php?u=www.example.com/?dj="
+                    ++ peerId,
+                    "Share SpotDJ Channel",
+                    "menubar=1,resizable=1,width=560,height=450",
+                  )
+              }>
+              {string("Facebook")}
             </DropdownItem>
-            <DropdownItem className=drowpdownItemStyle>
-              <div
-                onClick={
-                  _e =>
-                    shareSocialMedia(
-                      "https://twitter.com/intent/tweet?text=Join%20me%20on%20SpotDj%20Here:%20www.example.com/?dj="
-                      ++ peerId,
-                      "Share SpotDJ Channel",
-                      "menubar=1,resizable=1,width=350,height=250",
-                    )
-                }>
-                {string("Twitter")}
-              </div>
+            <DropdownItem
+              className=drowpdownItemStyle
+              onClick={
+                _e =>
+                  shareSocialMedia(
+                    "https://twitter.com/intent/tweet?text=Join%20me%20on%20SpotDj%20Here:%20www.example.com/?dj="
+                    ++ peerId,
+                    "Share SpotDJ Channel",
+                    "menubar=1,resizable=1,width=350,height=250",
+                  )
+              }>
+              {string("Twitter")}
             </DropdownItem>
-            <DropdownItem className=drowpdownItemStyle>
-              <div onClick={_e => copyUrlToClipboard(sharingLink)}>
-                {string("Copy URL")}
-              </div>
+            <DropdownItem
+              className=drowpdownItemStyle
+              onClick={_e => copyUrlToClipboard(sharingLink)}>
+              {string("Copy URL")}
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>

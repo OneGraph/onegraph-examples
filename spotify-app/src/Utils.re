@@ -47,3 +47,13 @@ external windowOpen: (string, string, string) => unit = "open";
 
 [@bs.val] [@bs.scope ("window", "navigator", "clipboard")]
 external writeText: string => Js.Promise.t(string) = "writeText";
+
+type element;
+
+[@bs.val] [@bs.scope "document"]
+external getElementById: string => element = "getElementById";
+
+[@bs.val] [@bs.scope "document"]
+external execCommand: string => bool = "execCommand";
+
+[@bs.send] external selectElement: (element, unit) => unit = "select";
