@@ -125,6 +125,7 @@ let make = children => {
 
                  let defaultAlbumImage =
                    Utils.requireAssetURI("./img/now-playing-ex.png");
+
                  let albumImageUrl =
                    Utils.getImageUrl(
                      ~images=albumImages,

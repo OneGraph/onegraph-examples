@@ -13,7 +13,6 @@ let prePlayerWrapper = [%css
     margin3(`px(0), `auto, `px(64)),
     transformStyle(`preserve3d),
     transform(`scale(0.7)),
-    /*  transform(`rotateY(`deg(-40.))),*/
   ]
 ];
 
@@ -44,13 +43,7 @@ let pauseBtnStyle = [%css
 
 let progressBarStyle = [%css [width(`px(200)), height(`px(4))]];
 
-let albumImage = [%css
-  [
-    width(`pct(100.)),
-    height(`px(300)),
-    /*box-shadow: -2px 2px 4px #797979;*/
-  ]
-];
+let albumImage = [%css [width(`pct(100.)), height(`px(300))]];
 
 let component = ReasonReact.statelessComponent("PreviouslyPlayed");
 

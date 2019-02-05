@@ -221,7 +221,6 @@ let make =
     switch (userKind) {
     | DJ(_) =>
       Js.log("I'm a DJ");
-
       let intervalId =
         Js.Global.setInterval(() => self.send(NotifyPeers), 1000);
       self.onUnmount(() => Js.Global.clearInterval(intervalId));
@@ -230,7 +229,6 @@ let make =
       let intervalId =
         Js.Global.setInterval(() => self.send(MaintainConnection), 1000);
       self.onUnmount(() => Js.Global.clearInterval(intervalId));
-
       Js.log({j|My switchboard $me has a connection to dj $djId|j});
     };
   },
