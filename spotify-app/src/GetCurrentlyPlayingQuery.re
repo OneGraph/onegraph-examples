@@ -55,7 +55,7 @@ let component = ReasonReact.statelessComponent("GetCurrentlyPlaying");
 let make = children => {
   ...component,
   render: _self =>
-    <GetCurrentlyPlayingQuery pollInterval=500>
+    <GetCurrentlyPlayingQuery pollInterval=1000>
       ...{
            ({result}) =>
              switch (result) {
