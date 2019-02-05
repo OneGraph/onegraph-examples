@@ -72,10 +72,44 @@ let appearBackToFront =
     (100, [transforms([`scale(1.)])]),
   ]);
 
-let toFrontAnimation = [%css
+let slideToFront =
+  keyframes([
+    (
+      0,
+      [
+        transforms([
+          `scale(0.3),
+          `rotateY(`deg(50.)),
+          `translate((`px(400), `px(0))),
+        ]),
+      ],
+    ),
+    (
+      30,
+      [
+        transforms([
+          `scale(0.3),
+          `rotateY(`deg(50.)),
+          `translate((`px(400), `px(0))),
+        ]),
+      ],
+    ),
+    (
+      100,
+      [
+        transforms([
+          `scale(1.),
+          `rotateY(`deg(0.)),
+          `translate((`px(0), `px(0))),
+        ]),
+      ],
+    ),
+  ]);
+
+let toFrontAnimation = (~animationKeyframes) => [%css
   [
-    animationName(appearBackToFront),
-    animationDuration(`ms(600)),
+    animationName(animationKeyframes),
+    animationDuration(`ms(700)),
     animationFillMode(`forwards),
     animationTimingFunction(`easeOut),
   ]
