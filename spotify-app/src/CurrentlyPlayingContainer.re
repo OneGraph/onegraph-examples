@@ -403,14 +403,14 @@ let make =
                   </span>
                 </p>
               </div>
-              <button
-                className={Cn.make([button, userKindSwitchBtn, marginZero])}>
-                <a
-                  className=textBlack
-                  href={"http://" ++ Utils.Window.host ++ "/#"}>
+              <a
+                className=textBlack
+                href={"http://" ++ Utils.Window.host ++ "/#"}>
+                <button
+                  className={Cn.make([button, userKindSwitchBtn, marginZero])}>
                   {string("I wanna be DJ")}
-                </a>
-              </button>
+                </button>
+              </a>
             </div>
           }
         }
