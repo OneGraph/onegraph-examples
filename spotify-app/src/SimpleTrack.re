@@ -18,24 +18,37 @@ let artistNameStyle = [%css
   [fontSize(`px(14)), marginBottom(`px(0)), textAlign(`left)]
 ];
 
+let hiddenTrackStyle = [%css [display(`none)]];
+
 let albumImage = [%css [width(`pct(100.)), height(`px(300))]];
 
 let component = ReasonReact.statelessComponent("PreviouslyPlayed");
 
-let make = (~songName, ~artistName, ~albumImageUrl, ~newestHistory, _children) => {
+let make =
+    (
+      ~songName,
+      ~artistName,
+      ~albumImageUrl,
+      ~newestHistory,
+      ~idx,
+      ~isCurrentTrack,
+      _children,
+    ) => {
   ...component,
   render: _self =>
     ReasonReact.(
       <div
-        key=songName
+        key={songName ++ string_of_int(idx)}
         className={
-          Cn.make([
-            SharedCss.flipToLeftAnimation(
-              ~startScale=newestHistory ? 1. : 0.7,
-              ~endScale=0.7,
-            ),
-            prePlayerWrapper,
-          ])
+          isCurrentTrack ?
+            hiddenTrackStyle :
+            Cn.make([
+              SharedCss.flipToLeftAnimation(
+                ~startScale=newestHistory ? 1. : 0.7,
+                ~endScale=0.7,
+              ),
+              prePlayerWrapper,
+            ])
         }>
         <img className=albumImage src=albumImageUrl alt="Album Image" />
         <div

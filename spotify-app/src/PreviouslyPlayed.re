@@ -68,23 +68,23 @@ let make = (~trackList, _children) => {
         {
           trackList
           |> Array.mapi((idx, trackId) =>
-               idx === Array.length(trackList) - 1 ?
-                 null :
-                 <GetTrackInfoQuery trackId>
-                   ...{
-                        ({songName, artistName, albumImageUrl}) =>
-                          <SimpleTrack
-                            songName
-                            artistName
-                            albumImageUrl
-                            newestHistory={
-                              idx === Array.length(trackList) - 2 ?
-                                true : false
-                            }
-                            key={string_of_int(idx)}
-                          />
-                      }
-                 </GetTrackInfoQuery>
+               <GetTrackInfoQuery trackId>
+                 ...{
+                      ({songName, artistName, albumImageUrl}) =>
+                        <SimpleTrack
+                          songName
+                          artistName
+                          albumImageUrl
+                          newestHistory={
+                            idx === Array.length(trackList) - 2 ? true : false
+                          }
+                          isCurrentTrack={
+                            idx === Array.length(trackList) - 1 ? true : false
+                          }
+                          idx
+                        />
+                    }
+               </GetTrackInfoQuery>
              )
           |> ReasonReact.array
         }
