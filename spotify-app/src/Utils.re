@@ -65,6 +65,8 @@ external getElementById: string => element = "getElementById";
 [@bs.val] [@bs.scope "document"]
 external execCommand: string => bool = "execCommand";
 
+[@bs.val] [@bs.scope ("document", "body")] external clientWidth: float = "";
+
 [@bs.send]
 external addEventListener: (element, string, 'a => unit, bool) => unit = "";
 
