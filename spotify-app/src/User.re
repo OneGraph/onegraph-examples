@@ -19,6 +19,9 @@ let separator = [%css
     display(`inlineBlock),
   ]
 ];
+let wrappepr = [%css
+  [backgroundColor(`hex("000")), paddingBottom(`px(4))]
+];
 
 let handleLogOut = (auth, setLogOut) =>
   Js.Promise.(

@@ -380,13 +380,15 @@ let make =
                   className=userKindIcon
                 />
                 <p className=marginZero>
-                  <strong className=textBold> {string("Audience ")} </strong>
-                  <span className=textWeak>
-                    {string(" - listening with ")}
-                    <i> {string("ABC")} </i>
-                  </span>
+                  <strong className=textBold>
+                    {string("You are the Audience ")}
+                  </strong>
                 </p>
               </div>
+              /*                  <span className=textWeak>
+                                    {string(" - listening with ")}
+                                    <i> {string("ABC")} </i>
+                                  </span>*/
               <a
                 className=textBlack
                 href={"http://" ++ Utils.Window.host ++ "/#"}>
