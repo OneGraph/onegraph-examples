@@ -48,11 +48,13 @@ type state = {
   focusedIdx: int,
   scrollLeft: float,
   initialScrollLeft: float,
+  trackList: array(string),
 };
 
 type action =
   | UpdateFocusedId
-  | HandleXScroll(float);
+  | HandleXScroll(float)
+  | UpdateTrackListAndScrollPosition(array(string), float);
 
 let component = ReasonReact.reducerComponent("TrackhistoryListDisplay");
 
@@ -149,7 +151,20 @@ let make =
       _children,
     ) => {
   ...component,
-  initialState: () => {focusedIdx: 0, scrollLeft: 0., initialScrollLeft: 0.},
+  initialState: () => {
+    focusedIdx: 0,
+    scrollLeft:
+      float_of_int(Array.length(trackList))
+      *. 0.5
+      *. float_of_int(imagePreviewTotalWidth)
+      *. (-1.0),
+    initialScrollLeft:
+      float_of_int(Array.length(trackList))
+      *. 0.5
+      *. float_of_int(imagePreviewTotalWidth)
+      *. (-1.0),
+    trackList,
+  },
   reducer: (action, state) =>
     ReasonReact.(
       switch (action) {
@@ -158,13 +173,17 @@ let make =
         let boundary =
           float_of_int(imagePreviewTotalWidth * Array.length(trackList))
           /. 2.;
-
+        Js.log2("boundary:", boundary);
+        Js.log2("dx:", dx);
         let scrollLeft =
           state.scrollLeft
           -. dx
           |> min(boundary, _)
           |> max(boundary *. (-1.0), _);
+        Js.log2("scrollLeft:", scrollLeft);
         Update({...state, scrollLeft});
+      | UpdateTrackListAndScrollPosition(trackList, scrollLeft) =>
+        Update({...state, trackList, scrollLeft})
       }
     ),
   didMount: self =>
@@ -179,6 +198,27 @@ let make =
       },
       false,
     ),
+  willUpdate: ({oldSelf, newSelf}) =>
+    if (Array.length(newSelf.state.trackList) !== Array.length(trackList)) {
+      let boundary =
+        float_of_int(
+          imagePreviewTotalWidth * Array.length(newSelf.state.trackList),
+        )
+        /. 2.;
+      let scrollLeft =
+        switch (boundary -. abs_float(newSelf.state.scrollLeft) < 300.) {
+        | false => newSelf.state.scrollLeft
+        | true =>
+          float_of_int(Array.length(trackList))
+          *. 0.5
+          *. float_of_int(imagePreviewTotalWidth)
+          *. (-1.0)
+        };
+
+      newSelf.send(UpdateTrackListAndScrollPosition(trackList, scrollLeft));
+    } else {
+      ();
+    },
   render: self =>
     ReasonReact.(
       <div>
