@@ -22,11 +22,24 @@ let playerWrapper = [%css
 ];
 
 let songNameStyle = [%css
-  [fontSize(`px(24)), marginBottom(`px(0)), textAlign(`left)]
+  [
+    fontSize(`px(20)),
+    marginBottom(`px(0)),
+    textAlign(`left),
+    width(`px(200)),
+  ]
 ];
 
 let artistNameStyle = [%css
-  [fontSize(`px(14)), marginBottom(`px(0)), textAlign(`left)]
+  [
+    fontSize(`px(12)),
+    marginBottom(`px(0)),
+    textAlign(`left),
+    textOverflow(`ellipsis),
+    width(`px(200)),
+    whiteSpace(`nowrap),
+    overflow(`hidden),
+  ]
 ];
 
 let audioWaveStyle = [%css [height(`px(48))]];

@@ -11,11 +11,27 @@ let prePlayerWrapper = [%css
 ];
 
 let songNameStyle = [%css
-  [fontSize(`px(24)), marginBottom(`px(0)), textAlign(`left)]
+  [
+    fontSize(`px(20)),
+    marginBottom(`px(0)),
+    textAlign(`left),
+    textOverflow(`ellipsis),
+    width(`px(200)),
+    whiteSpace(`nowrap),
+    overflow(`hidden),
+  ]
 ];
 
 let artistNameStyle = [%css
-  [fontSize(`px(14)), marginBottom(`px(0)), textAlign(`left)]
+  [
+    fontSize(`px(12)),
+    marginBottom(`px(0)),
+    textAlign(`left),
+    textOverflow(`ellipsis),
+    width(`px(200)),
+    whiteSpace(`nowrap),
+    overflow(`hidden),
+  ]
 ];
 
 let hiddenTrackStyle = [%css [display(`none)]];
