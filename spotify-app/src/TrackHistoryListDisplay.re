@@ -2,7 +2,7 @@ open Emotion;
 open ReactMotionBinding;
 
 let imagePreviewWidth = 200;
-let imagePreviewContainer = 32;
+let imagePreviewContainer = 64;
 let imagePreviewTotalWidth = imagePreviewWidth + imagePreviewContainer;
 
 let wrapper = [%css
@@ -38,7 +38,7 @@ let trackStyleHidden = [%css
     width(`px(200)),
     height(`px(300)),
     position(`relative),
-    margin(`px(16)),
+    margin(`px(32)),
     flexShrink(0.),
     right(`px(0)),
   ]
@@ -122,6 +122,7 @@ let trackAnimationStyle = (xVal, scale, rotate, opacity) => {
   let xVal = string_of_float(xVal);
   let scale = string_of_float(scale);
   let rotate = string_of_float(rotate);
+  let zIndex = opacity > 0.5 ? "10" : "";
   let opacity = string_of_float(opacity);
 
   let transform =
@@ -133,7 +134,7 @@ let trackAnimationStyle = (xVal, scale, rotate, opacity) => {
     ++ rotate
     ++ "0deg)";
 
-  ReactDOMRe.Style.make(~transform, ~opacity, ());
+  ReactDOMRe.Style.make(~transform, ~opacity, ~zIndex, ());
 };
 
 let make =

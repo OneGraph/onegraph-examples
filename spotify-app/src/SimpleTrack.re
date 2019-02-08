@@ -6,7 +6,7 @@ let prePlayerWrapper = [%css
     position(`relative),
     margin3(`px(0), `px(0), `px(64)),
     transformStyle(`preserve3d),
-    transform(`scale(0.7)),
+    /* transform(`scale(0.9)),*/
   ]
 ];
 
@@ -20,7 +20,7 @@ let artistNameStyle = [%css
 
 let hiddenTrackStyle = [%css [display(`none)]];
 
-let albumImage = [%css [width(`pct(100.)), height(`px(300))]];
+let albumImage = [%css [width(`px(200)), height(`auto)]];
 
 let component = ReasonReact.statelessComponent("PreviouslyPlayed");
 
