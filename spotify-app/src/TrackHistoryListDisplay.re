@@ -67,15 +67,14 @@ let getAnimationStyleValue = (trackList, currentScroll) => {
            *. 0.5
            -. float_of_int(Array.length(trackList))
            *. float_of_int(imagePreviewTotalWidth)
-           *. 0.7;
-
-         let offSetHelperWhenLessItem = centerDiff > 0.0 ? centerDiff : 0.0;
+           *. 0.5
+           +. 100.0;
 
          let offSetX =
            currentScroll
            +. float_of_int(idx)
-           *. 200.
-           +. offSetHelperWhenLessItem;
+           *. float_of_int(imagePreviewTotalWidth)
+           +. centerDiff;
 
          let center =
            offSetX
