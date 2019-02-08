@@ -57,3 +57,7 @@ external getElementById: string => element = "getElementById";
 external execCommand: string => bool = "execCommand";
 
 [@bs.send] external selectElement: (element, unit) => unit = "select";
+
+[@bs.send] external scrollTo: (element, int, int) => unit = "scrollTo";
+
+[@bs.get] external scrollLeft: element => float = "scrollLeft";

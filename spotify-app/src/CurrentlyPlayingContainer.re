@@ -15,7 +15,8 @@ let userKindIcon = [%css [width(`px(24)), margin2(`px(0), `px(4))]];
 
 let userKindSwitchBtn = [%css [fontSize(`px(12)), fontWeight(600)]];
 
-let unactiveStyle = [%css [opacity(0.5)]];
+let unactiveStyle = [%css [opacity(0.5), width(`px(300)), margin(`auto)]];
+let activeStyle = [%css [width(`px(300)), margin(`auto)]];
 
 let statusRibon = (~ribonColor) => [%css
   [
@@ -51,7 +52,6 @@ type state = {
   checkMessageIntervalId: option(Js.Global.intervalId),
   lastMessageReceivedAt: float,
   connectionId: int,
-  previousTrackIds: array(string),
 };
 
 type action =
@@ -62,8 +62,7 @@ type action =
   | SetDjConnectionStatus(int, connectionStatus)
   | SetSwitchboard(switchboard, BsUuid.Uuid.V4.t)
   | SetUserKind(userKind)
-  | SyncPlayer(SpotifyControls.playerStatus)
-  | SetPreviouseTrackId(string);
+  | SyncPlayer(SpotifyControls.playerStatus);
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -156,7 +155,6 @@ let reestablishConnection = (state, djId) =>
                 playerStatus => {
                   Js.log2("Received DJ playState", nextConnectionId);
                   self.send(ExamineDJState(playerStatus));
-                  self.send(SetPreviouseTrackId(playerStatus.trackId));
                 },
               ~peerId=djId,
               (),
@@ -180,6 +178,7 @@ let make =
       ~userName,
       ~userIconUrl,
       ~setLogOut,
+      ~trackHistoryList,
       _children,
     ) => {
   ...component,
@@ -191,9 +190,9 @@ let make =
     checkMessageIntervalId: None,
     lastMessageReceivedAt: 0.0,
     connectionId: (-1),
-    previousTrackIds: [||],
   },
   didMount: self => {
+    Js.log("didMount!");
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
     let query = QueryString.parseQueryString(url.search);
     let userKind =
@@ -262,21 +261,6 @@ let make =
         switchboard: Some(switchboard),
         switchboardId: Some(switchboardId),
       })
-    | SetPreviouseTrackId(id) =>
-      let idAlreadyExists = Js.Array.includes(id, state.previousTrackIds);
-      idAlreadyExists ?
-        NoUpdate :
-        {
-          let trackIds =
-            Array.copy(state.previousTrackIds) |> Js.Array.append(id);
-          if (Array.length(trackIds) > 4) {
-            let newTrackIds = Js.Array.slice(~start=1, ~end_=5, trackIds);
-            Update({...state, previousTrackIds: newTrackIds});
-          } else {
-            let newTrackIds = trackIds;
-            Update({...state, previousTrackIds: newTrackIds});
-          };
-        };
 
     | ExamineDJState(dj) =>
       /* Determine if we should run a OneGraph Spotify mutation to sync players, and if so, which mutation */
@@ -474,12 +458,12 @@ let make =
           | (DJ(_), _) => null
           }
         }
-        <PreviouslyPlayed trackList={self.state.previousTrackIds} />
+        /*  <PreviouslyPlayed trackList=trackHistoryList />*/
         <div
           className={
             switch (self.state.userKind, self.state.connectionToDj) {
             | (DJ(_), _)
-            | (Listener(_), Connected) => ""
+            | (Listener(_), Connected) => activeStyle
             | (Listener(_), _) => unactiveStyle
             }
           }>
@@ -489,7 +473,7 @@ let make =
             isPlaying
             progressPct
             albumImageUrl
-            isFirstSong={Array.length(self.state.previousTrackIds) <= 1}
+            isFirstSong={Array.length(trackHistoryList) <= 1}
           />
         </div>
         <LinkShare
@@ -500,6 +484,7 @@ let make =
             }
           }
         />
+        <TrackHistoryListDisplay trackList=trackHistoryList />
       </div>
     </div>,
 };

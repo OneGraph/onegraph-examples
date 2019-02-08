@@ -41,11 +41,13 @@ type state = {
   auth: OneGraphAuth.auth,
   peerId: BsUuid.Uuid.V4.t,
   playerStatus,
+  trackHistoryList: array(string),
 };
 
 type action =
   | NotePlayerStatus(playerStatus)
-  | SetLogInStatus(logInStatus);
+  | SetLogInStatus(logInStatus)
+  | UpdateTrackHistoryList(string);
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -63,6 +65,7 @@ let make = _children => {
       positionMs: 0,
     },
     peerId: BsUuid.Uuid.V4.create(),
+    trackHistoryList: [||],
   },
   didMount: self =>
     Js.Promise.(
@@ -82,6 +85,28 @@ let make = _children => {
 
     | NotePlayerStatus(playerStatus) =>
       ReasonReact.Update({...state, playerStatus})
+    | UpdateTrackHistoryList(id) =>
+      let listLength = Array.length(state.trackHistoryList);
+      listLength <= 0 ?
+        {
+          let newTrackIds =
+            Array.copy(state.trackHistoryList) |> Js.Array.append(id);
+          Js.log2("trackList:", newTrackIds);
+          Update({...state, trackHistoryList: newTrackIds});
+        } :
+        {
+          let lastTrackId = state.trackHistoryList[listLength - 1];
+          let isCurrentTrack = lastTrackId === id;
+
+          isCurrentTrack ?
+            NoUpdate :
+            {
+              let newTrackIds =
+                Array.copy(state.trackHistoryList) |> Js.Array.append(id);
+              Js.log2("trackList:", newTrackIds);
+              Update({...state, trackHistoryList: newTrackIds});
+            };
+        };
     },
   render: self =>
     ReasonReact.(
@@ -120,7 +145,10 @@ let make = _children => {
                 />
               </div>
             | LoggedIn =>
-              <GetCurrentlyPlayingQuery>
+              <GetCurrentlyPlayingQuery
+                updateTrackHistoryList=(
+                  id => self.send(UpdateTrackHistoryList(id))
+                )>
                 ...(
                      (
                        {
@@ -149,6 +177,7 @@ let make = _children => {
                          setLogOut={
                            () => self.send(SetLogInStatus(LoggedOut))
                          }
+                         trackHistoryList={self.state.trackHistoryList}
                        />
                    )
               </GetCurrentlyPlayingQuery>

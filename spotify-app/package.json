@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "build": "bsb -make-world",
-    "now-build": "bsb -make-world && NODE_ENV=production webpack && mv build dist",
+    "now-build": "bsb -make-world && mv build dist",
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
     "refmt": "refmt --in-place",
@@ -12,8 +12,7 @@
     "emacs": "emacs",
     "webpack": "webpack -w --display-error-details",
     "webpack:production": "NODE_ENV=production webpack",
-    "server": "webpack-dev-server --display-error-details",
-    "now-build": "bsb -make-world && mv build dist"
+    "server": "webpack-dev-server --display-error-details"
   },
   "keywords": [
     "BuckleScript"
@@ -34,6 +33,7 @@
     "re-classnames": "3.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-motion": "^0.5.2",
     "reason-apollo": "^0.15.1",
     "reason-react": ">=0.4.0"
   },

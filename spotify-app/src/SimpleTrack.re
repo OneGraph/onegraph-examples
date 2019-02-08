@@ -40,15 +40,7 @@ let make =
       <div
         key={songName ++ string_of_int(idx)}
         className={
-          isCurrentTrack ?
-            hiddenTrackStyle :
-            Cn.make([
-              SharedCss.flipToLeftAnimation(
-                ~startScale=newestHistory ? 1. : 0.7,
-                ~endScale=0.7,
-              ),
-              prePlayerWrapper,
-            ])
+          isCurrentTrack ? hiddenTrackStyle : Cn.make([prePlayerWrapper])
         }>
         <img className=albumImage src=albumImageUrl alt="Album Image" />
         <div

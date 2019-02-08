@@ -70,53 +70,48 @@ let make =
     },
   render: self =>
     ReasonReact.(
-      <div className="current-playing">
+      <div className={Cn.make([playerWrapper])}>
 
-          <div className={Cn.make([playerWrapper])}>
-            <img
-              key=songName
-              className={
-                Cn.make([
-                  albumImage,
-                  toFrontAnimation(
-                    ~animationKeyframes=
-                      isFirstSong ? appearBackToFront : slideToFront,
-                  ),
-                ])
-              }
-              src=albumImageUrl
-              alt="Album Image"
+          <img
+            key=songName
+            className={
+              Cn.make([
+                albumImage,
+                toFrontAnimation(
+                  ~animationKeyframes=
+                    isFirstSong ? appearBackToFront : slideToFront,
+                ),
+              ])
+            }
+            src=albumImageUrl
+            alt="Album Image"
+          />
+          <div
+            className={
+              SharedCss.flexWrapper(~justify=`spaceBetween, ~align=`center)
+            }>
+            <div>
+              <h3 className=songNameStyle> {string(songName)} </h3>
+              <p className=artistNameStyle> {string(artistName)} </p>
+            </div>
+            {
+              isPlaying ?
+                null :
+                <img className=pauseBtnStyle src=pause alt="Pause Icon" />
+            }
+            <SoundWave isPlaying />
+          </div>
+          <div
+            className={
+              Cn.make([
+                SharedCss.flexWrapper(~justify=`spaceBetween, ~align=`center),
+              ])
+            }>
+            <Progress
+              color="success"
+              className=progressBarStyle
+              value=progressPct
             />
-            <div
-              className={
-                SharedCss.flexWrapper(~justify=`spaceBetween, ~align=`center)
-              }>
-              <div>
-                <h3 className=songNameStyle> {string(songName)} </h3>
-                <p className=artistNameStyle> {string(artistName)} </p>
-              </div>
-              {
-                isPlaying ?
-                  null :
-                  <img className=pauseBtnStyle src=pause alt="Pause Icon" />
-              }
-              <SoundWave isPlaying />
-            </div>
-            <div
-              className={
-                Cn.make([
-                  SharedCss.flexWrapper(
-                    ~justify=`spaceBetween,
-                    ~align=`center,
-                  ),
-                ])
-              }>
-              <Progress
-                color="success"
-                className=progressBarStyle
-                value=progressPct
-              />
-            </div>
           </div>
         </div>
         /*Implement Share and Like later

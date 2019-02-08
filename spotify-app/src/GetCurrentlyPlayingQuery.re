@@ -52,7 +52,7 @@ module GetCurrentlyPlayingQuery =
 
 let component = ReasonReact.statelessComponent("GetCurrentlyPlaying");
 
-let make = children => {
+let make = (~updateTrackHistoryList, children) => {
   ...component,
   render: _self =>
     <GetCurrentlyPlayingQuery pollInterval=1000>
@@ -165,6 +165,8 @@ let make = children => {
                    |> Js.Array.filter(name => name !== "");
 
                  let artistName = Js.Array.joinWith(",", artistNameArray);
+
+                 updateTrackHistoryList(trackId);
 
                  children({
                    albumImageUrl,
