@@ -18,7 +18,7 @@ let separator = [%css
     display(`inlineBlock),
   ]
 ];
-let wrappepr = [%css
+let wrapper = [%css
   [backgroundColor(`hex("000")), paddingBottom(`px(4))]
 ];
 
@@ -45,7 +45,7 @@ let make = (~auth, ~userName, ~userIconUrl, ~setLogOut, _children) => {
   ...component,
   render: _self =>
     ReasonReact.(
-      <p>
+      <p className=wrapper>
         {string("Listening as")}
         <img className=userIcon src=userIconUrl alt="user icon" />
         {string(userName)}
