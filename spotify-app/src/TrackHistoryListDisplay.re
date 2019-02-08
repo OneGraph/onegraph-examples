@@ -112,7 +112,17 @@ let trackAnimationStyle = (xVal, scale, rotate) => {
   ReactDOMRe.Style.make(~transform, ());
 };
 
-let make = (~trackList, _children) => {
+let make =
+    (
+      ~trackList,
+      ~currentSongName,
+      ~currentArtistName,
+      ~currentIsPlaying,
+      ~currentProgressPct,
+      ~currentAlbumImageUrl,
+      ~currentIsFirstSong,
+      _children,
+    ) => {
   ...component,
   initialState: () => {focusedIdx: 1, scrollLeft: 0., initialScrollLeft: 0.},
   reducer: (action, state) =>
@@ -175,22 +185,33 @@ let make = (~trackList, _children) => {
                              styleValue[idx].rotate,
                            )
                          }>
-                         <GetTrackInfoQuery trackId>
-                           ...{
-                                ({songName, artistName, albumImageUrl}) =>
-                                  <SimpleTrack
-                                    songName
-                                    artistName
-                                    albumImageUrl
-                                    newestHistory={
-                                      idx === Array.length(trackList) - 2 ?
-                                        true : false
-                                    }
-                                    isCurrentTrack=false
-                                    idx
-                                  />
-                              }
-                         </GetTrackInfoQuery>
+                         {
+                           idx === Array.length(trackList) - 1 ?
+                             <CurrentlyPlaying
+                               songName=currentSongName
+                               artistName=currentArtistName
+                               isPlaying=currentIsPlaying
+                               progressPct=currentProgressPct
+                               albumImageUrl=currentAlbumImageUrl
+                               isFirstSong=currentIsFirstSong
+                             /> :
+                             <GetTrackInfoQuery trackId>
+                               ...{
+                                    ({songName, artistName, albumImageUrl}) =>
+                                      <SimpleTrack
+                                        songName
+                                        artistName
+                                        albumImageUrl
+                                        newestHistory={
+                                          idx === Array.length(trackList) - 2 ?
+                                            true : false
+                                        }
+                                        isCurrentTrack=false
+                                        idx
+                                      />
+                                  }
+                             </GetTrackInfoQuery>
+                         }
                        </div>
                      )
                   |> ReasonReact.array

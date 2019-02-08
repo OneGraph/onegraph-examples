@@ -466,16 +466,17 @@ let make =
             | (Listener(_), Connected) => activeStyle
             | (Listener(_), _) => unactiveStyle
             }
-          }>
-          <CurrentlyPlaying
-            songName
-            artistName
-            isPlaying
-            progressPct
-            albumImageUrl
-            isFirstSong={Array.length(trackHistoryList) <= 1}
-          />
-        </div>
+          }
+        />
+        <TrackHistoryListDisplay
+          trackList=trackHistoryList
+          currentSongName=songName
+          currentArtistName=artistName
+          currentIsPlaying=isPlaying
+          currentProgressPct=progressPct
+          currentAlbumImageUrl=albumImageUrl
+          currentIsFirstSong={Array.length(trackHistoryList) <= 1}
+        />
         <LinkShare
           peerId={
             switch (self.state.switchboardId) {
@@ -484,7 +485,16 @@ let make =
             }
           }
         />
-        <TrackHistoryListDisplay trackList=trackHistoryList />
       </div>
     </div>,
 };
+
+/*
+ <CurrentlyPlaying
+ songName
+ artistName
+ isPlaying
+ progressPct
+ albumImageUrl
+ isFirstSong={Array.length(trackHistoryList) <= 1}
+ />*/
