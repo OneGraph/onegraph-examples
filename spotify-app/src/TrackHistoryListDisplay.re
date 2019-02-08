@@ -70,22 +70,26 @@ let getAnimationStyleValue = (trackList, currentScroll) => {
 
          switch (isFocused) {
          | false =>
-           let scale = 1.1;
+           let scale = 1.0;
            let rotate = (-40.0);
+           let opacity = 0.3;
            let returnStyle = {
              x: spring(offSetX, gentle),
              scale: spring(scale, gentle),
              rotate: spring(rotate, gentle),
+             opacity: spring(opacity, gentle),
            };
 
            returnStyle;
          | true =>
-           let scale = 1.3;
+           let scale = idx === Array.length(trackList) - 1 ? 1.0 : 1.3;
            let rotate = 0.0;
+           let opacity = 1.0;
            let returnStyle = {
              x: spring(offSetX, gentle),
              scale: spring(scale, gentle),
              rotate: spring(rotate, gentle),
+             opacity: spring(opacity, gentle),
            };
 
            returnStyle;
@@ -95,10 +99,11 @@ let getAnimationStyleValue = (trackList, currentScroll) => {
   returnFunction;
 };
 
-let trackAnimationStyle = (xVal, scale, rotate) => {
+let trackAnimationStyle = (xVal, scale, rotate, opacity) => {
   let xVal = string_of_float(xVal);
   let scale = string_of_float(scale);
   let rotate = string_of_float(rotate);
+  let opacity = string_of_float(opacity);
 
   let transform =
     "translate("
@@ -109,7 +114,7 @@ let trackAnimationStyle = (xVal, scale, rotate) => {
     ++ rotate
     ++ "0deg)";
 
-  ReactDOMRe.Style.make(~transform, ());
+  ReactDOMRe.Style.make(~transform, ~opacity, ());
 };
 
 let make =
@@ -166,7 +171,10 @@ let make =
           }
           defaultStyles={
             trackList
-            |> Array.map(_trackId => {x: 1.1, scale: 1.1, rotate: (-40.0)})
+            |> Array.map(_trackId => {
+                 let offSetX = Utils.clientWidth +. 300.0;
+                 {x: offSetX, scale: 1.0, rotate: (-40.0), opacity: 0.3};
+               })
           }>
           {
             styleValue =>
@@ -183,6 +191,7 @@ let make =
                              styleValue[idx].x,
                              styleValue[idx].scale,
                              styleValue[idx].rotate,
+                             styleValue[idx].opacity,
                            )
                          }>
                          {

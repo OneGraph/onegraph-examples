@@ -3,6 +3,7 @@ type style = {
   x: float,
   scale: float,
   rotate: float,
+  opacity: float,
 };
 type springConfig('a) = Js.t('a);
 
