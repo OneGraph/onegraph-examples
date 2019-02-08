@@ -17,7 +17,7 @@ type jsProps = {
 };
 
 [@bs.module]
-external starggeredMotion: ReasonReact.reactClass =
+external staggeredMotion: ReasonReact.reactClass =
   "../node_modules/react-motion/lib/StaggeredMotion.js";
 
 [@bs.module "react-motion"] [@bs.scope "presets"]
@@ -35,13 +35,16 @@ external stiff: springConfig('a) = "";
 [@bs.module "react-motion"] [@bs.val]
 external spring: (float, springConfig('a)) => float = "spring";
 
-let component = ReasonReact.statelessComponent("ReactMotionBinding");
+module StaggeredMotion = {
+  let component = ReasonReact.statelessComponent("ReactMotionBinding");
 
-let make = (~className, ~getAimationStyleValue, ~defaultStyles, children) =>
-  ReasonReact.wrapJsForReason(
-    ~reactClass=starggeredMotion,
-    ~props=jsProps(~className, ~styles=getAimationStyleValue, ~defaultStyles),
-    children,
-  );
+  let make = (~className, ~getAimationStyleValue, ~defaultStyles, children) =>
+    ReasonReact.wrapJsForReason(
+      ~reactClass=staggeredMotion,
+      ~props=
+        jsProps(~className, ~styles=getAimationStyleValue, ~defaultStyles),
+      children,
+    );
+};
 
 let a = spring(0., gentle);

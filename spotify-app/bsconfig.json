@@ -24,6 +24,7 @@
     "bs-emotion",
     "bs-fetch",
     "bs-uuid",
+    "bs-webapi",
     "re-classnames",
     "reason-apollo",
     "reason-react"

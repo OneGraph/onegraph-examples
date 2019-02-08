@@ -51,10 +51,22 @@ external writeText: string => Js.Promise.t(string) = "writeText";
 type element;
 
 [@bs.val] [@bs.scope "document"]
+external addDocumentEventListener: (string, 'a => unit, bool) => unit =
+  "addEventListener";
+
+[@bs.val] [@bs.scope "document"]
+external addDocumentMouseWheelEventListener:
+  (string, Webapi.Dom.WheelEvent.t => unit, bool) => unit =
+  "addEventListener";
+
+[@bs.val] [@bs.scope "document"]
 external getElementById: string => element = "getElementById";
 
 [@bs.val] [@bs.scope "document"]
 external execCommand: string => bool = "execCommand";
+
+[@bs.send]
+external addEventListener: (element, string, 'a => unit, bool) => unit = "";
 
 [@bs.send] external selectElement: (element, unit) => unit = "select";
 

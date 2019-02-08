@@ -883,6 +883,11 @@ bs-uuid@^0.3.1:
   dependencies:
     uuid "^3.2.1"
 
+bs-webapi@0.13.2:
+  version "0.13.2"
+  resolved "https://registry.yarnpkg.com/bs-webapi/-/bs-webapi-0.13.2.tgz#7e96127f633cff16491d1b9b2158e7fa33a76412"
+  integrity sha512-eWWOT8ntAy7t2FzT+sJMmI47Fi+cpTmDSFC0R9F2OEJ/eZ8yp1wsheFAZsSDyOZIzIZP4mlJbiyVu01FB0r2DQ==
+
 bsb-native@4.0.7000:
   version "4.0.7000"
   resolved "https://registry.yarnpkg.com/bsb-native/-/bsb-native-4.0.7000.tgz#04031ae81a3cd53d48868593fe059c1d5752403b"
@@ -4380,6 +4385,11 @@ reason-apollo@^0.15.1:
     graphql-tag "2.10.0"
     react-apollo "2.3.2"
     subscriptions-transport-ws "0.9.0"
+
+reason-cli@3.3.3-macos-1:
+  version "3.3.3-macos-1"
+  resolved "https://registry.yarnpkg.com/reason-cli/-/reason-cli-3.3.3-macos-1.tgz#b847a614144b3c68d8dbf4972df6bb93bc857032"
+  integrity sha512-YdX54+bG2qjwlKYpgttfdhUIpKvkxBMY4x530GOyvSNNMU7pSzuc2H5x6Bt8pxKOyq0Kz/NQk/TMXT5AITdFcg==
 
 reason-react@>=0.4.0:
   version "0.5.3"

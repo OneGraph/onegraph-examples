@@ -65,7 +65,18 @@ let make = _children => {
       positionMs: 0,
     },
     peerId: BsUuid.Uuid.V4.create(),
-    trackHistoryList: [||],
+    trackHistoryList: [|
+      "4rsHDST3FgBWEQk55M9i6F",
+      "7L85hEKSwSnHtPs0yssxib",
+      "4rsHDST3FgBWEQk55M9i6F",
+      "7L85hEKSwSnHtPs0yssxib",
+      "4rsHDST3FgBWEQk55M9i6F",
+      "7L85hEKSwSnHtPs0yssxib",
+      "4rsHDST3FgBWEQk55M9i6F",
+      "7L85hEKSwSnHtPs0yssxib",
+      "4rsHDST3FgBWEQk55M9i6F",
+      "7L85hEKSwSnHtPs0yssxib",
+    |],
   },
   didMount: self =>
     Js.Promise.(
