@@ -177,7 +177,7 @@ let make =
         let scrollLeft =
           state.scrollLeft
           -. dx
-          |> min(boundary, _)
+          |> min(boundary -. 200.0, _)
           |> max(boundary *. (-1.0), _);
         Js.log2("scrollLeft:", scrollLeft);
         Update({...state, scrollLeft});
@@ -205,8 +205,11 @@ let make =
         )
         /. 2.;
       let scrollLeft =
-        switch (boundary -. abs_float(newSelf.state.scrollLeft) < 300.) {
-        | false => newSelf.state.scrollLeft
+        switch (boundary +. newSelf.state.scrollLeft < 50.) {
+        | false =>
+          newSelf.state.scrollLeft
+          +. float_of_int(imagePreviewTotalWidth)
+          *. 0.5
         | true =>
           float_of_int(Array.length(trackList))
           *. 0.5
