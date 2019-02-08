@@ -192,7 +192,6 @@ let make =
     connectionId: (-1),
   },
   didMount: self => {
-    Js.log("didMount!");
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
     let query = QueryString.parseQueryString(url.search);
     let userKind =
@@ -385,7 +384,8 @@ let make =
                   </strong>
                 </p>
               </div>
-              /*                  <span className=textWeak>
+              /* Might include DJ username later
+                 <span className=textWeak>
                                     {string(" - listening with ")}
                                     <i> {string("ABC")} </i>
                                   </span>*/
@@ -460,7 +460,6 @@ let make =
           | (DJ(_), _) => null
           }
         }
-        /*  <PreviouslyPlayed trackList=trackHistoryList />*/
         <div
           className={
             switch (self.state.userKind, self.state.connectionToDj) {
@@ -490,13 +489,3 @@ let make =
       </div>
     </div>,
 };
-
-/*
- <CurrentlyPlaying
- songName
- artistName
- isPlaying
- progressPct
- albumImageUrl
- isFirstSong={Array.length(trackHistoryList) <= 1}
- />*/

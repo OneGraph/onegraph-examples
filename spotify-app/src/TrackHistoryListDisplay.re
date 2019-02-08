@@ -172,14 +172,12 @@ let make =
         let boundary =
           float_of_int(imagePreviewTotalWidth * Array.length(trackList))
           /. 2.;
-        Js.log2("boundary:", boundary);
-        Js.log2("dx:", dx);
+
         let scrollLeft =
           state.scrollLeft
           -. dx
           |> min(boundary -. 200.0, _)
           |> max(boundary *. (-1.0), _);
-        Js.log2("scrollLeft:", scrollLeft);
         Update({...state, scrollLeft});
       | UpdateTrackListAndScrollPosition(trackList, scrollLeft) =>
         Update({...state, trackList, scrollLeft})

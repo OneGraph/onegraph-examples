@@ -1,6 +1,5 @@
 open Emotion;
 
-/*Style*/
 let userIcon = [%css
   [
     width(`px(25)),
