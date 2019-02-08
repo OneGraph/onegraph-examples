@@ -8,12 +8,11 @@ let imagePreviewTotalWidth = imagePreviewWidth + imagePreviewContainer;
 let wrapper = [%css
   [
     display(`flex),
-    height(`px(400)),
-    position(`absolute),
+    height(`px(450)),
+    position(`relative),
     top(`px(0)),
     zIndex(-1),
-    opacity(0.3),
-    width(`vw(90.)),
+    width(`vw(100.)),
     margin(`auto),
     perspective(`px(1000)),
   ]
@@ -157,14 +156,13 @@ let make =
       | HandleXScroll(dx) =>
         let boundary =
           float_of_int(imagePreviewTotalWidth * Array.length(trackList))
-          /. 2.0;
+          /. 2.;
 
         let scrollLeft =
           state.scrollLeft
-          +. dx
+          -. dx
           |> min(boundary, _)
           |> max(boundary *. (-1.0), _);
-
         Update({...state, scrollLeft});
       }
     ),
