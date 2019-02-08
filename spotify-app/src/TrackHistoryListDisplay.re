@@ -61,9 +61,29 @@ let getAnimationStyleValue = (trackList, currentScroll) => {
   let returnFunction = () =>
     trackList
     |> Array.mapi((idx, _value) => {
-         let offSetX = currentScroll +. float_of_int(idx) *. 200.;
+         let centerDiff =
+           Utils.clientWidth
+           *. 0.5
+           -. float_of_int(Array.length(trackList))
+           *. float_of_int(imagePreviewTotalWidth)
+           *. 0.7;
 
-         let center = offSetX -. 1265.0;
+         let offSetHelperWhenLessItem = centerDiff > 0.0 ? centerDiff : 0.0;
+
+         let offSetX =
+           currentScroll
+           +. float_of_int(idx)
+           *. 200.
+           +. offSetHelperWhenLessItem;
+
+         let center =
+           offSetX
+           -. (
+             Utils.clientWidth
+             *. 0.50
+             -. float_of_int(imagePreviewTotalWidth)
+             *. 0.50
+           );
 
          let isFocused =
            abs_float(center) < float_of_int(imagePreviewTotalWidth) *. 0.40;
@@ -129,7 +149,7 @@ let make =
       _children,
     ) => {
   ...component,
-  initialState: () => {focusedIdx: 1, scrollLeft: 0., initialScrollLeft: 0.},
+  initialState: () => {focusedIdx: 0, scrollLeft: 0., initialScrollLeft: 0.},
   reducer: (action, state) =>
     ReasonReact.(
       switch (action) {
