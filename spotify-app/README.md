@@ -1,10 +1,11 @@
 # SpotDJ
 
-This is a serverless web app that enables anyone with a Spotify account to listen for someone else Spotify music being played live.
+A serverless web app that enables anyone with a Spotify account to listen for someone else's Spotify music being played live.
 
 Try it live at www.spotDJ.com
 
 ![Demo](demo.gif)
+
 
 The Spotify APIs and authentications are accessed through OneGraph.
 
