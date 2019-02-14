@@ -1,6 +1,7 @@
 open BsReactstrap;
 open Utils;
 open Emotion;
+open SharedCss;
 
 let audioWave = requireAssetURI("./img/audio-wave.png");
 let like = requireAssetURI("./img/like.png");
@@ -21,11 +22,24 @@ let playerWrapper = [%css
 ];
 
 let songNameStyle = [%css
-  [fontSize(`px(24)), marginBottom(`px(0)), textAlign(`left)]
+  [
+    fontSize(`px(20)),
+    marginBottom(`px(0)),
+    textAlign(`left),
+    width(`px(200)),
+  ]
 ];
 
 let artistNameStyle = [%css
-  [fontSize(`px(14)), marginBottom(`px(0)), textAlign(`left)]
+  [
+    fontSize(`px(12)),
+    marginBottom(`px(0)),
+    textAlign(`left),
+    textOverflow(`ellipsis),
+    width(`px(200)),
+    whiteSpace(`nowrap),
+    overflow(`hidden),
+  ]
 ];
 
 let audioWaveStyle = [%css [height(`px(48))]];
@@ -52,7 +66,15 @@ let albumImage = [%css [width(`pct(100.)), height(`px(300))]];
 let component = ReasonReact.reducerComponent("User");
 
 let make =
-    (~songName, ~artistName, ~isPlaying, ~progressPct, ~albumImageUrl, _children) => {
+    (
+      ~songName,
+      ~artistName,
+      ~isPlaying,
+      ~progressPct,
+      ~albumImageUrl,
+      ~isFirstSong,
+      _children,
+    ) => {
   ...component,
   initialState: () => {isDropdownOpen: false},
   reducer: (action, state) =>
@@ -61,11 +83,26 @@ let make =
     },
   render: self =>
     ReasonReact.(
-      <div className="current-playing">
-        <div className=playerWrapper>
-          <img className=albumImage src=albumImageUrl alt="Album Image" />
+      <div className={Cn.make([playerWrapper])}>
+
+          <img
+            key=songName
+            className={
+              Cn.make([
+                albumImage,
+                toFrontAnimation(
+                  ~animationKeyframes=
+                    isFirstSong ? appearBackToFront : slideToFront,
+                ),
+              ])
+            }
+            src=albumImageUrl
+            alt="Album Image"
+          />
           <div
-            className={SharedCss.flexWrapper(~justify=`spaceBetween, ~align=`center)}>
+            className={
+              SharedCss.flexWrapper(~justify=`spaceBetween, ~align=`center)
+            }>
             <div>
               <h3 className=songNameStyle> {string(songName)} </h3>
               <p className=artistNameStyle> {string(artistName)} </p>
@@ -88,10 +125,10 @@ let make =
               className=progressBarStyle
               value=progressPct
             />
-            <img className=actionBtnStyle src=share alt="Share Icon" />
-            <img className=actionBtnStyle src=like alt="Like Icon" />
           </div>
         </div>
-      </div>
+        /*Implement Share and Like later
+          <img className=actionBtnStyle src=share alt="Share Icon" />
+          <img className=actionBtnStyle src=like alt="Like Icon" />*/
     ),
 };

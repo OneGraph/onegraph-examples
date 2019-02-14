@@ -74,70 +74,66 @@ let component = ReasonReact.statelessComponent("SoundWave");
 let make = (~isPlaying, _children) => {
   ...component,
   render: _self =>
-    ReasonReact.(
-      <div>
+    <div>
+      <div
+        className={Cn.make([
+          soundWaveWrapper,
+          SharedCss.flexWrapper(~justify=`center, ~align=`flexStart),
+        ])}>
         <div
           className={
-            Cn.make([
-              soundWaveWrapper,
-              SharedCss.flexWrapper(~justify=`center, ~align=`flexStart),
-            ])
+            isPlaying ?
+              Cn.make([
+                soundCol,
+                colAnimation(~name=swing1, ~durationMs=500),
+              ]) :
+              Cn.make([soundCol, soundColOnPause])
           }>
-          <div
-            className={
-              isPlaying ?
-                Cn.make([
-                  soundCol,
-                  colAnimation(~name=swing1, ~durationMs=500),
-                ]) :
-                Cn.make([soundCol, soundColOnPause])
-            }>
-            <div className={Cn.make([green, soundBlock])} />
-            <div className={Cn.make([green, soundBlock])} />
-            <div className={Cn.make([green, soundBlock])} />
-            <div className={Cn.make([green, soundBlock])} />
-            <div className={Cn.make([yellow, soundBlock])} />
-            <div className={Cn.make([yellow, soundBlock])} />
-            <div className={Cn.make([red, soundBlock])} />
-            <div className={Cn.make([red, soundBlock])} />
-          </div>
-          <div
-            className={
-              isPlaying ?
-                Cn.make([
-                  soundCol,
-                  colAnimation(~name=swing2, ~durationMs=500),
-                ]) :
-                Cn.make([soundCol, soundColOnPause])
-            }>
-            <div className={Cn.make([green, soundBlock])} />
-            <div className={Cn.make([green, soundBlock])} />
-            <div className={Cn.make([green, soundBlock])} />
-            <div className={Cn.make([green, soundBlock])} />
-            <div className={Cn.make([yellow, soundBlock])} />
-            <div className={Cn.make([yellow, soundBlock])} />
-            <div className={Cn.make([red, soundBlock])} />
-            <div className={Cn.make([red, soundBlock])} />
-          </div>
-          <div
-            className={
-              isPlaying ?
-                Cn.make([
-                  soundCol,
-                  colAnimation(~name=swing3, ~durationMs=800),
-                ]) :
-                Cn.make([soundCol, soundColOnPause])
-            }>
-            <div className={Cn.make([green, soundBlock])} />
-            <div className={Cn.make([green, soundBlock])} />
-            <div className={Cn.make([green, soundBlock])} />
-            <div className={Cn.make([green, soundBlock])} />
-            <div className={Cn.make([yellow, soundBlock])} />
-            <div className={Cn.make([yellow, soundBlock])} />
-            <div className={Cn.make([red, soundBlock])} />
-            <div className={Cn.make([red, soundBlock])} />
-          </div>
+          <div className={Cn.make([green, soundBlock])} />
+          <div className={Cn.make([green, soundBlock])} />
+          <div className={Cn.make([green, soundBlock])} />
+          <div className={Cn.make([green, soundBlock])} />
+          <div className={Cn.make([yellow, soundBlock])} />
+          <div className={Cn.make([yellow, soundBlock])} />
+          <div className={Cn.make([red, soundBlock])} />
+          <div className={Cn.make([red, soundBlock])} />
+        </div>
+        <div
+          className={
+            isPlaying ?
+              Cn.make([
+                soundCol,
+                colAnimation(~name=swing2, ~durationMs=500),
+              ]) :
+              Cn.make([soundCol, soundColOnPause])
+          }>
+          <div className={Cn.make([green, soundBlock])} />
+          <div className={Cn.make([green, soundBlock])} />
+          <div className={Cn.make([green, soundBlock])} />
+          <div className={Cn.make([green, soundBlock])} />
+          <div className={Cn.make([yellow, soundBlock])} />
+          <div className={Cn.make([yellow, soundBlock])} />
+          <div className={Cn.make([red, soundBlock])} />
+          <div className={Cn.make([red, soundBlock])} />
+        </div>
+        <div
+          className={
+            isPlaying ?
+              Cn.make([
+                soundCol,
+                colAnimation(~name=swing3, ~durationMs=800),
+              ]) :
+              Cn.make([soundCol, soundColOnPause])
+          }>
+          <div className={Cn.make([green, soundBlock])} />
+          <div className={Cn.make([green, soundBlock])} />
+          <div className={Cn.make([green, soundBlock])} />
+          <div className={Cn.make([green, soundBlock])} />
+          <div className={Cn.make([yellow, soundBlock])} />
+          <div className={Cn.make([yellow, soundBlock])} />
+          <div className={Cn.make([red, soundBlock])} />
+          <div className={Cn.make([red, soundBlock])} />
         </div>
       </div>
-    ),
+    </div>,
 };

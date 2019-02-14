@@ -20,12 +20,16 @@
   "suffix": ".bs.js",
   "namespace": true,
   "bs-dependencies": [
-    "reason-react",
-    "bs-emotion",
     "@ahrefs/bs-reactstrap",
+    "bs-emotion",
+    "bs-fetch",
+    "bs-uuid",
+    "bs-webapi",
     "re-classnames",
-    "reason-apollo"
+    "reason-apollo",
+    "reason-react"
   ],
   "refmt": 3,
-  "ppx-flags": ["bs-emotion-ppx/ppx", "graphql_ppx/ppx"]
+  "ppx-flags": ["bs-emotion-ppx/ppx", "graphql_ppx/ppx", "get_in_ppx/ppx"],
+  "bsc-flags": ["-bs-super-errors"]
 }

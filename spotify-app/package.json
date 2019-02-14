@@ -3,12 +3,16 @@
   "version": "0.1.0",
   "scripts": {
     "build": "bsb -make-world",
+    "now-build": "bsb -make-world && mv build dist",
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
+    "refmt": "refmt --in-place",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "webpack": "webpack -w",
+    "tmp": "which ocamlmerlin",
+    "emacs": "emacs",
+    "webpack": "webpack -w --display-error-details",
     "webpack:production": "NODE_ENV=production webpack",
-    "server": "webpack-dev-server"
+    "server": "webpack-dev-server --display-error-details"
   },
   "keywords": [
     "BuckleScript"
@@ -19,12 +23,18 @@
     "@ahrefs/bs-reactstrap": "^0.5.9",
     "apollo-client": "^2.4.8",
     "bs-emotion": "^0.1.1",
+    "bs-fetch": "^0.3.1",
+    "bs-webapi": "0.13.2",
+    "bs-uuid": "^0.3.1",
+    "get_in_ppx": "^1.0.2",
     "graphql": "^14.0.2",
     "graphql-tag": "^2.10.0",
     "onegraph-auth": "^0.2.20",
+    "peerjs": "^0.3.19",
     "re-classnames": "3.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-motion": "^0.5.2",
     "reason-apollo": "^0.15.1",
     "reason-react": ">=0.4.0"
   },
@@ -36,6 +46,7 @@
     "html-webpack-plugin": "^3.2.0",
     "webpack": "^4.0.1",
     "webpack-cli": "^3.1.1",
-    "webpack-dev-server": "^3.1.8"
+    "webpack-dev-server": "^3.1.8",
+    "reason-cli": "3.3.3-macos-1"
   }
 }

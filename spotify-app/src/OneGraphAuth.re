@@ -26,4 +26,13 @@ let authToken = (auth: auth): option(string) =>
   | Some(authHeader) => Some(Js.String.replace("Bearer ", "", authHeader))
   };
 
+let dangerouslyGetAuthToken = (auth: auth): string =>
+  switch (authToken(auth)) {
+  | None =>
+    raise(
+      Failure("OneGraph auth token not present in dangerouslyGetAuthToken"),
+    )
+  | Some(token) => token
+  };
+
 let config = config(~appId);

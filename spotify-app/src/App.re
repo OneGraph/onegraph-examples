@@ -1,11 +1,13 @@
 open Emotion;
 
-let header = (~centered) => [%css [
-  transform(translateY(centered ? `vh(20.) : `zero)),
-  transitionProperty("transform"),
-  transitionDuration((`ms(600))),
-  transitionTimingFunction(`easeOut)
-]];
+let header = (~centered) => [%css
+  [
+    transform(translateY(centered ? `vh(20.) : `zero)),
+    transitionProperty("transform"),
+    transitionDuration(`ms(600)),
+    transitionTimingFunction(`easeOut),
+  ]
+];
 
 let pageTitle = [%css [fontSize(`px(56)), marginBottom(`px(16))]];
 let pageSubTitle = [%css
@@ -13,45 +15,77 @@ let pageSubTitle = [%css
 ];
 
 let main = [%css [position(`relative)]];
-let welcome = [%css [
-  position(`absolute),
-  marginLeft(`auto),
-  marginRight(`auto),
-  left(`zero),
-  right(`zero)
-]];
+let welcome = [%css
+  [
+    position(`absolute),
+    marginLeft(`auto),
+    marginRight(`auto),
+    left(`zero),
+    right(`zero),
+  ]
+];
 
 type logInStatus =
   | HandshakingToken
   | LoggedIn
   | LoggedOut;
 
+type playerStatus = {
+  isPlaying: bool,
+  trackId: string,
+  positionMs: int,
+};
+
 type state = {
-  logInStatus: logInStatus,
+  logInStatus,
   auth: OneGraphAuth.auth,
-  isPublic: bool,
+  peerId: BsUuid.Uuid.V4.t,
+  playerStatus,
+  trackHistoryList: array(string),
 };
 
 type action =
+  | NotePlayerStatus(playerStatus)
   | SetLogInStatus(logInStatus)
-  | ToggleShareStatus;
+  | UpdateTrackHistoryList(string);
 
 let component = ReasonReact.reducerComponent("App");
 
 let renderIf = (condition: bool, element: ReasonReact.reactElement) =>
-  condition ? element : ReasonReact.null
+  condition ? element : ReasonReact.null;
 
 let make = _children => {
   ...component,
-  initialState: () => {logInStatus: HandshakingToken, auth: Client.auth, isPublic: true},
+  initialState: () => {
+    logInStatus: HandshakingToken,
+    auth: Client.auth,
+    playerStatus: {
+      isPlaying: false,
+      trackId: "",
+      positionMs: 0,
+    },
+    peerId: BsUuid.Uuid.V4.create(),
+    trackHistoryList: [|
+      "4rsHDST3FgBWEQk55M9i6F",
+      "7L85hEKSwSnHtPs0yssxib",
+      "4rsHDST3FgBWEQk55M9i6F",
+      "7L85hEKSwSnHtPs0yssxib",
+      "4rsHDST3FgBWEQk55M9i6F",
+      "7L85hEKSwSnHtPs0yssxib",
+      "4rsHDST3FgBWEQk55M9i6F",
+      "7L85hEKSwSnHtPs0yssxib",
+      "4rsHDST3FgBWEQk55M9i6F",
+      "7L85hEKSwSnHtPs0yssxib",
+    |],
+  },
   didMount: self =>
     Js.Promise.(
       OneGraphAuth.isLoggedIn(self.state.auth, "spotify")
-      |> then_((isLoggedIn:bool) => {
-            let logInStatus = isLoggedIn ? LoggedIn : LoggedOut;
-            self.send(SetLogInStatus(logInStatus));
-            resolve();
-          })
+      |> then_((isLoggedIn: bool) => {
+           let logInStatus = isLoggedIn ? LoggedIn : LoggedOut;
+           self.send(SetLogInStatus(logInStatus));
+           resolve();
+         })
       |> catch(err => resolve(Js.log(err)))
       |> ignore
     ),
@@ -59,65 +93,107 @@ let make = _children => {
     switch (action) {
     | SetLogInStatus(logInStatus) =>
       ReasonReact.Update({...state, logInStatus})
-    | ToggleShareStatus =>
-      ReasonReact.Update({...state, isPublic: !state.isPublic})
+
+    | NotePlayerStatus(playerStatus) =>
+      ReasonReact.Update({...state, playerStatus})
+    | UpdateTrackHistoryList(id) =>
+      let listLength = Array.length(state.trackHistoryList);
+      listLength <= 0 ?
+        {
+          let newTrackIds =
+            Array.copy(state.trackHistoryList) |> Js.Array.append(id);
+          Js.log2("trackList:", newTrackIds);
+          Update({...state, trackHistoryList: newTrackIds});
+        } :
+        {
+          let lastTrackId = state.trackHistoryList[listLength - 1];
+          let isCurrentTrack = lastTrackId === id;
+
+          isCurrentTrack ?
+            NoUpdate :
+            {
+              let newTrackIds =
+                Array.copy(state.trackHistoryList) |> Js.Array.append(id);
+              Js.log2("trackList:", newTrackIds);
+              Update({...state, trackHistoryList: newTrackIds});
+            };
+        };
     },
   render: self =>
     ReasonReact.(
       <div>
-        <header className={
-          Cn.make([
-            SharedCss.flexWrapper(~justify=`center, ~align=`center),
-            SharedCss.appearAnimation(~direction=`normal, ~delayMs=0),
-            header(~centered=self.state.logInStatus == HandshakingToken)
-          ])
-        }>
-          <h1 className=pageTitle>{string("SpotDJ")}</h1>
+        <header
+          className={
+            Cn.make([
+              SharedCss.flexWrapper(~justify=`center, ~align=`center),
+              SharedCss.appearAnimation(~direction=`normal, ~delayMs=0),
+              header(~centered=self.state.logInStatus == HandshakingToken),
+            ])
+          }>
+          <h1 className=pageTitle> {string("SpotDJ")} </h1>
         </header>
         <main className=main>
-          {renderIf(
-            self.state.logInStatus == LoggedOut,
-            <div className={
-              Cn.make([
-                SharedCss.appearAnimation(~direction=`normal, ~delayMs=400),
-                welcome
-              ])
-            }>
-              <h2 className=pageSubTitle>
-                {string("Share your Spotify music live")}
-              </h2>
+          {
+            switch (self.state.logInStatus) {
+            | HandshakingToken => <div> {string("Handshaking")} </div>
+            | LoggedOut =>
+              <div
+                className={
+                  Cn.make([
+                    SharedCss.appearAnimation(
+                      ~direction=`normal,
+                      ~delayMs=400,
+                    ),
+                    welcome,
+                  ])
+                }>
+                <h2 className=pageSubTitle>
+                  {string("Share your Spotify music live")}
+                </h2>
                 <LogIn
                   auth={self.state.auth}
-                  logIn={() => self.send(SetLogInStatus(LoggedIn))}
+                  logIn=(() => self.send(SetLogInStatus(LoggedIn)))
                 />
-            </div>
-          )}
-          {renderIf(
-            self.state.logInStatus == LoggedIn,
-            <GetCurrentlyPlayingQuery>
-            ...{({ userName, userIconUrl, songName, artistName, isPlaying, progressPct, albumImageUrl }) =>
-                <div className=SharedCss.appearAnimation(~direction=`normal, ~delayMs=0)>
-                    <User
-                      auth={self.state.auth}
-                      logOut={() => self.send(SetLogInStatus(LoggedOut))}
-                      userName
-                      userIconUrl
-                    />
-                    <CurrentlyPlaying
-                      songName
-                      artistName
-                      isPlaying
-                      progressPct
-                      albumImageUrl
-                    />
-                    <LinkShare
-                      isPublic={self.state.isPublic}
-                      toggleShareStatus={() => self.send(ToggleShareStatus)}
-                    />
-                  </div>
-                }
+              </div>
+            | LoggedIn =>
+              <GetCurrentlyPlayingQuery
+                updateTrackHistoryList=(
+                  id => self.send(UpdateTrackHistoryList(id))
+                )>
+                ...(
+                     (
+                       {
+                         userName,
+                         userIconUrl,
+                         songName,
+                         artistName,
+                         isPlaying,
+                         progressPct,
+                         albumImageUrl,
+                         trackId,
+                         positionMs,
+                       },
+                     ) =>
+                       <CurrentlyPlayingContainer
+                         auth={self.state.auth}
+                         artistName
+                         isPlaying
+                         progressPct
+                         songName
+                         userName
+                         userIconUrl
+                         albumImageUrl
+                         positionMs
+                         trackId
+                         setLogOut={
+                           () => self.send(SetLogInStatus(LoggedOut))
+                         }
+                         trackHistoryList={self.state.trackHistoryList}
+                       />
+                   )
               </GetCurrentlyPlayingQuery>
-          )}
+            }
+          }
         </main>
       </div>
     ),

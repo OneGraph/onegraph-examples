@@ -1,7 +1,7 @@
 open Belt.Option;
 
 module GetCurrentlyPlaying = [%graphql
-{|
+  {|
   query findUsername {
     spotify {
       me {
@@ -36,13 +36,15 @@ module GetCurrentlyPlaying = [%graphql
 ];
 
 type formattedData = {
-  userName: string,
-  userIconUrl: string,
-  songName: string,
+  albumImageUrl: string,
   artistName: string,
   isPlaying: bool,
+  positionMs: int,
   progressPct: float,
-  albumImageUrl: string
+  songName: string,
+  trackId: string,
+  userIconUrl: string,
+  userName: string,
 };
 
 module GetCurrentlyPlayingQuery =
@@ -50,124 +52,135 @@ module GetCurrentlyPlayingQuery =
 
 let component = ReasonReact.statelessComponent("GetCurrentlyPlaying");
 
-let make = (
-  children
-) => {
+let make = (~updateTrackHistoryList, children) => {
   ...component,
   render: _self =>
-    <GetCurrentlyPlayingQuery pollInterval=500>
+    <GetCurrentlyPlayingQuery pollInterval=1000>
       ...{
-        ({result}) =>
-          switch (result) {
-          | Loading => ReasonReact.null
-          | Error(error) =>
-            <div> {ReasonReact.string(error##message)} </div>
-          | Data(response) => {
+           ({result}) =>
+             switch (result) {
+             | Loading => ReasonReact.null
+             | Error(error) =>
+               <div> {ReasonReact.string(error##message)} </div>
+             | Data(response) =>
+               let userName =
+                 response##spotify##me
+                 ->flatMap(me => me##displayName)
+                 ->getWithDefault("");
 
-            let userName =
-              response##spotify##me
-              ->flatMap(me => me##displayName)
-              ->getWithDefault("")
+               let userImages =
+                 response##spotify##me
+                 ->flatMap(me => me##images)
+                 ->getWithDefault([||]);
 
-            let userImages =
-              response##spotify##me
-              ->flatMap(me => me##images)
-              ->getWithDefault([||]);
+               let userDefaultIcon = Utils.requireAssetURI("./img/user.png");
+               let userIconUrl =
+                 Utils.getImageUrl(
+                   ~images=userImages,
+                   ~defaultImage=userDefaultIcon,
+                 );
 
-            let userDefaultIcon = Utils.requireAssetURI("./img/user.png");
-            let userIconUrl = Utils.getImageUrl(
-              ~images=userImages,
-              ~defaultImage=userDefaultIcon
-            );
+               let spotifyIsLaunched =
+                 response##spotify##me
+                 ->flatMap(me => me##player)
+                 ->flatMap(player => player##item);
 
-            let spotifyIsLaunched =
-              response##spotify##me
-              ->flatMap(me => me##player)
-              ->flatMap(player => player##item)
+               switch (spotifyIsLaunched) {
+               | None =>
+                 ReasonReact.string(
+                   "Nobody is listening to Spotify on this account right now.",
+                 )
+               | Some(_item) =>
+                 let isPlaying =
+                   response##spotify##me
+                   ->flatMap(me => me##player)
+                   ->flatMap(player => player##isPlaying)
+                   ->getWithDefault(false);
 
-            switch (spotifyIsLaunched) {
-            | None => ReasonReact.string("Nobody is listening to Spotify on this account right now.")
-            | Some(_item) => {
-              let isPlaying =
-                response##spotify##me
-                ->flatMap(me => me##player)
-                ->flatMap(player => player##isPlaying)
-                ->getWithDefault(false);
+                 let durationMs =
+                   response##spotify##me
+                   ->flatMap(me => me##player)
+                   ->flatMap(player => player##item)
+                   ->flatMap(item => item##durationMs)
+                   ->getWithDefault(0);
 
-              let durationMs =
-                response##spotify##me
-                ->flatMap(me => me##player)
-                ->flatMap(player => player##item)
-                ->flatMap(item => item##durationMs)
-                ->getWithDefault(0);
+                 let progressMs =
+                   response##spotify##me
+                   ->flatMap(me => me##player)
+                   ->flatMap(player => player##progressMs)
+                   ->getWithDefault(0);
 
-              let progressMs =
-                response##spotify##me
-                ->flatMap(me => me##player)
-                ->flatMap(player => player##progressMs)
-                ->getWithDefault(0);
+                 let progressPct =
+                   float_of_int(progressMs)
+                   /. float_of_int(durationMs)
+                   *. 100.;
 
+                 let albumImages =
+                   response##spotify##me
+                   ->flatMap(me => me##player)
+                   ->flatMap(player => player##item)
+                   ->flatMap(item => item##album)
+                   ->flatMap(album => album##images)
+                   ->getWithDefault([||]);
 
-              let progressPct =
-                float_of_int(progressMs)
-                  /. float_of_int(durationMs)
-                  *. 100.
+                 let defaultAlbumImage =
+                   Utils.requireAssetURI("./img/now-playing-ex.png");
 
-              let albumImages =
-                response##spotify##me
-                ->flatMap(me => me##player)
-                ->flatMap(player => player##item)
-                ->flatMap(item => item##album)
-                ->flatMap(album => album##images)
-                ->getWithDefault([||]);
+                 let albumImageUrl =
+                   Utils.getImageUrl(
+                     ~images=albumImages,
+                     ~defaultImage=defaultAlbumImage,
+                   );
 
-              let defaultAlbumImage = Utils.requireAssetURI("./img/now-playing-ex.png");
-              let albumImageUrl = Utils.getImageUrl(
-                ~images=albumImages,
-                ~defaultImage=defaultAlbumImage
-              );
+                 let songName =
+                   response##spotify##me
+                   ->flatMap(me => me##player)
+                   ->flatMap(player => player##item)
+                   ->flatMap(item => item##name)
+                   ->getWithDefault("");
 
-              let songName =
-                response##spotify##me
-                ->flatMap(me => me##player)
-                ->flatMap(player => player##item)
-                ->flatMap(item => item##name)
-                ->getWithDefault("");
+                 let artistArray =
+                   response##spotify##me
+                   ->flatMap(me => me##player)
+                   ->flatMap(player => player##item)
+                   ->flatMap(item => item##artists)
+                   ->getWithDefault([||]);
 
-              let artistArray =
-                response##spotify##me
-                ->flatMap(me => me##player)
-                ->flatMap(player => player##item)
-                ->flatMap(item => item##artists)
-                ->getWithDefault([||]);
+                 let trackId =
+                   response##spotify##me
+                   ->flatMap(me => me##player)
+                   ->flatMap(player => player##item)
+                   ->flatMap(item => item##id)
+                   ->getWithDefault("");
 
-              let artistNameArray =
-                Js.Array.map(
-                  artist =>
-                    switch (artist##name) {
-                    | Some(name) => name
-                    | None => ""
-                    },
-                  artistArray,
-                )
-                |> Js.Array.filter(name => name !== "");
+                 let artistNameArray =
+                   Js.Array.map(
+                     artist =>
+                       switch (artist##name) {
+                       | Some(name) => name
+                       | None => ""
+                       },
+                     artistArray,
+                   )
+                   |> Js.Array.filter(name => name !== "");
 
+                 let artistName = Js.Array.joinWith(",", artistNameArray);
 
-              let artistName = Js.Array.joinWith(",", artistNameArray);
+                 updateTrackHistoryList(trackId);
 
-              children({
-                userName,
-                userIconUrl,
-                songName,
-                artistName,
-                isPlaying,
-                progressPct,
-                albumImageUrl
-              });
-              }
-            }
-          }
-        }
-      }
+                 children({
+                   albumImageUrl,
+                   artistName,
+                   isPlaying,
+                   positionMs: progressMs,
+                   progressPct,
+                   songName,
+                   trackId,
+                   userName,
+                   userIconUrl,
+                 });
+               };
+             }
+         }
     </GetCurrentlyPlayingQuery>,
 };
