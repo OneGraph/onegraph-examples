@@ -183,6 +183,22 @@ let make = _children => {
               </GetCurrentlyPlayingQuery>
             }
           }
+          <div>
+            {string("Built by ")}
+            <a href="https://twitter.com/yukims19" target="_blank">
+              {string("@yukims19")}
+            </a>
+            {string(" on top of ")}
+            <a href="https://www.onegraph.com/" target="_blank">
+              {string("OneGraph")}
+            </a>
+            {string(" view the source on ")}
+            <a
+              href="https://github.com/OneGraph/onegraph-examples/tree/master/spotify-dj"
+              target="_blank">
+              {string("GitHub")}
+            </a>
+          </div>
         </main>
       </div>
     ),
