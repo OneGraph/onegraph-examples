@@ -183,6 +183,16 @@ let make = _children => {
               </GetCurrentlyPlayingQuery>
             }
           }
+          <div>
+            {
+              string("Built by @yukims19 on top of OneGraph, view the source ")
+            }
+            <a
+              href="https://github.com/OneGraph/onegraph-examples/tree/master/spotify-dj"
+              target="_blank">
+              {string("here")}
+            </a>
+          </div>
         </main>
       </div>
     ),
