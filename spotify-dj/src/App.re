@@ -186,13 +186,17 @@ let make = _children => {
           <div>
             {string("Built by ")}
             <a href="https://twitter.com/yukims19" target="_blank">
-              {string("@yukims19 ")}
+              {string("@yukims19")}
             </a>
-            {string("on top of OneGraph, view the source ")}
+            {string(" on top of ")}
+            <a href="https://www.onegraph.com/" target="_blank">
+              {string("OneGraph")}
+            </a>
+            {string(" view the source on ")}
             <a
               href="https://github.com/OneGraph/onegraph-examples/tree/master/spotify-dj"
               target="_blank">
-              {string("here")}
+              {string("GitHub")}
             </a>
           </div>
         </main>
