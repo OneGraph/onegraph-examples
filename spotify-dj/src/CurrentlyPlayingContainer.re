@@ -400,7 +400,6 @@ let make =
             </div>
           }
         }
-        <pre> {string(trackId ++ string_of_int(positionMs))} </pre>
         <User auth userName userIconUrl setLogOut />
         {
           switch (self.state.userKind, self.state.connectionToDj) {

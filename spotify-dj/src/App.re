@@ -65,18 +65,7 @@ let make = _children => {
       positionMs: 0,
     },
     peerId: BsUuid.Uuid.V4.create(),
-    trackHistoryList: [|
-      "4rsHDST3FgBWEQk55M9i6F",
-      "7L85hEKSwSnHtPs0yssxib",
-      "4rsHDST3FgBWEQk55M9i6F",
-      "7L85hEKSwSnHtPs0yssxib",
-      "4rsHDST3FgBWEQk55M9i6F",
-      "7L85hEKSwSnHtPs0yssxib",
-      "4rsHDST3FgBWEQk55M9i6F",
-      "7L85hEKSwSnHtPs0yssxib",
-      "4rsHDST3FgBWEQk55M9i6F",
-      "7L85hEKSwSnHtPs0yssxib",
-    |],
+    trackHistoryList: [||],
   },
   didMount: self =>
     Js.Promise.(
@@ -102,7 +91,7 @@ let make = _children => {
         {
           let newTrackIds =
             Array.copy(state.trackHistoryList) |> Js.Array.concat([|id|]);
-          Js.log2("trackList:", newTrackIds);
+
           Update({...state, trackHistoryList: newTrackIds});
         } :
         {
@@ -114,7 +103,7 @@ let make = _children => {
             {
               let newTrackIds =
                 Array.copy(state.trackHistoryList) |> Js.Array.concat([|id|]);
-              Js.log2("trackList:", newTrackIds);
+
               Update({...state, trackHistoryList: newTrackIds});
             };
         };
