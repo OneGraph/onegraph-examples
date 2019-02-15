@@ -6,9 +6,10 @@ jobs:
     resource_class: "xlarge"
     environment:
       - TERM: dumb
-    working_directory: project/spotify-app/
+    working_directory: /root/project/spotify-dj
     steps:
-      - checkout
+      - checkout:
+          path: /root/project
       - restore_cache:
           key: spotdj-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
@@ -17,11 +18,17 @@ jobs:
             yarn install --frozen-lockfile
       - run:
           name: 'Install firebase Dependencies'
-          command: yarn add firebase-tools
+          command: yarn global add firebase-tools
       - save_cache:
           key: spotdj-dependency-cache-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
+      - run:
+          name: 'Debug'
+          command: |
+            pwd
+            ls -lash
+            ls -R
       - run:
           name: 'build'
           command: yarn build
@@ -32,8 +39,7 @@ jobs:
           name: 'Deploy to Firebase'
           command: |
             cd build
-            node_modules/.bin/firebase deploy -P prod --token "$FIREBASE_TOKEN"
-
+            PATH="$PATH:$(yarn global bin)" firebase deploy -P prod --token "$FIREBASE_TOKEN"
 workflows:
   version: 2
   build-deploy:
@@ -41,4 +47,5 @@ workflows:
       - build_and_deploy_spotdj:
           filters:
             branches:
-              ignore: master
+              only:
+                - master
