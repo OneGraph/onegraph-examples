@@ -1,0 +1,44 @@
+version: 2
+jobs:
+  build_and_deploy_spotdj:
+    docker:
+      - image: node:10.12-stretch
+    resource_class: "xlarge"
+    environment:
+      - TERM: dumb
+    working_directory: project/spotify-app/
+    steps:
+      - checkout
+      - restore_cache:
+          key: spotdj-dependency-cache-{{ checksum "yarn.lock" }}
+      - run:
+          name: 'Install SpotDJ dependencies'
+          command: |
+            yarn install --frozen-lockfile
+      - run:
+          name: 'Install firebase Dependencies'
+          command: yarn add firebase-tools
+      - save_cache:
+          key: spotdj-dependency-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - run:
+          name: 'build'
+          command: yarn build
+      - run:
+          name: 'webpack'
+          command: yarn webpack:production
+      - run:
+          name: 'Deploy to Firebase'
+          command: |
+            cd build
+            node_modules/.bin/firebase deploy -P prod --token "$FIREBASE_TOKEN"
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build_and_deploy_spotdj:
+          filters:
+            branches:
+              ignore: master
