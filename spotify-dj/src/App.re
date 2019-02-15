@@ -101,7 +101,7 @@ let make = _children => {
       listLength <= 0 ?
         {
           let newTrackIds =
-            Array.copy(state.trackHistoryList) |> Js.Array.append(id);
+            Array.copy(state.trackHistoryList) |> Js.Array.concat([|id|]);
           Js.log2("trackList:", newTrackIds);
           Update({...state, trackHistoryList: newTrackIds});
         } :
@@ -113,7 +113,7 @@ let make = _children => {
             NoUpdate :
             {
               let newTrackIds =
-                Array.copy(state.trackHistoryList) |> Js.Array.append(id);
+                Array.copy(state.trackHistoryList) |> Js.Array.concat([|id|]);
               Js.log2("trackList:", newTrackIds);
               Update({...state, trackHistoryList: newTrackIds});
             };

@@ -1,5 +1,3 @@
-open BsReactstrap;
-open Utils;
 open Emotion;
 
 let previouslyPlayed = [%css
@@ -50,37 +48,32 @@ let component = ReasonReact.statelessComponent("PreviouslyPlayed");
 let make = (~trackList, _children) => {
   ...component,
   render: _self =>
-    ReasonReact.(
-      <div
-        className={
-          Cn.make([
-            previouslyPlayed,
-            SharedCss.flexWrapper(~justify=`flexEnd, ~align=`center),
-          ])
-        }>
-        {
-          trackList
-          |> Array.mapi((idx, trackId) =>
-               <GetTrackInfoQuery trackId>
-                 ...{
-                      ({songName, artistName, albumImageUrl}) =>
-                        <SimpleTrack
-                          songName
-                          artistName
-                          albumImageUrl
-                          newestHistory={
-                            idx === Array.length(trackList) - 2 ? true : false
-                          }
-                          isCurrentTrack={
-                            idx === Array.length(trackList) - 1 ? true : false
-                          }
-                          idx
-                        />
-                    }
-               </GetTrackInfoQuery>
-             )
-          |> ReasonReact.array
-        }
-      </div>
-    ),
+    <div
+      className={
+        Cn.make([
+          previouslyPlayed,
+          SharedCss.flexWrapper(~justify=`flexEnd, ~align=`center),
+        ])
+      }>
+      {
+        trackList
+        |> Array.mapi((idx, trackId) =>
+             <GetTrackInfoQuery trackId>
+               ...{
+                    ({songName, artistName, albumImageUrl}) =>
+                      <SimpleTrack
+                        songName
+                        artistName
+                        albumImageUrl
+                        isCurrentTrack={
+                          idx === Array.length(trackList) - 1 ? true : false
+                        }
+                        idx
+                      />
+                  }
+             </GetTrackInfoQuery>
+           )
+        |> ReasonReact.array
+      }
+    </div>,
 };

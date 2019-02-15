@@ -82,8 +82,7 @@ module Impl = {
 
   [@bs.send] external connSend: (dataConnection, string) => unit = "send";
 
-  [@bs.get]
-  external localId: switchboard => [@bs.nullable] option(string) = "id";
+  [@bs.get] external localId: switchboard => option(string) = "id";
 
   [@bs.get] external connIsOpen: dataConnection => bool = "open";
 
