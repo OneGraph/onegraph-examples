@@ -195,7 +195,7 @@ let make =
       },
       false,
     ),
-  willUpdate: ({oldSelf, newSelf}) =>
+  willUpdate: ({newSelf}) =>
     if (Array.length(newSelf.state.trackList) !== Array.length(trackList)) {
       let boundary =
         float_of_int(
@@ -270,10 +270,6 @@ let make =
                                         songName
                                         artistName
                                         albumImageUrl
-                                        newestHistory={
-                                          idx === Array.length(trackList) - 2 ?
-                                            true : false
-                                        }
                                         isCurrentTrack=false
                                         idx
                                       />

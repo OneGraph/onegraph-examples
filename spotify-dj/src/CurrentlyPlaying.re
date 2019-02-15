@@ -81,7 +81,7 @@ let make =
     switch (action) {
     | Toggle => ReasonReact.Update({isDropdownOpen: !state.isDropdownOpen})
     },
-  render: self =>
+  render: _ =>
     ReasonReact.(
       <div className={Cn.make([playerWrapper])}>
 

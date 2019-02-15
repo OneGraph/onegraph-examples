@@ -93,8 +93,8 @@ let copyUrlToClipboard = url =>
   ) {
   | _ =>
     selectElement(getElementById("shareLinkURL"), ());
-    execCommand("copy");
-    ();
+    let success = execCommand("copy");
+    Js.log2("Success copying to clipboard: ", success);
   };
 
 let shareSocialMedia = (url, name, properties) =>

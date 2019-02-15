@@ -41,15 +41,7 @@ let albumImage = [%css [width(`px(200)), height(`auto)]];
 let component = ReasonReact.statelessComponent("PreviouslyPlayed");
 
 let make =
-    (
-      ~songName,
-      ~artistName,
-      ~albumImageUrl,
-      ~newestHistory,
-      ~idx,
-      ~isCurrentTrack,
-      _children,
-    ) => {
+    (~songName, ~artistName, ~albumImageUrl, ~idx, ~isCurrentTrack, _children) => {
   ...component,
   render: _self =>
     ReasonReact.(
