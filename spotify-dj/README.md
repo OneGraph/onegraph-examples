@@ -41,6 +41,11 @@ View the app at http://localhost:8000. Running in this environment provides hot 
 * [PeerJS](https://peerjs.com/) - WebRTC
 * [React-Motion](https://github.com/chenglou/react-motion) - UI Animation
 
+## Contributors
+
+- @yukims19: Check out the blog detailing how SpotDJ was designed, built, and pushed to production
+- @xavxyz built and guided much of the initial animation for SpotDJ
+
 ## License
 This project is licensed under the MIT License
 
