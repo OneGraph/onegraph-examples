@@ -25,6 +25,26 @@ let welcome = [%css
   ]
 ];
 
+let footer = [%css
+  [
+    position(`fixed),
+    bottom(`px(0)),
+    backgroundColor(`hex("000")),
+    width(`vw(100.)),
+    height(`px(48)),
+  ]
+];
+
+let footerLink = [%css
+  [
+    margin2(`px(0), `px(4)),
+    color(`hex("fff")),
+    textDecoration(`underline),
+    transitionDuration(`ms(200)),
+    select(":hover", [color(`hex("cfcfcf"))]),
+  ]
+];
+
 type logInStatus =
   | HandshakingToken
   | LoggedIn
@@ -183,23 +203,36 @@ let make = _children => {
               </GetCurrentlyPlayingQuery>
             }
           }
-          <div>
-            {string("Built by ")}
-            <a href="https://twitter.com/yukims19" target="_blank">
-              {string("@yukims19")}
-            </a>
-            {string(" on top of ")}
-            <a href="https://www.onegraph.com/" target="_blank">
-              {string("OneGraph")}
-            </a>
-            {string(" view the source on ")}
-            <a
-              href="https://github.com/OneGraph/onegraph-examples/tree/master/spotify-dj"
-              target="_blank">
-              {string("GitHub")}
-            </a>
-          </div>
         </main>
+        <div
+          className={
+            Cn.make([
+              SharedCss.flexWrapper(~justify=`center, ~align=`center),
+              footer,
+            ])
+          }>
+          {string("Built by ")}
+          <a
+            className=footerLink
+            href="https://twitter.com/yukims19"
+            target="_blank">
+            {string(" @yukims19")}
+          </a>
+          {string(" on top of ")}
+          <a
+            className=footerLink
+            href="https://www.onegraph.com/"
+            target="_blank">
+            {string(" OneGraph ")}
+          </a>
+          {string(" view the source on ")}
+          <a
+            className=footerLink
+            href="https://github.com/OneGraph/onegraph-examples/tree/master/spotify-dj"
+            target="_blank">
+            {string("GitHub")}
+          </a>
+        </div>
       </div>
     ),
 };
