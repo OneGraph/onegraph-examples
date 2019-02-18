@@ -150,7 +150,7 @@ let make = (~peerId, _children) => {
               onClick={
                 _e =>
                   shareSocialMedia(
-                    "https://www.facebook.com/sharer/sharer.php?u=www.example.com/?dj="
+                    "https://www.facebook.com/sharer/sharer.php?u=https://spotdj.onegraphapp.com/?dj="
                     ++ peerId,
                     "Share SpotDJ Channel",
                     "menubar=1,resizable=1,width=560,height=450",
@@ -168,7 +168,7 @@ let make = (~peerId, _children) => {
               onClick={
                 _e =>
                   shareSocialMedia(
-                    "https://twitter.com/intent/tweet?text=Join%20me%20on%20SpotDj%20Here:%20www.example.com/?dj="
+                    "https://twitter.com/intent/tweet?text=Join%20me%20on%20SpotDj%20Here:%20https://spotdj.onegraphapp.com/?dj="
                     ++ peerId,
                     "Share SpotDJ Channel",
                     "menubar=1,resizable=1,width=350,height=250",
