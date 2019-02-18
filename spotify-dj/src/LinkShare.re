@@ -2,6 +2,10 @@ open Utils;
 open BsReactstrap;
 open Emotion;
 
+let facebookIcon = requireAssetURI("./img/facebook-icon.png");
+let twitterIcon = requireAssetURI("./img/twitter-icon.png");
+let linkIcon = requireAssetURI("./img/link-icon.png");
+
 type action =
   | Toggle;
 
@@ -104,6 +108,10 @@ let component = ReasonReact.reducerComponent("User");
 
 let sharingLink = djId => Utils.Window.({j|$protocol//$host?dj=$djId|j});
 
+let localhostRegex = [%re "/https?:\/\/localhost/ig"];
+
+let isLocalhost = target => localhostRegex |> Js.Re.test(target);
+
 let make = (~peerId, _children) => {
   ...component,
   initialState: () => {isDropdownOpen: false},
@@ -146,12 +154,22 @@ let make = (~peerId, _children) => {
               onClick={
                 _e =>
                   shareSocialMedia(
-                    "https://www.facebook.com/sharer/sharer.php?u=www.example.com/?dj="
-                    ++ peerId,
+                    "https://www.facebook.com/sharer/sharer.php?u="
+                    ++ (
+                      /* Detect localhost urls because facebook only allows sharing public links */
+                      isLocalhost(sharingLink) ?
+                        "https://spotdj.onegraphapp.com/" ++ peerId :
+                        sharingLink
+                    ),
                     "Share SpotDJ Channel",
                     "menubar=1,resizable=1,width=560,height=450",
                   )
               }>
+              <img
+                className=SharedCss.icon
+                src=facebookIcon
+                alt="Facebook Icon"
+              />
               {string("Facebook")}
             </DropdownItem>
             <DropdownItem
@@ -159,17 +177,23 @@ let make = (~peerId, _children) => {
               onClick={
                 _e =>
                   shareSocialMedia(
-                    "https://twitter.com/intent/tweet?text=Join%20me%20on%20SpotDj%20Here:%20www.example.com/?dj="
-                    ++ peerId,
+                    "https://twitter.com/intent/tweet?text=Join%20me%20on%20SpotDj%20Here:%20"
+                    ++ sharingLink,
                     "Share SpotDJ Channel",
                     "menubar=1,resizable=1,width=350,height=250",
                   )
               }>
+              <img
+                className=SharedCss.icon
+                src=twitterIcon
+                alt="Twitter Icon"
+              />
               {string("Twitter")}
             </DropdownItem>
             <DropdownItem
               className=drowpdownItemStyle
               onClick={_e => copyUrlToClipboard(sharingLink)}>
+              <img className=SharedCss.icon src=linkIcon alt="Link Icon" />
               {string("Copy URL")}
             </DropdownItem>
           </DropdownMenu>
