@@ -10,9 +10,13 @@ let soundWaveWrapper = [%css
   ]
 ];
 
-let soundCol = [%css [flexShrink(1.), overflow(`hidden)]];
+let soundCol = [%css
+  [flexShrink(1.), overflow(`hidden), transitionDuration(`ms(300))]
+];
 
-let soundColOnPause = [%css [height(`pct(22.)), opacity(0.3)]];
+let soundColOnPause = heightPct => [%css
+  [height(`pct(heightPct)), opacity(0.3)]
+];
 
 /*Top to bottom*/
 let swing1 =
@@ -69,6 +73,8 @@ let yellow = [%css [backgroundColor(`hex("F5E223"))]];
 
 let red = [%css [backgroundColor(`hex("D0021B"))]];
 
+let grey = [%css [backgroundColor(`hex("cfcfcf"))]];
+
 let component = ReasonReact.statelessComponent("SoundWave");
 
 let make = (~isPlaying, _children) => {
@@ -76,10 +82,12 @@ let make = (~isPlaying, _children) => {
   render: _self =>
     <div>
       <div
-        className={Cn.make([
-          soundWaveWrapper,
-          SharedCss.flexWrapper(~justify=`center, ~align=`flexStart),
-        ])}>
+        className={
+          Cn.make([
+            soundWaveWrapper,
+            SharedCss.flexWrapper(~justify=`center, ~align=`flexStart),
+          ])
+        }>
         <div
           className={
             isPlaying ?
@@ -87,7 +95,7 @@ let make = (~isPlaying, _children) => {
                 soundCol,
                 colAnimation(~name=swing1, ~durationMs=500),
               ]) :
-              Cn.make([soundCol, soundColOnPause])
+              Cn.make([soundCol, soundColOnPause(47.)])
           }>
           <div className={Cn.make([green, soundBlock])} />
           <div className={Cn.make([green, soundBlock])} />
@@ -105,7 +113,7 @@ let make = (~isPlaying, _children) => {
                 soundCol,
                 colAnimation(~name=swing2, ~durationMs=500),
               ]) :
-              Cn.make([soundCol, soundColOnPause])
+              Cn.make([soundCol, soundColOnPause(22.)])
           }>
           <div className={Cn.make([green, soundBlock])} />
           <div className={Cn.make([green, soundBlock])} />
@@ -123,7 +131,7 @@ let make = (~isPlaying, _children) => {
                 soundCol,
                 colAnimation(~name=swing3, ~durationMs=800),
               ]) :
-              Cn.make([soundCol, soundColOnPause])
+              Cn.make([soundCol, soundColOnPause(80.)])
           }>
           <div className={Cn.make([green, soundBlock])} />
           <div className={Cn.make([green, soundBlock])} />
