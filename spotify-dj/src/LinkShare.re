@@ -2,6 +2,10 @@ open Utils;
 open BsReactstrap;
 open Emotion;
 
+let facebookIcon = requireAssetURI("./img/facebook-icon.png");
+let twitterIcon = requireAssetURI("./img/twitter-icon.png");
+let linkIcon = requireAssetURI("./img/link-icon.png");
+
 type action =
   | Toggle;
 
@@ -152,6 +156,11 @@ let make = (~peerId, _children) => {
                     "menubar=1,resizable=1,width=560,height=450",
                   )
               }>
+              <img
+                className=SharedCss.icon
+                src=facebookIcon
+                alt="Facebook Icon"
+              />
               {string("Facebook")}
             </DropdownItem>
             <DropdownItem
@@ -165,11 +174,17 @@ let make = (~peerId, _children) => {
                     "menubar=1,resizable=1,width=350,height=250",
                   )
               }>
+              <img
+                className=SharedCss.icon
+                src=twitterIcon
+                alt="Twitter Icon"
+              />
               {string("Twitter")}
             </DropdownItem>
             <DropdownItem
               className=drowpdownItemStyle
               onClick={_e => copyUrlToClipboard(sharingLink)}>
+              <img className=SharedCss.icon src=linkIcon alt="Link Icon" />
               {string("Copy URL")}
             </DropdownItem>
           </DropdownMenu>
