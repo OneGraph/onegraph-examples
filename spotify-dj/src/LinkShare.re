@@ -149,10 +149,13 @@ let make = (~peerId, _children) => {
               className=drowpdownItemStyle
               onClick={
                 _e =>
-                  /*Facebook do not handle localhost for popup. Hard coded the host here*/
                   shareSocialMedia(
-                    "https://www.facebook.com/sharer/sharer.php?u=https://spotdj.onegraphapp.com/?dj="
-                    ++ peerId,
+                    "https://www.facebook.com/sharer/sharer.php?u="
+                    ++ (
+                      Js.String.includes("localhost", sharingLink) ?
+                        "https://spotdj.onegraphapp.com/" ++ peerId :
+                        sharingLink
+                    ),
                     "Share SpotDJ Channel",
                     "menubar=1,resizable=1,width=560,height=450",
                   )
