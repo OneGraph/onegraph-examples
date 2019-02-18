@@ -110,7 +110,7 @@ let sharingLink = djId => Utils.Window.({j|$protocol//$host?dj=$djId|j});
 
 let localhostRegex = [%re "/https?:\/\/localhost/ig"];
 
-let isLocalhost = (substringRe, target) => substringRe |> Js.Re.test(target);
+let isLocalhost = target => localhostRegex |> Js.Re.test(target);
 
 let make = (~peerId, _children) => {
   ...component,
@@ -156,7 +156,8 @@ let make = (~peerId, _children) => {
                   shareSocialMedia(
                     "https://www.facebook.com/sharer/sharer.php?u="
                     ++ (
-                      isLocalhost(localhostRegex, sharingLink) ?
+                      /* Detect localhost urls because facebook only allows sharing public links */
+                      isLocalhost(sharingLink) ?
                         "https://spotdj.onegraphapp.com/" ++ peerId :
                         sharingLink
                     ),
