@@ -16,6 +16,8 @@ let button = [%css
   ]
 ];
 
+let icon = [%css [width(`px(25)), borderRadius(`pct(50.))]];
+
 let appear =
   keyframes([
     (0, [opacity(0.), visibility(`hidden)]),

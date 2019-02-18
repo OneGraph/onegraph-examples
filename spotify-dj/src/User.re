@@ -1,13 +1,9 @@
 open Emotion;
 
-let userIcon = [%css
-  [
-    width(`px(25)),
-    margin4(`zero, `em(0.25), `zero, `em(0.5)),
-    borderRadius(`pct(50.)),
-  ]
-];
+let userIcon = [%css [margin4(`zero, `em(0.25), `zero, `em(0.5))]];
+
 let anchor = [%css [cursor(`pointer)]];
+
 let separator = [%css
   [
     width(`em(1.)),
@@ -18,6 +14,7 @@ let separator = [%css
     display(`inlineBlock),
   ]
 ];
+
 let wrapper = [%css
   [backgroundColor(`hex("000")), paddingBottom(`px(4))]
 ];
@@ -47,7 +44,11 @@ let make = (~auth, ~userName, ~userIconUrl, ~setLogOut, _children) => {
     ReasonReact.(
       <p className=wrapper>
         {string("Listening as")}
-        <img className=userIcon src=userIconUrl alt="user icon" />
+        <img
+          className={Cn.make([SharedCss.icon, userIcon])}
+          src=userIconUrl
+          alt="user icon"
+        />
         {string(userName)}
         <span className=separator />
         <a className=anchor onClick={_e => handleLogOut(auth, setLogOut)}>
