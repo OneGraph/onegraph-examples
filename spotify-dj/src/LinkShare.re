@@ -108,6 +108,10 @@ let component = ReasonReact.reducerComponent("User");
 
 let sharingLink = djId => Utils.Window.({j|$protocol//$host?dj=$djId|j});
 
+let localhostRegex = [%re "/https?:\/\/localhost/ig"];
+
+let isLocalhost = (substringRe, target) => substringRe |> Js.Re.test(target);
+
 let make = (~peerId, _children) => {
   ...component,
   initialState: () => {isDropdownOpen: false},
@@ -152,7 +156,7 @@ let make = (~peerId, _children) => {
                   shareSocialMedia(
                     "https://www.facebook.com/sharer/sharer.php?u="
                     ++ (
-                      Js.String.includes("localhost", sharingLink) ?
+                      isLocalhost(localhostRegex, sharingLink) ?
                         "https://spotdj.onegraphapp.com/" ++ peerId :
                         sharingLink
                     ),
