@@ -149,6 +149,7 @@ let make = (~peerId, _children) => {
               className=drowpdownItemStyle
               onClick={
                 _e =>
+                  /*Facebook do not handle localhost for popup. Hard coded the host here*/
                   shareSocialMedia(
                     "https://www.facebook.com/sharer/sharer.php?u=https://spotdj.onegraphapp.com/?dj="
                     ++ peerId,
