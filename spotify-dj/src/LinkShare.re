@@ -168,8 +168,8 @@ let make = (~peerId, _children) => {
               onClick={
                 _e =>
                   shareSocialMedia(
-                    "https://twitter.com/intent/tweet?text=Join%20me%20on%20SpotDj%20Here:%20https://spotdj.onegraphapp.com/?dj="
-                    ++ peerId,
+                    "https://twitter.com/intent/tweet?text=Join%20me%20on%20SpotDj%20Here:%20"
+                    ++ sharingLink,
                     "Share SpotDJ Channel",
                     "menubar=1,resizable=1,width=350,height=250",
                   )
