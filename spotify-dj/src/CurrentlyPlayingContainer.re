@@ -7,15 +7,18 @@ open SharedCss;
 let recordPlayer = requireAssetURI("./img/record-player.png");
 let headphone = requireAssetURI("./img/headphone.png");
 
-let userKindWrapper = [%css
-  [position(`fixed), top(`px(16)), right(`px(16))]
-];
+/*let userKindWrapper = [%css
+    [position(`fixed), top(`px(16)), right(`px(16))]
+  ];*/
 
 let userKindIcon = [%css [width(`px(24)), margin2(`px(0), `px(4))]];
 
-let userKindSwitchBtn = [%css [fontSize(`px(12)), fontWeight(600)]];
+let userKindSwitchBtn = [%css
+  [fontSize(`px(12)), fontWeight(600), borderRadius(`px(3))]
+];
 
 let unactiveStyle = [%css [opacity(0.5), width(`px(300)), margin(`auto)]];
+
 let activeStyle = [%css [width(`px(300)), margin(`auto)]];
 
 let statusRibon = (~ribonColor) => [%css
@@ -31,6 +34,8 @@ let statusRibon = (~ribonColor) => [%css
     color(`hex("ffffffc9")),
   ]
 ];
+
+let nonPremiumWarning = [%css [height(`px(300)), fontSize(`px(20))]];
 
 type connectionStatus =
   | Disconnected
@@ -359,12 +364,12 @@ let make =
   render: self =>
     <div>
       <div className={appearAnimation(~direction=`normal, ~delayMs=0)}>
+        <User auth userName userIconUrl setLogOut />
         {
           switch (self.state.userKind) {
           | DJ(num) =>
-            <div className=userKindWrapper>
-              <div
-                className={flexWrapper(~justify=`flexStart, ~align=`center)}>
+            <div>
+              <div className={flexWrapper(~justify=`center, ~align=`center)}>
                 <img src=recordPlayer alt="DJ Icon" className=userKindIcon />
                 <p className=marginZero>
                   <strong className=textBold> {string("DJ ")} </strong>
@@ -375,9 +380,8 @@ let make =
               </div>
             </div>
           | Listener(_) =>
-            <div className=userKindWrapper>
-              <div
-                className={flexWrapper(~justify=`flexStart, ~align=`center)}>
+            <div>
+              <div className={flexWrapper(~justify=`center, ~align=`center)}>
                 <img
                   src=headphone
                   alt="Listener Icon"
