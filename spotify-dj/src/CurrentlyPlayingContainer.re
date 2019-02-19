@@ -7,10 +7,6 @@ open SharedCss;
 let recordPlayer = requireAssetURI("./img/record-player.png");
 let headphone = requireAssetURI("./img/headphone.png");
 
-/*let userKindWrapper = [%css
-    [position(`fixed), top(`px(16)), right(`px(16))]
-  ];*/
-
 let userKindIcon = [%css [width(`px(24)), margin2(`px(0), `px(4))]];
 
 let userKindSwitchBtn = [%css
