@@ -46,7 +46,7 @@ type formattedData = {
   trackId: string,
   userIconUrl: string,
   userName: string,
-  isPremiunSpotify: bool,
+  isPremiumSpotify: bool,
 };
 
 module GetCurrentlyPlayingQuery =
@@ -174,7 +174,7 @@ let make = (~updateTrackHistoryList, children) => {
 
                  updateTrackHistoryList(trackId);
 
-                 let isPremiunSpotify =
+                 let isPremiumSpotify =
                    switch (spotifyStatus) {
                    | Some("premium") => true
                    | _ => false
@@ -190,7 +190,7 @@ let make = (~updateTrackHistoryList, children) => {
                    trackId,
                    userName,
                    userIconUrl,
-                   isPremiunSpotify,
+                   isPremiumSpotify,
                  });
                };
              }

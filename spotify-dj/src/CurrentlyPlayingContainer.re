@@ -180,7 +180,7 @@ let make =
       ~userIconUrl,
       ~setLogOut,
       ~trackHistoryList,
-      ~isPremiunSpotify,
+      ~isPremiumSpotify,
       _children,
     ) => {
   ...component,
@@ -226,7 +226,7 @@ let make =
       self.onUnmount(() => Js.Global.clearInterval(intervalId));
 
     | Listener(djId) =>
-      switch (isPremiunSpotify) {
+      switch (isPremiumSpotify) {
       | false => Js.log({j|Non-premium members can only be DJ|j})
       | true =>
         let intervalId =
@@ -406,7 +406,7 @@ let make =
           }
         }
         {
-          switch (self.state.userKind, isPremiunSpotify) {
+          switch (self.state.userKind, isPremiumSpotify) {
           | (Listener(_), false) =>
             <div
               className={
