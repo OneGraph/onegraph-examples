@@ -6,7 +6,6 @@ open SharedCss;
 let audioWave = requireAssetURI("./img/audio-wave.png");
 let like = requireAssetURI("./img/like.png");
 let share = requireAssetURI("./img/share.png");
-let pause = requireAssetURI("./img/pause.png");
 
 type action =
   | Toggle;
@@ -107,11 +106,6 @@ let make =
               <h3 className=songNameStyle> {string(songName)} </h3>
               <p className=artistNameStyle> {string(artistName)} </p>
             </div>
-            {
-              isPlaying ?
-                null :
-                <img className=pauseBtnStyle src=pause alt="Pause Icon" />
-            }
             <SoundWave isPlaying />
           </div>
           <div
