@@ -179,6 +179,7 @@ let make =
       ~userIconUrl,
       ~setLogOut,
       ~trackHistoryList,
+      ~isPremiunSpotify,
       _children,
     ) => {
   ...component,
@@ -224,10 +225,14 @@ let make =
       self.onUnmount(() => Js.Global.clearInterval(intervalId));
 
     | Listener(djId) =>
-      let intervalId =
-        Js.Global.setInterval(() => self.send(MaintainConnection), 1000);
-      self.onUnmount(() => Js.Global.clearInterval(intervalId));
-      Js.log({j|My switchboard $me has a connection to dj $djId|j});
+      switch (isPremiunSpotify) {
+      | false => Js.log({j|Non-premium members can only be DJ|j})
+      | true =>
+        let intervalId =
+          Js.Global.setInterval(() => self.send(MaintainConnection), 1000);
+        self.onUnmount(() => Js.Global.clearInterval(intervalId));
+        Js.log({j|My switchboard $me has a connection to dj $djId|j});
+      }
     };
   },
   reducer: (action, state) =>
@@ -400,83 +405,100 @@ let make =
             </div>
           }
         }
-        <User auth userName userIconUrl setLogOut />
         {
-          switch (self.state.userKind, self.state.connectionToDj) {
-          | (Listener(_), Connected) => null
-          /*Come back animation*/
-          | (Listener(_), Connecting(asOfMs)) =>
-            switch (asOfMs, self.state.connectionId < 1) {
-            | (0., _)
-            | (_, true) =>
-              <div
-                key="connecting"
-                className={
-                  Cn.make([
-                    statusRibon(~ribonColor=`hex("cfcfcf")),
-                    scaleAnimation,
-                  ])
-                }>
-                {string("Connecting ...")}
-              </div>
-            | _ =>
-              <div
-                key="offline"
-                className={
-                  Cn.make([
-                    statusRibon(~ribonColor=`hex("1DB954f0")),
-                    scaleAnimation,
-                  ])
-                }>
-                {string("DJ is offline")}
-              </div>
-            }
+          switch (self.state.userKind, isPremiunSpotify) {
+          | (Listener(_), false) =>
+            <div
+              className={
+                Cn.make([
+                  flexWrapper(~justify=`center, ~align=`center),
+                  nonPremiumWarning,
+                ])
+              }>
+              {string("Sorry, non-premium Spotify members can only be DJ")}
+            </div>
+          | (Listener(_), true)
+          | (DJ(_), _) =>
+            <div>
+              {
+                switch (self.state.userKind, self.state.connectionToDj) {
+                | (Listener(_), Connected) => null
+                /*Come back animation*/
+                | (Listener(_), Connecting(asOfMs)) =>
+                  switch (asOfMs, self.state.connectionId < 1) {
+                  | (0., _)
+                  | (_, true) =>
+                    <div
+                      key="connecting"
+                      className={
+                        Cn.make([
+                          statusRibon(~ribonColor=`hex("cfcfcf")),
+                          scaleAnimation,
+                        ])
+                      }>
+                      {string("Connecting ...")}
+                    </div>
+                  | _ =>
+                    <div
+                      key="offline"
+                      className={
+                        Cn.make([
+                          statusRibon(~ribonColor=`hex("1DB954f0")),
+                          scaleAnimation,
+                        ])
+                      }>
+                      {string("DJ is offline")}
+                    </div>
+                  }
 
-          | (Listener(_), Disconnected) =>
-            <div
-              key="offline"
-              className={
-                Cn.make([
-                  statusRibon(~ribonColor=`hex("1DB954f0")),
-                  scaleAnimation,
-                ])
-              }>
-              {string("DJ is offline")}
+                | (Listener(_), Disconnected) =>
+                  <div
+                    key="offline"
+                    className={
+                      Cn.make([
+                        statusRibon(~ribonColor=`hex("1DB954f0")),
+                        scaleAnimation,
+                      ])
+                    }>
+                    {string("DJ is offline")}
+                  </div>
+                | (Listener(_), Error) =>
+                  <div
+                    key="error"
+                    className={
+                      Cn.make([
+                        statusRibon(~ribonColor=`hex("b50303")),
+                        scaleAnimation,
+                      ])
+                    }>
+                    <small>
+                      {string("Whops.. Something is wrong. Try Refresh")}
+                    </small>
+                  </div>
+                | (DJ(_), _) => null
+                }
+              }
+              <div
+                className={
+                  switch (self.state.userKind, self.state.connectionToDj) {
+                  | (DJ(_), _)
+                  | (Listener(_), Connected) => activeStyle
+                  | (Listener(_), _) => unactiveStyle
+                  }
+                }
+              />
+              <TrackHistoryListDisplay
+                trackList=trackHistoryList
+                currentSongName=songName
+                currentArtistName=artistName
+                currentIsPlaying=isPlaying
+                currentProgressPct=progressPct
+                currentAlbumImageUrl=albumImageUrl
+                currentIsFirstSong={Array.length(trackHistoryList) <= 1}
+              />
             </div>
-          | (Listener(_), Error) =>
-            <div
-              key="error"
-              className={
-                Cn.make([
-                  statusRibon(~ribonColor=`hex("b50303")),
-                  scaleAnimation,
-                ])
-              }>
-              <small>
-                {string("Whops.. Something is wrong. Try Refresh")}
-              </small>
-            </div>
-          | (DJ(_), _) => null
           }
         }
-        <div
-          className={
-            switch (self.state.userKind, self.state.connectionToDj) {
-            | (DJ(_), _)
-            | (Listener(_), Connected) => activeStyle
-            | (Listener(_), _) => unactiveStyle
-            }
-          }
-        />
-        <TrackHistoryListDisplay
-          trackList=trackHistoryList
-          currentSongName=songName
-          currentArtistName=artistName
-          currentIsPlaying=isPlaying
-          currentProgressPct=progressPct
-          currentAlbumImageUrl=albumImageUrl
-          currentIsFirstSong={Array.length(trackHistoryList) <= 1}
-        />
         <LinkShare
           peerId={
             switch (self.state.switchboardId) {

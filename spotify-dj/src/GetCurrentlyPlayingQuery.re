@@ -10,6 +10,7 @@ module GetCurrentlyPlaying = [%graphql
         images {
           url
         }
+        product
         player {
           isPlaying
           currentlyPlayingType
@@ -45,6 +46,7 @@ type formattedData = {
   trackId: string,
   userIconUrl: string,
   userName: string,
+  isPremiunSpotify: bool,
 };
 
 module GetCurrentlyPlayingQuery =
@@ -91,6 +93,9 @@ let make = (~updateTrackHistoryList, children) => {
                    "Nobody is listening to Spotify on this account right now.",
                  )
                | Some(_item) =>
+                 let spotifyStatus =
+                   response##spotify##me->flatMap(me => me##product);
+
                  let isPlaying =
                    response##spotify##me
                    ->flatMap(me => me##player)
@@ -168,6 +173,12 @@ let make = (~updateTrackHistoryList, children) => {
 
                  updateTrackHistoryList(trackId);
 
+                 let isPremiunSpotify =
+                   switch (spotifyStatus) {
+                   | Some("premium") => true
+                   | _ => false
+                   };
+
                  children({
                    albumImageUrl,
                    artistName,
@@ -178,6 +189,7 @@ let make = (~updateTrackHistoryList, children) => {
                    trackId,
                    userName,
                    userIconUrl,
+                   isPremiunSpotify,
                  });
                };
              }

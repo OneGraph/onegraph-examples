@@ -181,6 +181,7 @@ let make = _children => {
                          albumImageUrl,
                          trackId,
                          positionMs,
+                         isPremiunSpotify,
                        },
                      ) =>
                        <CurrentlyPlayingContainer
@@ -198,6 +199,7 @@ let make = _children => {
                            () => self.send(SetLogInStatus(LoggedOut))
                          }
                          trackHistoryList={self.state.trackHistoryList}
+                         isPremiunSpotify
                        />
                    )
               </GetCurrentlyPlayingQuery>
