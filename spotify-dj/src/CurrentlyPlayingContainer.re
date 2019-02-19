@@ -17,7 +17,7 @@ let unactiveStyle = [%css [opacity(0.5), width(`px(300)), margin(`auto)]];
 
 let activeStyle = [%css [width(`px(300)), margin(`auto)]];
 
-let statusRibon = (~ribonColor) => [%css
+let statusRibbon = (~ribbonColor) => [%css
   [
     fontSize(`px(32)),
     position(`absolute),
@@ -25,7 +25,7 @@ let statusRibon = (~ribonColor) => [%css
     transform(`translateX(`pct(-50.))),
     zIndex(2),
     top(`px(200)),
-    backgroundColor(ribonColor),
+    backgroundColor(ribbonColor),
     width(`px(400)),
     color(`hex("ffffffc9")),
   ]
@@ -432,7 +432,7 @@ let make =
                       key="connecting"
                       className={
                         Cn.make([
-                          statusRibon(~ribonColor=`hex("cfcfcf")),
+                          statusRibbon(~ribbonColor=`hex("cfcfcf")),
                           scaleAnimation,
                         ])
                       }>
@@ -443,7 +443,7 @@ let make =
                       key="offline"
                       className={
                         Cn.make([
-                          statusRibon(~ribonColor=`hex("1DB954f0")),
+                          statusRibbon(~ribbonColor=`hex("1DB954f0")),
                           scaleAnimation,
                         ])
                       }>
@@ -456,7 +456,7 @@ let make =
                     key="offline"
                     className={
                       Cn.make([
-                        statusRibon(~ribonColor=`hex("1DB954f0")),
+                        statusRibbon(~ribbonColor=`hex("1DB954f0")),
                         scaleAnimation,
                       ])
                     }>
@@ -467,12 +467,16 @@ let make =
                     key="error"
                     className={
                       Cn.make([
-                        statusRibon(~ribonColor=`hex("b50303")),
+                        statusRibbon(~ribbonColor=`hex("b50303")),
                         scaleAnimation,
                       ])
                     }>
                     <small>
-                      {string("Whops.. Something is wrong. Try Refresh")}
+                      {
+                        string(
+                          "Whoops.. Something went wrong. Try refreshing!",
+                        )
+                      }
                     </small>
                   </div>
                 | (DJ(_), _) => null

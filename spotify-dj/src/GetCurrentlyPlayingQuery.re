@@ -90,8 +90,8 @@ let make = (~updateTrackHistoryList, children) => {
                switch (spotifyIsLaunched) {
                | None =>
                  ReasonReact.string(
-                   "No music played on Spotify with this account right now.
-                    Try to open the Spotify app and play something!",
+                   "No music is playing on this Spotify account right now.
+                    To get started, open the Spotify app on the web, your desktop, or even your phone, and play some tunes for us to listen to!",
                  )
                | Some(_item) =>
                  let spotifyStatus =
