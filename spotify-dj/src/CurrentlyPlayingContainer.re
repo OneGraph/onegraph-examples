@@ -9,10 +9,6 @@ let headphone = requireAssetURI("./img/headphone.png");
 
 let userKindIcon = [%css [width(`px(24)), margin2(`px(0), `px(4))]];
 
-let userKindSwitchBtn = [%css
-  [fontSize(`px(12)), fontWeight(600), borderRadius(`px(3))]
-];
-
 let unactiveStyle = [%css [opacity(0.5), width(`px(300)), margin(`auto)]];
 
 let activeStyle = [%css [width(`px(300)), margin(`auto)]];
@@ -400,8 +396,7 @@ let make =
               <a
                 className=textBlack
                 href={"http://" ++ Utils.Window.host ++ "/#"}>
-                <button
-                  className={Cn.make([button, userKindSwitchBtn, marginZero])}>
+                <button className={Cn.make([button])}>
                   {string("I wanna be DJ")}
                 </button>
               </a>
