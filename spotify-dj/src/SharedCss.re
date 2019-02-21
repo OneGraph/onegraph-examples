@@ -9,6 +9,7 @@ let button = [%css
     backgroundColor(`hex("19A34A")),
     borderStyle(`none),
     margin(`px(16)),
+    marginBottom(`px(32)),
     padding2(`px(8), `px(16)),
     borderRadius(`px(3)),
     color(`hex("fff")),
