@@ -49,7 +49,7 @@ View the app at http://localhost:8000. Running in this environment provides hot 
 
 ## Contributors
 
-- @yukims19: Check out the blog detailing how SpotDJ was designed, built, and pushed to production
+- @yukims19: Check out the [blog](https://medium.com/@yukims19/stories-behind-spotdj-7bb3bf6ddea2) detailing how SpotDJ was designed, built, and pushed to production
 - @xavxyz built and guided much of the initial animation for SpotDJ
 
 ## License
