@@ -370,7 +370,14 @@ let make =
                 <p className=marginZero>
                   <strong className=textBold> {string("DJ ")} </strong>
                   <span className=textWeak>
-                    {string(" - " ++ string_of_int(num) ++ " followers")}
+                    {
+                      string(
+                        " - You have "
+                        ++ string_of_int(num)
+                        ++ (num > 1 ? " listeners" : " listener")
+                        ++ " following you",
+                      )
+                    }
                   </span>
                 </p>
               </div>
@@ -384,16 +391,12 @@ let make =
                   className=userKindIcon
                 />
                 <p className=marginZero>
-                  <strong className=textBold>
-                    {string("You are the Audience ")}
-                  </strong>
+                  <strong className=textBold> {string("Listener ")} </strong>
+                  <span className=textWeak>
+                    {string(" - Your Spotify is synced with the DJ")}
+                  </span>
                 </p>
               </div>
-              /* Might include DJ username later
-                 <span className=textWeak>
-                                    {string(" - listening with ")}
-                                    <i> {string("ABC")} </i>
-                                  </span>*/
               <a
                 className=textBlack
                 href={"http://" ++ Utils.Window.host ++ "/#"}>
