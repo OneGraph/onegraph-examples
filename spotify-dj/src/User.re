@@ -15,8 +15,14 @@ let separator = [%css
   ]
 ];
 
-let wrapper = [%css
-  [backgroundColor(`hex("000")), paddingBottom(`px(4))]
+let userWrapper = [%css
+  [
+    backgroundColor(`hex("000")),
+    paddingBottom(`px(4)),
+    position(`fixed),
+    top(`px(24)),
+    right(`px(24)),
+  ]
 ];
 
 let handleLogOut = (auth, setLogOut) =>
@@ -42,8 +48,7 @@ let make = (~auth, ~userName, ~userIconUrl, ~setLogOut, _children) => {
   ...component,
   render: _self =>
     ReasonReact.(
-      <p className=wrapper>
-        {string("Listening as")}
+      <p className=userWrapper>
         <img
           className={Cn.make([SharedCss.icon, userIcon])}
           src=userIconUrl
