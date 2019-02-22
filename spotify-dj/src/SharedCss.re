@@ -16,6 +16,7 @@ let button = [%css
     fontSize(`px(18)),
     fontWeight(600),
     boxShadow(~x=`px(0), ~y=`px(2), ~blur=`px(4), `hex("00000040")),
+    transitionProperty("all"),
     transitionDuration(`ms(350)),
     select(
       ":hover",
@@ -25,8 +26,22 @@ let button = [%css
         transform(`scale(1.2)),
       ],
     ),
-    select(":active", [important(backgroundColor(`hex("20c159")))]),
-    select(":focus", [important(backgroundColor(`hex("20c159")))]),
+    select(
+      ":active",
+      [
+        important(backgroundColor(`hex("20c159"))),
+        cursor(`pointer),
+        transform(`scale(1.2)),
+      ],
+    ),
+    select(
+      ":focus",
+      [
+        important(backgroundColor(`hex("20c159"))),
+        cursor(`pointer),
+        transform(`scale(1.2)),
+      ],
+    ),
   ]
 ];
 
