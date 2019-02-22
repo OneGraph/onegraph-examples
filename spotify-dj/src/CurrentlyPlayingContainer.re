@@ -370,7 +370,7 @@ let make =
                       string(
                         " - You have "
                         ++ string_of_int(num)
-                        ++ (num > 1 ? " listeners" : " listener")
+                        ++ (num === 1 ? " listener" : " listeners")
                         ++ " following you",
                       )
                     }
