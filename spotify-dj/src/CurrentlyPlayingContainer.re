@@ -377,6 +377,14 @@ let make =
                   </span>
                 </p>
               </div>
+              <LinkShare
+                peerId={
+                  switch (self.state.switchboardId) {
+                  | Some(peerId) => BsUuid.Uuid.V4.toString(peerId)
+                  | None => ""
+                  }
+                }
+              />
             </div>
           | Listener(_) =>
             <div>
@@ -501,14 +509,6 @@ let make =
             </div>
           }
         }
-        <LinkShare
-          peerId={
-            switch (self.state.switchboardId) {
-            | Some(peerId) => BsUuid.Uuid.V4.toString(peerId)
-            | None => ""
-            }
-          }
-        />
       </div>
     </div>,
 };
