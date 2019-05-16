@@ -27,6 +27,7 @@
     "bs-webapi",
     "re-classnames",
     "reason-apollo",
+    "reason-apollo-hooks",
     "reason-react"
   ],
   "refmt": 3,

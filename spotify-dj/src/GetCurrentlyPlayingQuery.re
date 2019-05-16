@@ -197,3 +197,60 @@ let make = (~updateTrackHistoryList, children) => {
          }
     </GetCurrentlyPlayingQuery>,
 };
+
+module Test = {
+  module UserQueryConfig = [%graphql
+    {|
+  query findUsername {
+    spotify {
+      me {
+        id
+        displayName
+        images {
+          url
+        }
+        product
+        player {
+          isPlaying
+          currentlyPlayingType
+          progressMs
+          item {
+            id
+            name
+            artists {
+              name
+            }
+            durationMs
+            href
+            album {
+              images {
+                url
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+|}
+  ];
+
+  module UserQuery = ReasonApolloHooks.Query.Make(UserQueryConfig);
+
+  [@react.component]
+  let make = () => {
+    /* Both variant and records available */
+    let (simple, _full) = UserQuery.use();
+
+    <div>
+      {
+        switch (simple) {
+        | Loading => <p> {React.string("Loading...")} </p>
+        | Data(data) => <p> {React.string(data##currentUser##name)} </p>
+        | NoData
+        | Error(_) => <p> {React.string("Get off my lawn!")} </p>
+        }
+      }
+    </div>;
+  };
+};

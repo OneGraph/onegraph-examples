@@ -35,12 +35,13 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-motion": "^0.5.2",
-    "reason-apollo": "^0.15.1",
+    "reason-apollo": "^0.15.2",
+    "reason-apollo-hooks": "^1.0.2-beta.1",
     "reason-react": ">=0.4.0"
   },
   "devDependencies": {
     "bs-emotion-ppx": "0.0.6",
-    "bs-platform": "^4.0.14",
+    "bs-platform": "^5.0.4",
     "favicons-webpack-plugin": "^0.0.9",
     "file-loader": "^1.1.11",
     "graphql_ppx": "^0.2.8",
