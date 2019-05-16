@@ -246,7 +246,15 @@ module Test = {
       {
         switch (simple) {
         | Loading => <p> {React.string("Loading...")} </p>
-        | Data(data) => <p> {React.string(data##currentUser##name)} </p>
+        | Data(data) =>
+          <p>
+            {
+              React.string(
+                [%get_in data##spotify##me#??displayName]
+                ->Belt.Option.getWithDefault("No name"),
+              )
+            }
+          </p>
         | NoData
         | Error(_) => <p> {React.string("Get off my lawn!")} </p>
         }
