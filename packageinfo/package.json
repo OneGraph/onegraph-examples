@@ -4,8 +4,9 @@
   "description": "PackageInfo - npm package information using OneGraph",
   "version": "1.0.0",
   "scripts": {
-    "dev": "next src",
-    "build": "next build src"
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
   },
   "dependencies": {
     "date-fns": "^2.16.0",
