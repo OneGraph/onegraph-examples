@@ -1,8 +1,6 @@
 import React, { Component, useState, useEffect, useContext } from 'react'
-import { withRouter } from 'next/router'
 import Head from 'next/head'
-import { Query } from 'react-apollo'
-import { gql } from 'apollo-boost'
+import { useQuery } from 'urql'
 import { useFela } from 'react-fela'
 import { AuthContext } from 'react-onegraph'
 
@@ -30,7 +28,7 @@ import Spacer from '../components/Spacer'
 
 // one request for the all data including 2 different services
 // this is both convenient and mind-blowing
-const GET_STATS = gql`
+const GET_STATS = `
   query npm($package: String!, $startDate: String!, $endDate: String!) {
     npm {
       package(name: $package) {
@@ -118,6 +116,134 @@ const GET_STATS = gql`
   }
 `
 
+const PackageInfo = ({
+  fetching,
+  error,
+  data,
+  search,
+  updateSearch,
+  status,
+  login,
+  logout,
+}) => {
+  const { css, theme } = useFela()
+
+  if (fetching) {
+    return <Loading />
+  }
+
+  if (!data || !data.npm.package) {
+    if (error) {
+      return <Error packageName={search} error={error} />
+    }
+    return (
+      <Error packageName={search} error={{ message: 'Package not found.' }} />
+    )
+  }
+
+  const packageData = preparePackageData({ ...data.npm.package })
+
+  const {
+    name,
+    downloads,
+    maintainers,
+    keywords,
+    versions,
+    dependencies,
+    bundlephobia,
+    bundlephobiaHistory,
+    readme,
+    readmeUrl,
+  } = packageData
+
+  return (
+    <div
+      className={css({
+        padding: 10,
+        flex: 1,
+        width: '100%',
+        maxWidth: 900,
+        alignSelf: 'center',
+      })}>
+      <div
+        className={css({
+          backgroundColor: 'rgba(240, 240, 240, 0.4)',
+          color: 'rgb(80, 80, 80)',
+          padding: 10,
+          fontSize: 14,
+        })}>
+        {!status.github ? (
+          <div
+            className={css({
+              justifyContent: 'space-between',
+              textAlign: 'center',
+              '@media (min-width: 640px)': {
+                flexDirection: 'row',
+              },
+            })}>
+            You are not logged into GitHub. Some information may not be missing.
+            <Spacer size={10} />
+            <span
+              onClick={() => login('github')}
+              className={css({
+                cursor: 'pointer',
+
+                color: theme.colors.primary,
+              })}>
+               Login with Github
+            </span>
+          </div>
+        ) : (
+          <div
+            className={css({
+              justifyContent: 'space-between',
+              textAlign: 'center',
+              '@media (min-width: 640px)': {
+                flexDirection: 'row',
+              },
+            })}>
+            You are logged into GitHub. You may log out at any time.
+            <Spacer size={10} />
+            <span
+              onClick={() => logout('github')}
+              className={css({
+                cursor: 'pointer',
+
+                color: theme.colors.primary,
+              })}>
+               Logout with Github
+            </span>
+          </div>
+        )}
+      </div>
+      <Spacer size={10} />
+      <Info data={packageData} githubStatus={status.github} />
+      <Spacer size={20} />
+      <Downloads downloads={downloads} />
+      <Spacer size={20} />
+      <Maintainers maintainers={maintainers} />
+      <Spacer size={25} />
+      <Conditional condition={dependencies.length > 0}>
+        <Dependencies dependencies={dependencies} updateSearch={updateSearch} />
+        <Spacer size={25} />
+      </Conditional>
+      <Conditional condition={keywords.length > 0}>
+        <Keywords keywords={keywords} />
+        <Spacer size={30} />
+      </Conditional>
+      <Conditional condition={bundlephobia}>
+        <BundleSize bundlephobiaHistory={bundlephobiaHistory} />
+
+        <Spacer size={25} />
+      </Conditional>
+      <Versions versions={versions} packageName={name} />
+      <Spacer size={50} />
+      <ReadmeFile readme={readme} readmeUrl={readmeUrl} />
+      <Spacer size={40} />
+    </div>
+  )
+}
+
 const getDateString = date =>
   [
     date.getFullYear(),
@@ -125,8 +251,8 @@ const getDateString = date =>
     padNumber(date.getDate()),
   ].join('-')
 
-const Page = ({ initialSearch }) => {
-  const { status, login, logout, headers } = useContext(AuthContext)
+export default function Page({ initialSearch = '' }) {
+  const onegraph = useContext(AuthContext)
   const [search, updateSearch] = useState(initialSearch)
   const { css, theme } = useFela()
 
@@ -158,6 +284,18 @@ const Page = ({ initialSearch }) => {
     [search]
   )
 
+  const [res] = useQuery({
+    query: GET_STATS,
+    pause: search.length === 0,
+    variables: {
+      package: search,
+      endDate: getDateString(new Date()),
+      startDate: getDateString(
+        new Date(new Date().setFullYear(new Date().getFullYear() - 1))
+      ),
+    },
+  })
+
   return (
     <div
       className={css({
@@ -180,7 +318,7 @@ const Page = ({ initialSearch }) => {
             fontFamily: 'Roboto, Inter UI, Helvetica, -apple-system',
           })}>
           <img
-            src="/static/logo.png"
+            src="/logo.png"
             className={css({ width: 30, height: 30, paddingRight: 5 })}
           />
           OneGraph PackageInfo
@@ -212,151 +350,12 @@ const Page = ({ initialSearch }) => {
       </div>
 
       {search.length > 0 ? (
-        <Query
-          query={GET_STATS}
-          // passing the headers to the variables is a neat hack
-          // forcing Apollo to refetch the data using the new headers
-          variables={{
-            package: search,
-            endDate: getDateString(new Date()),
-            startDate: getDateString(
-              new Date(new Date().setFullYear(new Date().getFullYear() - 1))
-            ),
-            headers,
-          }}
-          context={{ headers }}
-          // TODO: investigate why this is required
-          // without it won't always update on input change
-          // even if the input value is an existing package
-          fetchPolicy="cache-and-network"
-          // using this to display npm data even if GitHub auth throws
-          // otherwise Apollo would not pass any data at all
-          errorPolicy="all">
-          {({ loading, error, data, refetch }) => {
-            if (loading) {
-              return <Loading />
-            }
-
-            if (!data || !data.npm.package) {
-              if (error) {
-                return <Error packageName={search} error={error} />
-              }
-
-              return (
-                <Error
-                  packageName={search}
-                  error={{ message: 'Package not found.' }}
-                />
-              )
-            }
-
-            const packageData = preparePackageData({ ...data.npm.package })
-
-            const {
-              name,
-              downloads,
-              maintainers,
-              keywords,
-              versions,
-              dependencies,
-              bundlephobia,
-              bundlephobiaHistory,
-              readme,
-              readmeUrl,
-            } = packageData
-
-            return (
-              <div
-                className={css({
-                  padding: 10,
-                  flex: 1,
-                  width: '100%',
-                  maxWidth: 900,
-                  alignSelf: 'center',
-                })}>
-                <div
-                  className={css({
-                    backgroundColor: 'rgba(240, 240, 240, 0.4)',
-                    color: 'rgb(80, 80, 80)',
-                    padding: 10,
-                    fontSize: 14,
-                  })}>
-                  {!status.github ? (
-                    <div
-                      className={css({
-                        justifyContent: 'space-between',
-                        textAlign: 'center',
-                        '@media (min-width: 640px)': {
-                          flexDirection: 'row',
-                        },
-                      })}>
-                      You are not logged into GitHub. Some information may not
-                      be missing.
-                      <Spacer size={10} />
-                      <span
-                        onClick={() => login('github')}
-                        className={css({
-                          cursor: 'pointer',
-
-                          color: theme.colors.primary,
-                        })}>
-                         Login with Github
-                      </span>
-                    </div>
-                  ) : (
-                    <div
-                      className={css({
-                        justifyContent: 'space-between',
-                        textAlign: 'center',
-                        '@media (min-width: 640px)': {
-                          flexDirection: 'row',
-                        },
-                      })}>
-                      You are logged into GitHub. You may log out at any time.
-                      <Spacer size={10} />
-                      <span
-                        onClick={() => logout('github')}
-                        className={css({
-                          cursor: 'pointer',
-
-                          color: theme.colors.primary,
-                        })}>
-                         Logout with Github
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <Spacer size={10} />
-                <Info data={packageData} githubStatus={status.github} />
-                <Spacer size={20} />
-                <Downloads downloads={downloads} />
-                <Spacer size={20} />
-                <Maintainers maintainers={maintainers} />
-                <Spacer size={25} />
-                <Conditional condition={dependencies.length > 0}>
-                  <Dependencies
-                    dependencies={dependencies}
-                    updateSearch={updateSearch}
-                  />
-                  <Spacer size={25} />
-                </Conditional>
-                <Conditional condition={keywords.length > 0}>
-                  <Keywords keywords={keywords} />
-                  <Spacer size={30} />
-                </Conditional>
-                <Conditional condition={bundlephobia}>
-                  <BundleSize bundlephobiaHistory={bundlephobiaHistory} />
-
-                  <Spacer size={25} />
-                </Conditional>
-                <Versions versions={versions} packageName={name} />
-                <Spacer size={50} />
-                <ReadmeFile readme={readme} readmeUrl={readmeUrl} />
-                <Spacer size={40} />
-              </div>
-            )
-          }}
-        </Query>
+        <PackageInfo
+          {...res}
+          {...onegraph}
+          search={search}
+          updateSearch={updateSearch}
+        />
       ) : (
         <Placeholder updateSearch={updateSearch} />
       )}
@@ -365,8 +364,6 @@ const Page = ({ initialSearch }) => {
   )
 }
 
-export default withRouter(({ router }) => (
-  <FelaProvider>
-    <Page initialSearch={router.query.package || ''} />
-  </FelaProvider>
-))
+Page.getInitialProps = ({ query }) => ({
+  initialSearch: query.package || '',
+})

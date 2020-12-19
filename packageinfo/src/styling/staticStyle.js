@@ -27,7 +27,7 @@ export default [
     selector: 'body',
     style: {
       backgroundColor: 'rgb(235, 235, 235)',
-      fontFamily: 'Inter UI, Helvetica Neue,-apple-system',
+      fontFamily: 'Inter, Helvetica Neue,-apple-system',
       fontSize: 16,
     },
   },

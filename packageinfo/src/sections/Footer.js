@@ -1,20 +1,18 @@
 import React from 'react'
-import RouterLink from 'next/link'
 import { useFela } from 'react-fela'
 
 function FooterLink({ href, children }) {
   const { css, theme } = useFela()
 
   return (
-    <RouterLink href={href}>
-      <a
-        className={css({
-          padding: '0 4px',
-          color: theme.colors.primary,
-        })}>
-        {children}
-      </a>
-    </RouterLink>
+    <a
+      href={href}
+      className={css({
+        padding: '0 4px',
+        color: theme.colors.primary,
+      })}>
+      {children}
+    </a>
   )
 }
 

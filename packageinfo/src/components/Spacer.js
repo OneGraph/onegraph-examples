@@ -6,7 +6,12 @@ export default function Spacer({ size }) {
 
   return (
     <div
-      className={css({ flexGrow: 0, flexShrink: 0, flexBasis: size + 'px' })}
+      className={css({
+        flexGrow: 0,
+        flexShrink: 0,
+        flexBasis: size + 'px',
+        width: size,
+      })}
     />
   )
 }

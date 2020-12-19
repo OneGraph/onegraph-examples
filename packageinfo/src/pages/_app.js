@@ -1,29 +1,34 @@
-import App, { Container } from 'next/app'
+import Head from 'next/head'
 import React from 'react'
-import { ApolloProvider } from 'react-apollo'
-import { ThemeProvider } from 'react-fela'
 import { AuthProvider } from 'react-onegraph'
+import { ThemeProvider } from 'react-fela'
+import { Provider as UrqlProvider } from 'urql'
 
-import withApolloClient from '../integration/withApolloClient'
+import FelaProvider from '../styling/FelaProvider'
 import theme from '../styling/theme'
+
+import client from '../integration/client'
 
 import { APP_ID } from '../../env'
 
-class MyApp extends App {
-  render() {
-    const { Component, pageProps, apolloClient } = this.props
-    return (
-      <Container>
-        <ThemeProvider theme={theme}>
-          <AuthProvider appId={APP_ID}>
-            <ApolloProvider client={apolloClient}>
+export default function App({ Component, pageProps, renderer }) {
+  return (
+    <AuthProvider appId={APP_ID}>
+      <UrqlProvider value={client}>
+        <FelaProvider renderer={renderer}>
+          <ThemeProvider theme={theme}>
+            <>
+              <Head>
+                <meta
+                  name="viewport"
+                  content="width=device-width,height=device-height,initial-scale=1, viewport-fit=cover"
+                />
+              </Head>
               <Component {...pageProps} />
-            </ApolloProvider>
-          </AuthProvider>
-        </ThemeProvider>
-      </Container>
-    )
-  }
+            </>
+          </ThemeProvider>
+        </FelaProvider>
+      </UrqlProvider>
+    </AuthProvider>
+  )
 }
-
-export default withApolloClient(MyApp)

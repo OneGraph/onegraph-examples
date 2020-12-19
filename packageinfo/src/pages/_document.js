@@ -1,54 +1,41 @@
-import Document, { Head, Main, NextScript } from 'next/document'
-import { renderToSheetList } from 'fela-dom'
+import Document, { Html, Head, Main, NextScript } from 'next/document'
+import { renderToNodeList } from 'react-fela'
 
 import FelaProvider from '../styling/FelaProvider'
 import getFelaRenderer from '../styling/getFelaRenderer'
 
+import PreloadStyleSheet from '../components/PreloadStyleSheet'
+
 export default class MyDocument extends Document {
-  static getInitialProps({ renderPage }) {
-    const serverRenderer = getFelaRenderer()
+  static async getInitialProps(ctx) {
+    const renderer = getFelaRenderer()
+    const originalRenderPage = ctx.renderPage
 
-    const page = renderPage(App => props => (
-      <FelaProvider renderer={serverRenderer}>
-        <App {...props} />
-      </FelaProvider>
-    ))
+    ctx.renderPage = () =>
+      originalRenderPage({
+        enhanceApp: App => props => <App {...props} renderer={renderer} />,
+      })
 
-    const sheetList = renderToSheetList(serverRenderer)
+    const initialProps = await Document.getInitialProps(ctx)
+    const styles = renderToNodeList(renderer)
 
     return {
-      ...page,
-      sheetList,
+      ...initialProps,
+      styles: [...initialProps.styles, ...styles],
     }
   }
 
   render() {
-    const styleNodes = this.props.sheetList.map(
-      ({ type, rehydration, support, media, css }) => (
-        <style
-          dangerouslySetInnerHTML={{ __html: css }}
-          data-fela-rehydration={rehydration}
-          data-fela-support={support}
-          data-fela-type={type}
-          key={`${type}-${media}`}
-          media={media}
-        />
-      )
-    )
-
     return (
-      <html>
+      <Html lang="en">
         <Head>
           <meta httpEquiv="content-type" content="text/html; charset=utf-8" />
-          <meta
-            name="viewport"
-            content="width=device-width,height=device-height,initial-scale=1, viewport-fit=cover"
-          />
+
           <meta
             name="title"
             content="PackageInfo | npm package information using OneGraph"
           />
-          <link rel="stylesheet" href="https://rsms.me/inter/inter-ui.css" />
+          <PreloadStyleSheet href="/fonts/inter/inter.css" />
           <link
             rel="stylesheet"
             href="https://unpkg.com/react-vis/dist/style.css"
@@ -57,13 +44,12 @@ export default class MyDocument extends Document {
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css"
           />
-          {styleNodes}
         </Head>
         <body>
           <Main />
           <NextScript />
         </body>
-      </html>
+      </Html>
     )
   }
 }

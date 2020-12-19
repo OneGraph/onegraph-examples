@@ -12,11 +12,11 @@ PackageInfo is built with a set of modern web technologies.
 * [React](http://reactjs.org): A library for component-based user interfaces.
 * [Next](http://nextjs.org): A framework for React-powered web applications.
 * [Now](https://zeit.co): A platform for serverless application deployment used to serve PackageInfo.
-* [Apollo](https://www.apollographql.com): A leading client for GraphQL backends that connects OneGraph with PackageInfo.
+* [urql](https://formidable.com/open-source/urql/): A GrapQL client that connects OneGraph with PackageInfo.
 * [Fela](http://fela.js.org): A CSS in JS styling library that renders to Atomic CSS.
 * [react-vis](https://github.com/uber/react-vis): A visualization library for React used to render the download graphs.
 * [react-markdown](https://github.com/rexxars/react-markdown): A library that renders Markdown to React components used to render the Readme. 
-* [react-markdown-github-renderers](https://github.com/rexxars/react-markdown-github-renderers): A set of react-markdown renderers providing GitHub-like appearance
+* [react-markdown-github-renderers](https://github.com/robinweser/react-markdown-github-renderers): A set of react-markdown renderers providing GitHub-like appearance
 
 ## Sharing links
 Searching for packages will automatically update the URL to include the package name in order to share it e.g.
