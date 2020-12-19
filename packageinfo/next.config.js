@@ -7,6 +7,9 @@ var withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 const config = {
   target: 'serverless',
+  env: {
+    APP_ID: process.env.APP_ID,
+  },
   workboxOpts: {
     runtimeCaching: [
       {
