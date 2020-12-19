@@ -9,7 +9,7 @@ import theme from '../styling/theme'
 
 import client from '../integration/client'
 
-import { APP_ID } from '../../env'
+const APP_ID = process.env.APP_ID
 
 export default function App({ Component, pageProps, renderer }) {
   return (
