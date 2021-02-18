@@ -9,7 +9,9 @@ let header = (~centered) => [%css
   ]
 ];
 
-let pageTitle = [%css [fontSize(`px(56)), marginBottom(`px(16))]];
+let pageTitle = [%css
+  [fontSize(`px(56)), marginTop(`px(16)), marginBottom(`px(40))]
+];
 let pageSubTitle = [%css
   [fontSize(`px(32)), marginBottom(`px(64)), fontWeight(200)]
 ];

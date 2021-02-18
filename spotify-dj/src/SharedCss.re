@@ -6,13 +6,42 @@ let flexWrapper = (~justify, ~align) => [%css
 
 let button = [%css
   [
-    backgroundColor(`hex("1DB954")),
+    backgroundColor(`hex("19A34A")),
     borderStyle(`none),
-    marginBottom(`px(16)),
+    margin(`px(16)),
+    marginBottom(`px(32)),
+    padding2(`px(8), `px(16)),
+    borderRadius(`px(3)),
+    color(`hex("fff")),
+    fontSize(`px(18)),
+    fontWeight(600),
     boxShadow(~x=`px(0), ~y=`px(2), ~blur=`px(4), `hex("00000040")),
-    select(":hover", [backgroundColor(`hex("18a94b"))]),
-    select(":active", [important(backgroundColor(`hex("18a94b")))]),
-    select(":focus", [important(backgroundColor(`hex("18a94b")))]),
+    transitionProperty("all"),
+    transitionDuration(`ms(350)),
+    select(
+      ":hover",
+      [
+        backgroundColor(`hex("20c159")),
+        cursor(`pointer),
+        transform(`scale(1.2)),
+      ],
+    ),
+    select(
+      ":active",
+      [
+        important(backgroundColor(`hex("20c159"))),
+        cursor(`pointer),
+        transform(`scale(1.2)),
+      ],
+    ),
+    select(
+      ":focus",
+      [
+        important(backgroundColor(`hex("20c159"))),
+        cursor(`pointer),
+        transform(`scale(1.2)),
+      ],
+    ),
   ]
 ];
 

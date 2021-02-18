@@ -34,15 +34,7 @@ let shareWrapper = [%css [position(`relative)]];
 let shareLinkTitle = [%css [fontSize(`px(24)), marginBottom(`px(16))]];
 
 let shareLinkURL = [%css
-  [
-    border(`px(0), `none, `hex("1DB954")),
-    padding2(`px(0), `px(8)),
-    width(`px(280)),
-    backgroundColor(`hex("ffffff00")),
-    outlineStyle(`none),
-    color(`hex("7d7d7d")),
-    marginBottom(`px(16)),
-  ]
+  [position(`absolute), top(`px(-1000)), left(`px(-1000))]
 ];
 
 let drowpdownMenuStyle = [%css
@@ -96,7 +88,9 @@ let copyUrlToClipboard = url =>
     |> ignore
   ) {
   | _ =>
+    Js.log("11111");
     selectElement(getElementById("shareLinkURL"), ());
+    Js.log("11111");
     let success = execCommand("copy");
     Js.log2("Success copying to clipboard: ", success);
   };
@@ -123,82 +117,63 @@ let make = (~peerId, _children) => {
     open ReasonReact;
     let sharingLink = sharingLink(peerId);
 
-    <div className=linkSharing>
-      <p className=shareLinkTitle>
-        {string("Share the following link to invite people to your music")}
-      </p>
-      <div
-        className={
-          Cn.make([
-            SharedCss.flexWrapper(~justify=`center, ~align=`flexEnd),
-            shareWrapper,
-          ])
-        }>
-        <input
-          className=shareLinkURL
-          value=sharingLink
-          readOnly=true
-          id="shareLinkURL"
-        />
-        <hr className=inputLine />
-        <Dropdown
-          isOpen={self.state.isDropdownOpen}
-          toggle={() => self.send(Toggle)}
-          size="sm">
-          <DropdownToggle className=SharedCss.button caret=true>
-            {string("Share")}
-          </DropdownToggle>
-          <DropdownMenu className=drowpdownMenuStyle>
-            <DropdownItem
-              className=drowpdownItemStyle
-              onClick={
-                _e =>
-                  shareSocialMedia(
-                    "https://www.facebook.com/sharer/sharer.php?u="
-                    ++ (
-                      /* Detect localhost urls because facebook only allows sharing public links */
-                      isLocalhost(sharingLink) ?
-                        "https://spotdj.onegraphapp.com/" ++ peerId :
-                        sharingLink
-                    ),
-                    "Share SpotDJ Channel",
-                    "menubar=1,resizable=1,width=560,height=450",
-                  )
-              }>
-              <img
-                className=SharedCss.icon
-                src=facebookIcon
-                alt="Facebook Icon"
-              />
-              {string("Facebook")}
-            </DropdownItem>
-            <DropdownItem
-              className=drowpdownItemStyle
-              onClick={
-                _e =>
-                  shareSocialMedia(
-                    "https://twitter.com/intent/tweet?text=Join%20me%20on%20SpotDj%20Here:%20"
-                    ++ sharingLink,
-                    "Share SpotDJ Channel",
-                    "menubar=1,resizable=1,width=350,height=250",
-                  )
-              }>
-              <img
-                className=SharedCss.icon
-                src=twitterIcon
-                alt="Twitter Icon"
-              />
-              {string("Twitter")}
-            </DropdownItem>
-            <DropdownItem
-              className=drowpdownItemStyle
-              onClick={_e => copyUrlToClipboard(sharingLink)}>
-              <img className=SharedCss.icon src=linkIcon alt="Link Icon" />
-              {string("Copy URL")}
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
-      </div>
+    <div>
+      <input
+        className=shareLinkURL
+        value=sharingLink
+        readOnly=true
+        id="shareLinkURL"
+      />
+      <Dropdown
+        isOpen={self.state.isDropdownOpen} toggle={() => self.send(Toggle)}>
+        <DropdownToggle className=SharedCss.button caret=true>
+          {string("Share my channel")}
+        </DropdownToggle>
+        <DropdownMenu className=drowpdownMenuStyle>
+          <DropdownItem
+            className=drowpdownItemStyle
+            onClick={
+              _e =>
+                shareSocialMedia(
+                  "https://www.facebook.com/sharer/sharer.php?u="
+                  ++ (
+                    /* Detect localhost urls because facebook only allows sharing public links */
+                    isLocalhost(sharingLink) ?
+                      "https://spotdj.onegraphapp.com/" ++ peerId : sharingLink
+                  ),
+                  "Share SpotDJ Channel",
+                  "menubar=1,resizable=1,width=560,height=450",
+                )
+            }>
+            <img
+              className=SharedCss.icon
+              src=facebookIcon
+              alt="Facebook Icon"
+            />
+            {string("Facebook")}
+          </DropdownItem>
+          <DropdownItem
+            className=drowpdownItemStyle
+            onClick={
+              _e =>
+                shareSocialMedia(
+                  "https://twitter.com/intent/tweet?text=Join%20me%20on%20SpotDj%20Here:%20"
+                  ++ sharingLink,
+                  "Share SpotDJ Channel",
+                  "menubar=1,resizable=1,width=350,height=250",
+                )
+            }>
+            <img className=SharedCss.icon src=twitterIcon alt="Twitter Icon" />
+            {string("Twitter")}
+          </DropdownItem>
+          <DropdownItem
+            className=drowpdownItemStyle
+            onClick={_e => copyUrlToClipboard(sharingLink)}>
+            <img className=SharedCss.icon src=linkIcon alt="Link Icon" />
+            {string("Copy URL")}
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
     </div>;
   },
 };

@@ -221,7 +221,10 @@ let make =
     },
   render: self =>
     ReasonReact.(
-      <div>
+      <div
+        style={
+          ReactDOMRe.Style.make(~cursor="url(" ++ scrollIcon ++ "), auto", ())
+        }>
         <StaggeredMotion
           key={Array.length(trackList) |> string_of_int}
           className="motion"

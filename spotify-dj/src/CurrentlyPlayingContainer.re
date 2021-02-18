@@ -9,10 +9,6 @@ let headphone = requireAssetURI("./img/headphone.png");
 
 let userKindIcon = [%css [width(`px(24)), margin2(`px(0), `px(4))]];
 
-let userKindSwitchBtn = [%css
-  [fontSize(`px(12)), fontWeight(600), borderRadius(`px(3))]
-];
-
 let unactiveStyle = [%css [opacity(0.5), width(`px(300)), margin(`auto)]];
 
 let activeStyle = [%css [width(`px(300)), margin(`auto)]];
@@ -370,10 +366,25 @@ let make =
                 <p className=marginZero>
                   <strong className=textBold> {string("DJ ")} </strong>
                   <span className=textWeak>
-                    {string(" - " ++ string_of_int(num) ++ " followers")}
+                    {
+                      string(
+                        " - You have "
+                        ++ string_of_int(num)
+                        ++ (num === 1 ? " listener" : " listeners")
+                        ++ " following you",
+                      )
+                    }
                   </span>
                 </p>
               </div>
+              <LinkShare
+                peerId={
+                  switch (self.state.switchboardId) {
+                  | Some(peerId) => BsUuid.Uuid.V4.toString(peerId)
+                  | None => ""
+                  }
+                }
+              />
             </div>
           | Listener(_) =>
             <div>
@@ -384,21 +395,16 @@ let make =
                   className=userKindIcon
                 />
                 <p className=marginZero>
-                  <strong className=textBold>
-                    {string("You are the Audience ")}
-                  </strong>
+                  <strong className=textBold> {string("Listener ")} </strong>
+                  <span className=textWeak>
+                    {string(" - Your Spotify is synced with the DJ")}
+                  </span>
                 </p>
               </div>
-              /* Might include DJ username later
-                 <span className=textWeak>
-                                    {string(" - listening with ")}
-                                    <i> {string("ABC")} </i>
-                                  </span>*/
               <a
                 className=textBlack
                 href={"http://" ++ Utils.Window.host ++ "/#"}>
-                <button
-                  className={Cn.make([button, userKindSwitchBtn, marginZero])}>
+                <button className={Cn.make([button])}>
                   {string("I wanna be DJ")}
                 </button>
               </a>
@@ -503,14 +509,6 @@ let make =
             </div>
           }
         }
-        <LinkShare
-          peerId={
-            switch (self.state.switchboardId) {
-            | Some(peerId) => BsUuid.Uuid.V4.toString(peerId)
-            | None => ""
-            }
-          }
-        />
       </div>
     </div>,
 };
